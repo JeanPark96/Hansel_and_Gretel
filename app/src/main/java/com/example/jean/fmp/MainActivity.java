@@ -18,18 +18,18 @@ import static android.app.Service.START_STICKY;
 public class MainActivity extends AppCompatActivity {
 
     boolean flag = true;
-    TextView countText, distanceText, orientationText;
+    TextView countText, distanceText, minText,maxText;
     Button Btn;
     EditText walkText;
     double a=0, b=0, result=0;
-    String result2;
+    String result2,minResult, maxResult;
 
     int count = StepValue.Step;
     private long lastTime;
     private float deltaTotalAcc, lastX, lastY, lastZ, x, y, z, azimuth, pitch, roll,totalAccDiff,lastDeltaTotalAcc,low_peak,high_peak,totalAbsAcc,lastTotalAbsAcc;
     int msg,n=0;
     private static final double SHAKE_THRESHOLD = 15;
-    private static final double AMPLITUDE_THRESHOLD = 13.3;
+    private static final double AMPLITUDE_THRESHOLD = 0;
     private SensorManager sensorManager;
     private Sensor accelerometerSensor; //가속도 센서
     private Sensor magneticSensor; //지자기 센서
@@ -46,15 +46,14 @@ public class MainActivity extends AppCompatActivity {
 
         countText = (TextView) findViewById(R.id.stepText);
         distanceText = (TextView) findViewById(R.id.distanceText);
-        orientationText = (TextView) findViewById(R.id.orientationText);
         Btn = (Button) findViewById(R.id.button);
         walkText = (EditText) findViewById(R.id.walkText);
-
+        minText=(TextView)findViewById(R.id.minText);
+        maxText=(TextView)findViewById(R.id.maxText);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        magneticSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         accL = new accelerometerListener();
-        magN = new magneticListener();
+
 
         Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,9 +88,6 @@ public class MainActivity extends AppCompatActivity {
         if (accelerometerSensor != null) {
             sensorManager.registerListener(accL, accelerometerSensor, sensorManager.SENSOR_DELAY_GAME);
         }
-        if (magneticSensor != null) {
-            sensorManager.registerListener(magN, magneticSensor, sensorManager.SENSOR_DELAY_GAME);
-        }
         return START_STICKY;
     }
 
@@ -101,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
         Log.i("onDestroy", "IN");
         if (sensorManager != null) {
             sensorManager.unregisterListener(accL);
-            sensorManager.unregisterListener(magN);
             StepValue.Step = 0; //다시 초기화
         }
     }
@@ -127,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
                     totalAbsAcc=Math.abs(x)+Math.abs(y)+Math.abs(z);
                     totalAccDiff=(totalAbsAcc-(lastTotalAbsAcc));
                     deltaTotalAcc = totalAccDiff/gapOfTime;
+                    n++;
 
                     if(n==1){
                         low_peak=totalAbsAcc;
@@ -145,12 +141,11 @@ public class MainActivity extends AppCompatActivity {
                       if(count==0||(lastDeltaTotalAcc>0 && deltaTotalAcc<0)) {
                            StepValue.Step = count++;
                            msg = StepValue.Step;
+                           printResult();
                            low_peak=high_peak;
                            high_peak=0;
                        }
                    }
-
-                    printResult();
 
                     lastX=x;
                     lastY=y;
@@ -163,31 +158,7 @@ public class MainActivity extends AppCompatActivity {
         public void onAccuracyChanged(Sensor sensor, int accuracy) {}
     }
 
-    private class magneticListener implements SensorEventListener {
-        public void onSensorChanged(SensorEvent event){
-            //방향 계산
-            if(event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD){
-                Magnetic = event.values.clone();
-            }
 
-            if (Gravity != null && Magnetic != null) {
-                float R[] = new float[9];
-                float I[] = new float[9];
-                boolean success = SensorManager.getRotationMatrix(R, I, Gravity, Magnetic);//?
-
-                if (success) {
-                    float orientation[] = new float[3];
-                    SensorManager.getOrientation(R, orientation);
-                    azimuth = orientation[0];
-                    azimuth = azimuth * 360 / (2*3.14159f);
-                    pitch = (float)Math.toDegrees(orientation[1]);
-                    roll = (float)Math.toDegrees(orientation[2]);
-                }
-            }
-        }
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-    }
 
     public void printResult(){
         countText.setText(Integer.toString(msg)); //step 수 출력
@@ -197,7 +168,10 @@ public class MainActivity extends AppCompatActivity {
         result = a*b; //거리 계산
         distanceText.setText(Double.toString(result)); //거리 출력
 
-        result2 = "Azimut:"+azimuth+"\n"+"Pitch:"+pitch+"\n"+"Roll:"+roll;
-        orientationText.setText(result2); //방향 출력
+        minResult = minText.getText()+", "+Float.toString(low_peak);
+        minText.setText(minResult);
+        maxResult = maxText.getText()+", "+Float.toString(high_peak);
+        maxText.setText(maxResult);
+
     }
 }
