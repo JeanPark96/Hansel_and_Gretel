@@ -2,6 +2,7 @@ package com.example.jean.mapcanvas;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -13,8 +14,8 @@ import android.widget.ImageView;
 
 public class drawCanvas extends View {
 
-    private Bitmap drawBitmap,firstBitmap;
-    private Paint paintCanvas,paintMark;
+    private Bitmap drawBitmap,firstBitmap,bitmap;
+    private Paint paintCanvas,paintMark,canvasPaint;
     private Canvas canvas;
     ImageView canvasMap;
 
@@ -25,6 +26,7 @@ public class drawCanvas extends View {
     private float r_azimuth;
     private int width,height;
     private Path path=new Path();
+
 
     public drawCanvas(Context context, AttributeSet attrs) {
         super(context,attrs);
@@ -42,23 +44,21 @@ public class drawCanvas extends View {
         paintMark.setStrokeWidth(5f);
         paintMark.setAntiAlias(true);
         paintMark.setStrokeJoin(Paint.Join.ROUND);
-
-       // canvasMap=(ImageView)findViewById(R.id.grid_img);
+        canvasPaint=new Paint(Paint.DITHER_FLAG);
+        // canvasMap=(ImageView)findViewById(R.id.grid_img);
 
     }
-   @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+  @Override
+  protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-       // firstBitmap= BitmapFactory.decodeResource(getResources(),R.drawable.grid);//res 폴더에 저장된 이미지를 Bitmap으로 만들때 사용함
-        //canvasMap.setImageBitmap(firstBitmap);
-       // drawBitmap=Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);//CanvasBitmap를 그대로 가져오면서 흑백처리 해버림.
+      drawBitmap=Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);//CanvasBitmap를 그대로 가져오면서 흑백처리 해버림.
+      //drawBitmap=Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);
+      canvas=new Canvas(drawBitmap);//이거 없으면 start 버튼 누르면 grid 이미지 사라짐
+      width=getWidth();
+      height=getHeight();
+      firstBitmap= Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),900,900,false);
 
-       drawBitmap=Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);
-       canvas=new Canvas(drawBitmap);//이거 없으면 start 버튼 누르면 grid 이미지 사라짐
-       width=getWidth();
-       height=getHeight();
-
-    }
+  }
 
     public void drawing(float azimuth,int msg) {
         r_msg=msg;
@@ -91,13 +91,18 @@ public class drawCanvas extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawBitmap(drawBitmap,0,0,null);
+        //firstBitmap= BitmapFactory.decodeResource(getResources(),R.drawable.grid);//res 폴더에 저장된 이미지를 Bitmap으로 만들때 사용함
+        //canvasMap.setImageBitmap(firstBitmap);
 
+
+        canvas.drawBitmap(firstBitmap,0,200,canvasPaint);
+
+        canvas.drawBitmap(drawBitmap,0,0,canvasPaint);
         canvas.drawPath(path,paintCanvas);
+        //canvasMap.setImageDrawable(new BitmapDrawable(getResources(),drawBitmap));//이거 없으면 안그려짐 애초에 그려질 수 있도록 drawBitmap이 없는것처럼 인식됨
 
         //canvas.drawLine(startx,starty,endx,endy,paintCanvas);
-       // canvasMap.setImageDrawable(new BitmapDrawable(getResources(),drawBitmap));//이거 없으면 안그려짐 애초에 그려질 수 있도록 drawBitmap이 없는것처럼 인식됨
-        //canvas.save();
+    //canvas.save();
 
     }
 

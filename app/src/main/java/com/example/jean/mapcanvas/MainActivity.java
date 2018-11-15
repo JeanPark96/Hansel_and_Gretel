@@ -50,6 +50,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         showCanvas=(drawCanvas)findViewById(R.id.drawing);
+        /*View v= new drawCanvas(getApplicationContext());
+        Bitmap bitmap=Bitmap.createBitmap(300,300,Bitmap.Config.ARGB_8888);
+        Canvas canvas=new Canvas(bitmap);
+        v.draw(canvas);
+        ImageView canvas_imageView=(ImageView)findViewById(R.id.canvas);
+        canvas_imageView.setImageBitmap(bitmap);*/
 
         countText = (TextView) findViewById(R.id.stepText);
         distanceText = (TextView) findViewById(R.id.distanceText);

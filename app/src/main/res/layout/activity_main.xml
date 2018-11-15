@@ -6,16 +6,15 @@
     android:layout_height="match_parent"
     tools:context="com.example.jean.mapcanvas.MainActivity"
     android:orientation="vertical">
+
     <com.example.jean.mapcanvas.drawCanvas
         android:id="@+id/drawing"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="350dp"
+        android:layout_height="350dp"
         android:layout_gravity="center"
         android:layout_weight="7"
-        android:background="@drawable/grid"
         >
     </com.example.jean.mapcanvas.drawCanvas>
-
 
 
 
