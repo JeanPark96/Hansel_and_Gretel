@@ -1,5 +1,6 @@
 package com.example.jean.mapcanvas;
 
+import android.view.View;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,7 +16,7 @@ import android.widget.ImageView;
 public class drawCanvas extends View {
 
     private Bitmap drawBitmap,firstBitmap,bitmap;
-    private Paint paintCanvas,paintMark,canvasPaint;
+    private Paint paintCanvas,paintMark,canvasPaint, intermediatePaint;
     private Canvas canvas;
     ImageView canvasMap;
 
@@ -32,6 +33,7 @@ public class drawCanvas extends View {
         super(context,attrs);
         paintCanvas=new Paint();
         paintMark=new Paint();
+        intermediatePaint = new Paint();
 
         paintCanvas.setStyle(Paint.Style.STROKE);
         paintCanvas.setColor(Color.BLUE);
@@ -45,6 +47,12 @@ public class drawCanvas extends View {
         paintMark.setAntiAlias(true);
         paintMark.setStrokeJoin(Paint.Join.ROUND);
         canvasPaint=new Paint(Paint.DITHER_FLAG);
+
+        intermediatePaint.setStyle(Paint.Style.STROKE);
+        intermediatePaint.setColor(Color.BLACK);
+        intermediatePaint.setStrokeWidth(5f);
+        intermediatePaint.setAntiAlias(true);
+        intermediatePaint.setStrokeJoin(Paint.Join.ROUND);
         // canvasMap=(ImageView)findViewById(R.id.grid_img);
 
     }
@@ -81,6 +89,10 @@ public class drawCanvas extends View {
             angleDiffRadian =modifyDirection(angleDiff);
             updateLocation(startX,startY,angleDiffRadian);
             path.lineTo(endX,endY);
+
+            if(r_msg % 80 == 0) {
+                canvas.drawOval(startX-8, startY-8, startX+8, endY+8, intermediatePaint);
+            }
         }
 
         invalidate();
