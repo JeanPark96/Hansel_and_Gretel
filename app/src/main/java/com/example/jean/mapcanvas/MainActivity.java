@@ -44,7 +44,9 @@ public class MainActivity extends AppCompatActivity {
     float[] Magnetic;
     private drawCanvas showCanvas;
     ImageView canvasMap;
+    ImageView orientationImg;
     Bitmap firstBitmap;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
         orientationText = (TextView) findViewById(R.id.orientationText);
         Btn = (Button) findViewById(R.id.button);
         walkText = (EditText) findViewById(R.id.walkText);
+
+        orientationImg = (ImageView)findViewById(R.id.orientationImg);
+        orientationImg.setRotation(0);
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -124,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         public void onSensorChanged(SensorEvent event) {
             //거리 계산
             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-               Gravity = lowPass(event.values.clone(), Gravity);
+                Gravity = lowPass(event.values.clone(), Gravity);
                 //Gravity = event.values.clone();
                 long currentTime = System.currentTimeMillis();
                 long gapOfTime = (currentTime - lastTime);
@@ -183,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
         public void onSensorChanged(SensorEvent event){
             if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
                 Magnetic = lowPass(event.values.clone(), Magnetic);
-               // Magnetic = event.values.clone();
+                // Magnetic = event.values.clone();
 
 
             }
@@ -202,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
                     SensorManager.getOrientation(R, orientation);
                     azimuth = orientation[0];
                     azimuth = (float)(azimuth * 1/radianConst);//범위가 -180~180 사이로 나옴 음수면 서쪽 양수면 동쪽이다
+                    orientationImg.setRotation(-azimuth);
                     if(azimuth<0){
                         azimuth+=360;
                     }

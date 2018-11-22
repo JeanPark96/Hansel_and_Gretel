@@ -7,6 +7,13 @@
     tools:context="com.example.jean.mapcanvas.MainActivity"
     android:orientation="vertical">
 
+    <ImageView
+        android:id="@+id/orientationImg"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/orientation"/>
+
+
     <com.example.jean.mapcanvas.drawCanvas
         android:id="@+id/drawing"
         android:layout_width="350dp"

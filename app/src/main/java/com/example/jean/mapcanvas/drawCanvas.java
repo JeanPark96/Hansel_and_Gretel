@@ -56,17 +56,17 @@ public class drawCanvas extends View {
         // canvasMap=(ImageView)findViewById(R.id.grid_img);
 
     }
-  @Override
-  protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-      drawBitmap=Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);//CanvasBitmap를 그대로 가져오면서 흑백처리 해버림.
-      //drawBitmap=Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);
-      canvas=new Canvas(drawBitmap);//이거 없으면 start 버튼 누르면 grid 이미지 사라짐
-      width=getWidth();
-      height=getHeight();
-      firstBitmap= Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),900,900,false);
+        drawBitmap=Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);//CanvasBitmap를 그대로 가져오면서 흑백처리 해버림.
+        //drawBitmap=Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);
+        canvas=new Canvas(drawBitmap);//이거 없으면 start 버튼 누르면 grid 이미지 사라짐
+        width=getWidth();
+        height=getHeight();
+        firstBitmap= Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),900,900,false);
 
-  }
+    }
 
     public void drawing(float azimuth,int msg) {
         r_msg=msg;
@@ -114,15 +114,15 @@ public class drawCanvas extends View {
         //canvasMap.setImageDrawable(new BitmapDrawable(getResources(),drawBitmap));//이거 없으면 안그려짐 애초에 그려질 수 있도록 drawBitmap이 없는것처럼 인식됨
 
         //canvas.drawLine(startx,starty,endx,endy,paintCanvas);
-    //canvas.save();
+        //canvas.save();
 
     }
 
-   public void finished(){
-           paintMark.setColor(Color.RED);
-           canvas.drawOval(startX-8,startY-8,startX+8,endY+8,paintMark);
-           //pathMark.addArc(startx-5,starty-5,startx+5,endy+5,0,360);
-           //  canvas.drawPath(pathMark,paintMark);
+    public void finished(){
+        paintMark.setColor(Color.RED);
+        canvas.drawOval(startX-8,startY-8,startX+8,endY+8,paintMark);
+        //pathMark.addArc(startx-5,starty-5,startx+5,endy+5,0,360);
+        //  canvas.drawPath(pathMark,paintMark);
         invalidate();
     }
 
