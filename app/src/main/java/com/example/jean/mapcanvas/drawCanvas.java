@@ -1,6 +1,5 @@
 package com.example.jean.mapcanvas;
 
-import android.view.View;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -59,9 +58,8 @@ public class drawCanvas extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        drawBitmap=Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);//CanvasBitmap를 그대로 가져오면서 흑백처리 해버림.
-        //drawBitmap=Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);
-        canvas=new Canvas(drawBitmap);//이거 없으면 start 버튼 누르면 grid 이미지 사라짐
+        drawBitmap=Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);
+        canvas=new Canvas(drawBitmap);
         width=getWidth();
         height=getHeight();
         firstBitmap= Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),900,900,false);
@@ -103,26 +101,16 @@ public class drawCanvas extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        //firstBitmap= BitmapFactory.decodeResource(getResources(),R.drawable.grid);//res 폴더에 저장된 이미지를 Bitmap으로 만들때 사용함
-        //canvasMap.setImageBitmap(firstBitmap);
 
-
-        canvas.drawBitmap(firstBitmap,0,200,canvasPaint);
+        canvas.drawBitmap(firstBitmap,0,100,canvasPaint);
 
         canvas.drawBitmap(drawBitmap,0,0,canvasPaint);
         canvas.drawPath(path,paintCanvas);
-        //canvasMap.setImageDrawable(new BitmapDrawable(getResources(),drawBitmap));//이거 없으면 안그려짐 애초에 그려질 수 있도록 drawBitmap이 없는것처럼 인식됨
-
-        //canvas.drawLine(startx,starty,endx,endy,paintCanvas);
-        //canvas.save();
-
     }
 
     public void finished(){
         paintMark.setColor(Color.RED);
         canvas.drawOval(startX-8,startY-8,startX+8,endY+8,paintMark);
-        //pathMark.addArc(startx-5,starty-5,startx+5,endy+5,0,360);
-        //  canvas.drawPath(pathMark,paintMark);
         invalidate();
     }
 

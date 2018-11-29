@@ -1,6 +1,5 @@
 package com.example.jean.mapcanvas;
 
-import android.graphics.Bitmap;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -30,9 +29,8 @@ public class MainActivity extends AppCompatActivity {
     int count = StepValue.Step;
     private long lastTime;
     int msg,n=0;
-    private float deltaTotalAcc, lastX, lastY, lastZ, x, y, z, azimuth, pitch, roll,totalAccDiff,lastDeltaTotalAcc,low_peak,high_peak,totalAbsAcc,lastTotalAbsAcc;
-    //private static final int SHAKE_THRESHOLD = 15;
-    private static final double AMPLITUDE_THRESHOLD = 4.3;
+    private float deltaTotalAcc, lastX, lastY, lastZ, x, y, z, azimuth, pitch, roll,totalAccDiff,lastDeltaTotalAcc,low_peak,high_peak,totalAbsAcc,lastTotalAbsAcc,customThresholdTotal=0,averageCustomThreshold=0;
+    private static double AMPLITUDE_THRESHOLD = 2.1;
     private SensorManager sensorManager;
     private Sensor accelerometerSensor; //가속도 센서
     private Sensor magneticSensor; //지자기 센서
@@ -43,21 +41,13 @@ public class MainActivity extends AppCompatActivity {
     float[] Gravity;
     float[] Magnetic;
     private drawCanvas showCanvas;
-    ImageView canvasMap;
     ImageView orientationImg;
-    Bitmap firstBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         showCanvas=(drawCanvas)findViewById(R.id.drawing);
-        /*View v= new drawCanvas(getApplicationContext());
-        Bitmap bitmap=Bitmap.createBitmap(300,300,Bitmap.Config.ARGB_8888);
-        Canvas canvas=new Canvas(bitmap);
-        v.draw(canvas);
-        ImageView canvas_imageView=(ImageView)findViewById(R.id.canvas);
-        canvas_imageView.setImageBitmap(bitmap);*/
 
         countText = (TextView) findViewById(R.id.stepText);
         distanceText = (TextView) findViewById(R.id.distanceText);
@@ -92,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                     Btn.setText("START");
                     showCanvas.finished();
                     try {
-                        onDestroy();
+                        onStop();
                     } catch (Exception e) {
                         Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                     }
@@ -100,6 +90,16 @@ public class MainActivity extends AppCompatActivity {
                 flag = !flag;
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (sensorManager != null) {
+            sensorManager.unregisterListener(accL);
+            sensorManager.unregisterListener(magN);
+            StepValue.Step = 0; //다시 초기화
+        }
     }
 
     public int onStartCommand() {
@@ -118,11 +118,7 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         Log.i("onDestroy", "IN");
-        if (sensorManager != null) {
-            sensorManager.unregisterListener(accL);
-            sensorManager.unregisterListener(magN);
-            StepValue.Step = 0; //다시 초기화
-        }
+
     }
 
     private class accelerometerListener implements SensorEventListener {
@@ -163,6 +159,14 @@ public class MainActivity extends AppCompatActivity {
 
                     if(high_peak-low_peak>AMPLITUDE_THRESHOLD){
                         if(count==0||(lastDeltaTotalAcc>0 && deltaTotalAcc<0)) {
+                            if(StepValue.Step<=5){
+                                customThresholdTotal+=totalAccDiff;
+                                if(StepValue.Step==5) {
+                                    averageCustomThreshold = customThresholdTotal / 5;
+                                    AMPLITUDE_THRESHOLD=averageCustomThreshold;
+                                }
+                            }
+
                             StepValue.Step = count++;
                             msg = StepValue.Step;
                             low_peak=high_peak;
