@@ -163,7 +163,8 @@ public class MainActivity extends AppCompatActivity {
                                 customThresholdTotal+=totalAccDiff;
                                 if(StepValue.Step==5) {
                                     averageCustomThreshold = customThresholdTotal / 5;
-                                    AMPLITUDE_THRESHOLD=averageCustomThreshold;
+                                    if(averageCustomThreshold>AMPLITUDE_THRESHOLD)
+                                        AMPLITUDE_THRESHOLD=averageCustomThreshold;
                                 }
                             }
 
