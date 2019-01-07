@@ -1,5 +1,9 @@
 package com.example.jean.mapcanvas;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -29,15 +33,14 @@ public class MainActivity extends AppCompatActivity {
     int count = StepValue.Step;
     private long lastTime;
     int msg,n=0;
-    private float deltaTotalAcc, lastX, lastY, lastZ, x, y, z, azimuth, pitch, roll,totalAccDiff,lastDeltaTotalAcc,low_peak,high_peak,totalAbsAcc,lastTotalAbsAcc,customThresholdTotal=0,averageCustomThreshold=0;
-    private static double AMPLITUDE_THRESHOLD = 2.1;
+    private float deltaTotalAcc, lastX, lastY, lastZ, x, y, z, azimuth, pitch, roll,totalAccDiff,lastDeltaTotalAcc,low_peak,high_peak,totalAbsAcc,lastTotalAbsAcc;
+    private float customThresholdTotal=0,averageCustomThreshold=0;
+    private static double AMPLITUDE_THRESHOLD = 4.3;
     private SensorManager sensorManager;
     private Sensor accelerometerSensor; //가속도 센서
     private Sensor magneticSensor; //지자기 센서
     private SensorEventListener accL;
     private SensorEventListener magN;
-    private float gravity[]=new float[3];
-    private float magnetic[]=new float[3];
     float[] Gravity;
     float[] Magnetic;
     private drawCanvas showCanvas;
@@ -47,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        showCanvas=(drawCanvas)findViewById(R.id.drawing);
+        showCanvas= (drawCanvas) findViewById(R.id.drawing);
 
         countText = (TextView) findViewById(R.id.stepText);
         distanceText = (TextView) findViewById(R.id.distanceText);
@@ -82,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                     Btn.setText("START");
                     showCanvas.finished();
                     try {
-                        onStop();
+                        onDestroy();
                     } catch (Exception e) {
                         Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                     }
@@ -90,16 +93,6 @@ public class MainActivity extends AppCompatActivity {
                 flag = !flag;
             }
         });
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (sensorManager != null) {
-            sensorManager.unregisterListener(accL);
-            sensorManager.unregisterListener(magN);
-            StepValue.Step = 0; //다시 초기화
-        }
     }
 
     public int onStartCommand() {
@@ -118,7 +111,11 @@ public class MainActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         Log.i("onDestroy", "IN");
-
+        if (sensorManager != null) {
+            sensorManager.unregisterListener(accL);
+            sensorManager.unregisterListener(magN);
+            StepValue.Step = 0; //다시 초기화
+        }
     }
 
     private class accelerometerListener implements SensorEventListener {
@@ -126,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
             //거리 계산
             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
                 Gravity = lowPass(event.values.clone(), Gravity);
-                //Gravity = event.values.clone();
                 long currentTime = System.currentTimeMillis();
                 long gapOfTime = (currentTime - lastTime);
 
@@ -154,9 +150,7 @@ public class MainActivity extends AppCompatActivity {
                         }else if(totalAbsAcc>high_peak){
                             high_peak=totalAbsAcc;
                         }
-
                     }
-
                     if(high_peak-low_peak>AMPLITUDE_THRESHOLD){
                         if(count==0||(lastDeltaTotalAcc>0 && deltaTotalAcc<0)) {
                             if(StepValue.Step<=5){
@@ -167,7 +161,6 @@ public class MainActivity extends AppCompatActivity {
                                         AMPLITUDE_THRESHOLD=averageCustomThreshold;
                                 }
                             }
-
                             StepValue.Step = count++;
                             msg = StepValue.Step;
                             low_peak=high_peak;
@@ -175,8 +168,6 @@ public class MainActivity extends AppCompatActivity {
                             printResult();
                         }
                     }
-
-
                     lastX=x;
                     lastY=y;
                     lastZ=z;
@@ -184,8 +175,8 @@ public class MainActivity extends AppCompatActivity {
                     lastDeltaTotalAcc=deltaTotalAcc;
                 }
             }
-
         }
+
         public void onAccuracyChanged(Sensor sensor, int accuracy) {}
     }
 
@@ -193,15 +184,8 @@ public class MainActivity extends AppCompatActivity {
         public void onSensorChanged(SensorEvent event){
             if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
                 Magnetic = lowPass(event.values.clone(), Magnetic);
-                // Magnetic = event.values.clone();
-
-
             }
-           /* //방향 계산
-            if(event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD){
-                Magnetic = event.values.clone();
-            }
-            */
+
             if (Gravity != null && Magnetic != null) {
                 float R[] = new float[9];
                 float I[] = new float[9];
@@ -245,5 +229,12 @@ public class MainActivity extends AppCompatActivity {
         result2 = "Azimut:"+azimuth+"\n"+"Pitch:"+pitch+"\n"+"Roll:"+roll;
         orientationText.setText(result2); //방향 출력
         showCanvas.drawing(azimuth,msg);
+    }
+
+    public void backTracking(View view){
+        String path = showCanvas.saveBitmap(this.getApplicationContext(), showCanvas.drawBitmap, "NewBitmap");
+        Toast.makeText(this.getApplicationContext(), "경로가 저장되었습니다.", Toast.LENGTH_LONG).show();
+        showCanvas.firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), path),900,900,false);
+        //orientationImg.setImageBitmap(showCanvas.drawBitmap);
     }
 }
