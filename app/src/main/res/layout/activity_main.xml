@@ -9,8 +9,8 @@
 
     <ImageView
         android:id="@+id/orientationImg"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:src="@drawable/orientation"/>
 
 
@@ -120,13 +120,23 @@
             </LinearLayout>
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/button"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:text="Start " />
 
-        <Button
-            android:id="@+id/button"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:text="Start "
-            />
+            <Button
+                android:id="@+id/backTrack_button"
+                android:layout_width="140dp"
+                android:layout_height="40dp"
+                android:text="BackTracking"
+                android:onClick="backTracking"/>
+        </LinearLayout>
 
     </LinearLayout>
 
