@@ -2,8 +2,6 @@ package com.example.jean.mapcanvas;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -36,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     private float deltaTotalAcc, lastX, lastY, lastZ, x, y, z, azimuth, pitch, roll,totalAccDiff,lastDeltaTotalAcc,low_peak,high_peak,totalAbsAcc,lastTotalAbsAcc;
     private float customThresholdTotal=0,averageCustomThreshold=0;
     private static double AMPLITUDE_THRESHOLD = 4.3;
+    public static boolean newBitmapAvailable=false;
+    public static Bitmap newBitmap;
     private SensorManager sensorManager;
     private Sensor accelerometerSensor; //가속도 센서
     private Sensor magneticSensor; //지자기 센서
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (flag) { //버튼 처음 눌렀을 때
+                if (flag) {
                     Btn.setText("STOP");
 
                     try {
@@ -81,11 +81,12 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-                else { //버튼 다시 눌렀을 때
+                else {
                     Btn.setText("START");
                     showCanvas.finished();
                     try {
-                        onDestroy();
+                       // onDestroy();
+                        onStop();
                     } catch (Exception e) {
                         Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                     }
@@ -93,6 +94,16 @@ public class MainActivity extends AppCompatActivity {
                 flag = !flag;
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (sensorManager != null) {
+            sensorManager.unregisterListener(accL);
+            sensorManager.unregisterListener(magN);
+            StepValue.Step = 0; //다시 초기화
+        }
     }
 
     public int onStartCommand() {
@@ -117,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
             StepValue.Step = 0; //다시 초기화
         }
     }
+
 
     private class accelerometerListener implements SensorEventListener {
         public void onSensorChanged(SensorEvent event) {
@@ -232,9 +244,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void backTracking(View view){
-        String path = showCanvas.saveBitmap(this.getApplicationContext(), showCanvas.drawBitmap, "NewBitmap");
+        String filePath = showCanvas.saveBitmap(this.getApplicationContext(), showCanvas.drawBitmap, "NewBitmap");
         Toast.makeText(this.getApplicationContext(), "경로가 저장되었습니다.", Toast.LENGTH_LONG).show();
-        showCanvas.firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), path),900,900,false);
+        makeNewBitmapFromPath(filePath);
+        showCanvas.onSizeChanged(900,900,900,900);
+       // showCanvas.firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), (int)path),900,900,false);
         //orientationImg.setImageBitmap(showCanvas.drawBitmap);
     }
+
+    public Bitmap makeNewBitmapFromPath(String filePath){
+        newBitmap= BitmapFactory.decodeFile(filePath);
+        newBitmapAvailable=true;
+        return newBitmap;
+    }
+
+
 }

@@ -1,7 +1,5 @@
 package com.example.jean.mapcanvas;
 
-import android.graphics.Matrix;
-import android.view.View;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,11 +7,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,9 +20,9 @@ import java.io.IOException;
 public class drawCanvas extends View {
     public static File tempFile;
     public static Bitmap drawBitmap, firstBitmap;
+    public Bitmap bitmapForbackTracking;
     private Paint paintCanvas,paintMark,canvasPaint, intermediatePaint;
     private Canvas canvas;
-    ImageView canvasMap;
 
     private double radianConst=3.15192/180,theta=0,angleDiff,one_fourth_rad=90*radianConst,half_rad=180*radianConst,three_fourth=270*radianConst;
     private float angleDiffRadian;
@@ -65,14 +62,26 @@ public class drawCanvas extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        drawBitmap = Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888); //CanvasBitmap를 그대로 가져오면서 흑백처리 해버림.
-        //drawBitmap=Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);
-        canvas = new Canvas(drawBitmap);//이거 없으면 start 버튼 누르면 grid 이미지 사라짐
+        drawBitmap = Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);
+        canvas = new Canvas(drawBitmap);
         width = getWidth();
         height = getHeight();
-        firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),900,900,false);
-    }
+        if(isBackTrackActivated()){
+            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+            firstBitmap=Bitmap.createScaledBitmap(bitmapForbackTracking,900,900,false);
+        }else{
+            firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),900,900,false);
+        }
+  }
 
+    public boolean isBackTrackActivated(){
+        if(MainActivity.newBitmapAvailable==true) {
+            bitmapForbackTracking=MainActivity.newBitmap;
+            return true;
+        }
+        else
+            return false;
+    }
     public void drawing(float azimuth,int msg) {
         r_msg=msg;
         r_azimuth=azimuth;
@@ -109,21 +118,14 @@ public class drawCanvas extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        //firstBitmap= BitmapFactory.decodeResource(getResources(),R.drawable.grid);//res 폴더에 저장된 이미지를 Bitmap으로 만들때 사용함
-        //canvasMap.setImageBitmap(firstBitmap);
         canvas.drawBitmap(firstBitmap,0,200,canvasPaint);
         canvas.drawBitmap(drawBitmap,0,0,canvasPaint);
 
-        //canvasMap.setImageDrawable(new BitmapDrawable(getResources(),drawBitmap));//이거 없으면 안그려짐 애초에 그려질 수 있도록 drawBitmap이 없는것처럼 인식됨
-        //canvas.drawLine(startx,starty,endx,endy,paintCanvas);
-        //canvas.save();
     }
 
     public void finished(){
         paintMark.setColor(Color.RED);
         canvas.drawOval(startX-8,startY-8,startX+8,endY+8,paintMark);
-        //pathMark.addArc(startx-5,starty-5,startx+5,endy+5,0,360);
-        //  canvas.drawPath(pathMark,paintMark);
         invalidate();
     }
 
