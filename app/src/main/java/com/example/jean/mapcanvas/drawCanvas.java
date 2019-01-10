@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -19,7 +18,7 @@ import java.io.IOException;
 
 public class drawCanvas extends View {
     public static File tempFile;
-    public static Bitmap drawBitmap, firstBitmap;
+    public static Bitmap drawBitmap, firstBitmap,newBitmap;
     public Bitmap bitmapForbackTracking;
     private Paint paintCanvas,paintMark,canvasPaint, intermediatePaint;
     private Canvas canvas;
@@ -27,7 +26,7 @@ public class drawCanvas extends View {
     private double radianConst=3.15192/180,theta=0,angleDiff,one_fourth_rad=90*radianConst,half_rad=180*radianConst,three_fourth=270*radianConst;
     private float angleDiffRadian;
     private float startX, startY,endX,endY;
-    private int r_msg;
+    private int r_msg,flag=0;
     private float r_azimuth;
     private int width,height;
     private Path path=new Path();
@@ -62,15 +61,20 @@ public class drawCanvas extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        drawBitmap = Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);
-        canvas = new Canvas(drawBitmap);
+
         width = getWidth();
         height = getHeight();
         if(isBackTrackActivated()){
-            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-            firstBitmap=Bitmap.createScaledBitmap(bitmapForbackTracking,900,900,false);
+           // canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+           // firstBitmap=Bitmap.createScaledBitmap(bitmapForbackTracking,900,900,false);
+           // canvas.drawColor(0,PorterDuff.Mode.CLEAR);
+            firstBitmap=bitmapForbackTracking;
+            firstBitmap=Bitmap.createBitmap(getWidth(),getHeight(), Bitmap.Config.ALPHA_8);
+            flag=1;
         }else{
-            firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),900,900,false);
+            drawBitmap = Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);
+            canvas = new Canvas(drawBitmap);
+            firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),width,height,false);
         }
   }
 
@@ -118,7 +122,7 @@ public class drawCanvas extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawBitmap(firstBitmap,0,200,canvasPaint);
+        canvas.drawBitmap(firstBitmap,0,0,canvasPaint);
         canvas.drawBitmap(drawBitmap,0,0,canvasPaint);
 
     }
@@ -156,7 +160,7 @@ public class drawCanvas extends View {
         try{
             tempFile.createNewFile();  // 파일을 생성해주고
             FileOutputStream out = new FileOutputStream(tempFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90 , out);  // 넘거 받은 bitmap을 jpeg(손실압축)으로 저장해줌
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90 , out);  // 넘거 받은 bitmap을 jpeg(손실압축)으로 저장해줌
             out.flush();
             out.close(); // 마무리로 닫아줍니다.
         } catch (FileNotFoundException e) {
