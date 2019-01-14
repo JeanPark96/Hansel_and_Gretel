@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
@@ -68,9 +69,10 @@ public class drawCanvas extends View {
            // canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
            // firstBitmap=Bitmap.createScaledBitmap(bitmapForbackTracking,900,900,false);
            // canvas.drawColor(0,PorterDuff.Mode.CLEAR);
-            firstBitmap=bitmapForbackTracking;
-            firstBitmap=Bitmap.createBitmap(getWidth(),getHeight(), Bitmap.Config.ALPHA_8);
-            flag=1;
+          //  firstBitmap=bitmapForbackTracking;
+           // firstBitmap=Bitmap.createBitmap(getWidth(),getHeight(), Bitmap.Config.ALPHA_8);
+            canvas=new Canvas(drawBitmap);
+
         }else{
             drawBitmap = Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);
             canvas = new Canvas(drawBitmap);
@@ -133,17 +135,14 @@ public class drawCanvas extends View {
         invalidate();
     }
 
-    /*public Bitmap RotateBitmap(Bitmap bitmap){
+    public Bitmap RotateBitmap(Bitmap bitmap){
         Matrix matrix = new Matrix();
-        matrix.setScale(1, -1); //상하반전
-        matrix.setScale(-1, 1); //좌우반전
-        //matrix.postRotate(180);
+        matrix.setScale(-1, -1); //좌우반전
 
         drawBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
-
         return drawBitmap;
     }
-    public drawCanvas RotateBitmap(drawCanvas canvas){
+    /*public drawCanvas RotateBitmap(drawCanvas canvas){
         canvas.setRotation(180);
         return  canvas;
     }*/
