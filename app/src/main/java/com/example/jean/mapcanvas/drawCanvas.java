@@ -69,9 +69,22 @@ public class drawCanvas extends View {
            // canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
            // firstBitmap=Bitmap.createScaledBitmap(bitmapForbackTracking,900,900,false);
            // canvas.drawColor(0,PorterDuff.Mode.CLEAR);
+
+            /*
             firstBitmap=bitmapForbackTracking;
             firstBitmap=Bitmap.createBitmap(getWidth(),getHeight(), Bitmap.Config.ALPHA_8);
             flag=1;
+            */
+
+            findViewById(R.id.drawing).setVisibility(View.INVISIBLE);
+
+            canvas = new Canvas(bitmapForbackTracking);
+            startX = width-endX;
+            startY = height-endY;
+            path.moveTo(startX, startY);
+
+            findViewById(R.id.drawing).setVisibility(View.VISIBLE);
+
         }else{
             drawBitmap = Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);
             canvas = new Canvas(drawBitmap);
