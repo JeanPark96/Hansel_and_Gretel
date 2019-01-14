@@ -248,23 +248,23 @@ public class MainActivity extends AppCompatActivity {
     public void backTracking(View view){
         String filePath = showCanvas.saveBitmap(this.getApplicationContext(), showCanvas.drawBitmap, "NewBitmap");
         Toast.makeText(this.getApplicationContext(), "경로가 저장되었습니다.", Toast.LENGTH_LONG).show();
+        //makeNewBitmapFromPath(filePath);
         makeNewBitmapFromPath(filePath);
         showCanvas.onSizeChanged(showCanvas.getWidth(),showCanvas.getHeight(),showCanvas.getWidth(),showCanvas.getHeight());
-       // showCanvas.firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), (int)path),900,900,false);
+        //showCanvas.firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), (int)path),900,900,false);
         //orientationImg.setImageBitmap(showCanvas.drawBitmap);
     }
 
     public Bitmap makeNewBitmapFromPath(String filePath){
         BitmapFactory.Options newBitmapOption= new BitmapFactory.Options();
-      // newBitmapOption.inPreferredConfig=Bitmap.Config.ARGB_4444;
-       // newBitmapOption.outHeight=showCanvas.getHeight();
-      //  newBitmapOption.outWidth=showCanvas.getWidth();
+        //newBitmapOption.inPreferredConfig=Bitmap.Config.ARGB_4444;
+        //newBitmapOption.outHeight=showCanvas.getHeight();
+        //newBitmapOption.outWidth=showCanvas.getWidth();
         newBitmap= BitmapFactory.decodeFile(filePath,newBitmapOption);
         newBitmap=Bitmap.createScaledBitmap(newBitmap,showCanvas.getWidth(),showCanvas.getHeight(),false);
 
         newBitmapAvailable=true;
-        return newBitmap;
+        return showCanvas.RotateBitmap(newBitmap);
     }
-
 
 }

@@ -5,11 +5,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -133,16 +135,17 @@ public class drawCanvas extends View {
         invalidate();
     }
 
-    /*public Bitmap RotateBitmap(Bitmap bitmap){
+    public Bitmap RotateBitmap(Bitmap bitmap){
         Matrix matrix = new Matrix();
-        matrix.setScale(1, -1); //상하반전
-        matrix.setScale(-1, 1); //좌우반전
+        //matrix.setScale(1, -1); //상하반전
+        matrix.setScale(-1, -1); //좌우반전
         //matrix.postRotate(180);
 
         drawBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
 
         return drawBitmap;
     }
+    /*
     public drawCanvas RotateBitmap(drawCanvas canvas){
         canvas.setRotation(180);
         return  canvas;
