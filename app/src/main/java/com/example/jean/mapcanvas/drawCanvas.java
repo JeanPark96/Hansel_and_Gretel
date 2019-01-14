@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
@@ -66,9 +65,12 @@ public class drawCanvas extends View {
         width = getWidth();
         height = getHeight();
         if(isBackTrackActivated()){
+           // canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+           // firstBitmap=Bitmap.createScaledBitmap(bitmapForbackTracking,900,900,false);
+           // canvas.drawColor(0,PorterDuff.Mode.CLEAR);
             firstBitmap=bitmapForbackTracking;
             firstBitmap=Bitmap.createBitmap(getWidth(),getHeight(), Bitmap.Config.ALPHA_8);
-
+            flag=1;
         }else{
             drawBitmap = Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);
             canvas = new Canvas(drawBitmap);
@@ -131,25 +133,24 @@ public class drawCanvas extends View {
         invalidate();
     }
 
-    public Bitmap RotateBitmap(Bitmap bitmap){
-
+    /*public Bitmap RotateBitmap(Bitmap bitmap){
         Matrix matrix = new Matrix();
-        //matrix.setScale(1, -1); //상하반전
-        matrix.setScale(-1, -1); //좌우반전
+        matrix.setScale(1, -1); //상하반전
+        matrix.setScale(-1, 1); //좌우반전
+        //matrix.postRotate(180);
 
-
-        drawBitmap=Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
+        drawBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
 
         return drawBitmap;
     }
-   /* public drawCanvas RotateBitmap(drawCanvas canvas){
+    public drawCanvas RotateBitmap(drawCanvas canvas){
         canvas.setRotation(180);
         return  canvas;
     }*/
 
     public static String saveBitmap(Context context, Bitmap bitmap, String name){
         File storage = context.getCacheDir(); // 이 부분이 임시파일 저장 경로
-        String fileName = name + ".png";  // 파일이름은 마음대로!
+        String fileName = name + ".jpg";  // 파일이름은 마음대로!
         tempFile = new File(storage, fileName);
 
         /*if(tempFile.exists()){
