@@ -100,6 +100,7 @@ public class drawCanvas extends View {
         else
             return false;
     }
+
     public void drawing(float azimuth,int msg) {
         r_msg=msg;
         r_azimuth=azimuth;
