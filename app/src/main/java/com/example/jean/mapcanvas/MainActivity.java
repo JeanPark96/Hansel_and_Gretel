@@ -25,13 +25,13 @@ public class MainActivity extends AppCompatActivity {
 
     Button Btn;
     EditText walkText;
-    double a=0, b=0, result=0,radianConst=3.15192/180;
-    String result2;
+    double stride_length=0, numOfStep=0, distance_result=0,radianConst=3.15192/180;
+    String orientation_result;
 
     int count = StepValue.Step;
     private long lastTime;
-    int msg,n=0;
-    private float deltaTotalAcc, lastX, lastY, lastZ, x, y, z, azimuth, pitch, roll,totalAccDiff,lastDeltaTotalAcc,low_peak,high_peak,totalAbsAcc,lastTotalAbsAcc;
+    int local_step,n=0;
+    private float deltaTotalAcc, x, y, z, azimuth, pitch, roll,totalAccDiff,lastDeltaTotalAcc,low_peak,high_peak,totalAbsAcc,lastTotalAbsAcc;
     private float customThresholdTotal=0,averageCustomThreshold=0;
     private static double AMPLITUDE_THRESHOLD = 4.3;
     public static boolean newBitmapAvailable=false;
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         if (sensorManager != null) {
             sensorManager.unregisterListener(accL);
             sensorManager.unregisterListener(magN);
-            StepValue.Step = 0; //다시 초기화
+            //다시 초기화
         }
     }
 
@@ -174,15 +174,13 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                             StepValue.Step = count++;
-                            msg = StepValue.Step;
+                            local_step = StepValue.Step;
                             low_peak=high_peak;
                             high_peak=0;
                             printResult();
                         }
                     }
-                    lastX=x;
-                    lastY=y;
-                    lastZ=z;
+
                     lastTotalAbsAcc=totalAbsAcc;
                     lastDeltaTotalAcc=deltaTotalAcc;
                 }
@@ -231,17 +229,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void printResult(){
-        countText.setText(Integer.toString(msg)); //step 수 출력
+        countText.setText(Integer.toString(local_step)); //step 수 출력
 
-        a = Double.parseDouble(walkText.getText().toString()); //보폭 변환
-        b = Double.parseDouble(countText.getText().toString()); //step 수 변환
-        result = a*b; //거리 계산
-        distanceText.setText(Double.toString(result)); //거리 출력
+        stride_length = Double.parseDouble(walkText.getText().toString()); //보폭 변환
+        numOfStep = Double.parseDouble(countText.getText().toString()); //step 수 변환
+        distance_result = stride_length*numOfStep; //거리 계산
+        distanceText.setText(Double.toString(distance_result)); //거리 출력
 
-        result2 = "Azimut:"+azimuth+"\n"+"Pitch:"+pitch+"\n"+"Roll:"+roll;
-        orientationText.setText(result2); //방향 출력
+        orientation_result = "Azimut:"+azimuth+"\n"+"Pitch:"+pitch+"\n"+"Roll:"+roll;
+        orientationText.setText(orientation_result); //방향 출력
 
-        showCanvas.drawing(azimuth,msg);
+        showCanvas.drawing(azimuth,local_step);
 
     }
 
@@ -250,22 +248,17 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this.getApplicationContext(), "경로가 저장되었습니다.", Toast.LENGTH_LONG).show();
         makeNewBitmapFromPath(filePath);
         showCanvas.onSizeChanged(showCanvas.getWidth(),showCanvas.getHeight(),showCanvas.getWidth(),showCanvas.getHeight());
-        //showCanvas.RotateBitmap(showCanvas);
-        //showCanvas.firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), (int)path),900,900,false);
-        //orientationImg.setImageBitmap(showCanvas.drawBitmap);
+
     }
 
     public Bitmap makeNewBitmapFromPath(String filePath){
         BitmapFactory.Options newBitmapOption= new BitmapFactory.Options();
-        //newBitmapOption.inPreferredConfig=Bitmap.Config.ARGB_4444;
-        //newBitmapOption.outHeight=showCanvas.getHeight();
-        //newBitmapOption.outWidth=showCanvas.getWidth();
         newBitmap= BitmapFactory.decodeFile(filePath,newBitmapOption);
         newBitmap=Bitmap.createScaledBitmap(newBitmap,showCanvas.getWidth(),showCanvas.getHeight(),false);
 
         newBitmapAvailable=true;
-        //newBitmap=showCanvas.RotateBitmap(newBitmap);
-        return showCanvas.RotateBitmap(newBitmap);
+        newBitmap = showCanvas.RotateBitmap(newBitmap);
+        return newBitmap;
     }
 
 

@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -28,7 +27,7 @@ public class drawCanvas extends View {
     private double radianConst=3.15192/180,theta=0,angleDiff,one_fourth_rad=90*radianConst,half_rad=180*radianConst,three_fourth=270*radianConst;
     private float angleDiffRadian;
     private float startX, startY,endX,endY;
-    private int r_msg,flag=0;
+    private int r_local_step,flag=0;
     private float r_azimuth;
     private int width,height;
     private Path path=new Path();
@@ -57,30 +56,23 @@ public class drawCanvas extends View {
         intermediatePaint.setStrokeWidth(5f);
         intermediatePaint.setAntiAlias(true);
         intermediatePaint.setStrokeJoin(Paint.Join.ROUND);
-        // canvasMap=(ImageView)findViewById(R.id.grid_img);
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+
         width = getWidth();
         height = getHeight();
-
         if(isBackTrackActivated()){
-           //canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-           // firstBitmap=Bitmap.createScaledBitmap(bitmapForbackTracking,900,900,false);
-           // canvas.drawColor(0,PorterDuff.Mode.CLEAR);
-            /*int [] allPixels = new int[firstBitmap.getWidth()*firstBitmap.getHeight()];
-            firstBitmap.getPixels(allPixels, 0, firstBitmap.getWidth(), 0, 0, firstBitmap.getWidth(), firstBitmap.getHeight());
-            for(int i =0; i<firstBitmap.getHeight()*firstBitmap.getWidth();i++){
-                if(allPixels[i] == Color.BLUE)
-                    allPixels[i] = Color.BLACK;
-            }
-            firstBitmap.setPixels(allPixels, 0, firstBitmap.getWidth(), 0, 0, firstBitmap.getWidth(), firstBitmap.getHeight());*/
+            path.reset();
 
-            firstBitmap = bitmapForbackTracking;
-            firstBitmap = Bitmap.createBitmap(getWidth(),getHeight(), Bitmap.Config.ARGB_8888);
-            //invalidate();
+            canvas = new Canvas(bitmapForbackTracking);
+            startX = width-endX;
+            startY = height-endY;
+            path.moveTo(startX, startY);
+
+
         }else{
             drawBitmap = Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);
             canvas = new Canvas(drawBitmap);
@@ -91,17 +83,17 @@ public class drawCanvas extends View {
     public boolean isBackTrackActivated(){
         if(MainActivity.newBitmapAvailable==true) {
             bitmapForbackTracking=MainActivity.newBitmap;
-            //RotateBitmap(bitmapForbackTracking);
             return true;
         }
         else
             return false;
     }
+
     public void drawing(float azimuth,int msg) {
-        r_msg=msg;
+        r_local_step=msg;
         r_azimuth=azimuth;
-        Log.d("drawing method working",r_msg+"drawing");
-        if (r_msg <= 1) {
+        Log.d("drawing method working",r_local_step+"drawing");
+        if (r_local_step <= 1) {
             startX = (width/ 2);
             startY = (height / 2) + 300;
             path.moveTo(startX,startY);
@@ -119,7 +111,7 @@ public class drawCanvas extends View {
             path.lineTo(endX,endY);
             canvas.drawPath(path,paintCanvas);
 
-            if(r_msg % 80 == 0) {
+            if(r_local_step % 80 == 0) {
                 canvas.drawOval(startX-8, startY-8, startX+8, endY+8, intermediatePaint);
             }
         }
@@ -147,20 +139,11 @@ public class drawCanvas extends View {
     public Bitmap RotateBitmap(Bitmap bitmap){
         Matrix matrix = new Matrix();
         matrix.setScale(-1, -1); //상하좌우반전
-        //matrix.postRotate(180);
 
-        Bitmap rotateBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-        return rotateBitmap;
+        drawBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
+
+        return drawBitmap;
     }
-
-    /*public drawCanvas RotateBitmap(drawCanvas canvas){
-        if(MainActivity.newBitmapAvailable==true) {
-            canvas.setRotation(180);
-            return canvas;
-        }
-        else
-            return canvas;
-    }*/
 
     public static String saveBitmap(Context context, Bitmap bitmap, String name){
         File storage = context.getCacheDir(); // 이 부분이 임시파일 저장 경로
