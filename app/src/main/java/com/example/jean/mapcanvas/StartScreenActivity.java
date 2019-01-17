@@ -18,7 +18,5 @@ public class StartScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_startscreen);
 
-        Hansel_and_Gretel_IMG = findViewById(R.id.image);
-        Hansel_and_Gretel_TITLE = findViewById(R.id.title);
     }
 }
