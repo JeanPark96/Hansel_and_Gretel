@@ -76,14 +76,13 @@ public class drawCanvas extends View {
             flag=1;
             */
 
-            findViewById(R.id.drawing).setVisibility(View.INVISIBLE);
+            path.reset();
 
             canvas = new Canvas(bitmapForbackTracking);
             startX = width-endX;
             startY = height-endY;
             path.moveTo(startX, startY);
 
-            findViewById(R.id.drawing).setVisibility(View.VISIBLE);
 
         }else{
             drawBitmap = Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);
