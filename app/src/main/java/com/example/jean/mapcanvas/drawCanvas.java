@@ -4,10 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -21,7 +21,7 @@ public class drawCanvas extends View {
     public static File tempFile;
     public static Bitmap drawBitmap, firstBitmap,newBitmap;
     public Bitmap bitmapForbackTracking;
-    private Paint paintCanvas,paintMark,canvasPaint, intermediatePaint;
+    private Paint pathColorPaint, startAndFinishMarkColorPaint,canvasPaint, intermediatePaint;
     private Canvas canvas;
 
     private double radianConst=3.15192/180,theta=0,angleDiff,one_fourth_rad=90*radianConst,half_rad=180*radianConst,three_fourth=270*radianConst;
@@ -34,30 +34,27 @@ public class drawCanvas extends View {
 
     public drawCanvas(Context context, AttributeSet attrs) {
         super(context,attrs);
-        paintCanvas = new Paint();
-        paintMark = new Paint();
+        pathColorPaint = new Paint();
+        startAndFinishMarkColorPaint = new Paint();
         intermediatePaint = new Paint();
 
-        paintCanvas.setStyle(Paint.Style.STROKE);
-        paintCanvas.setColor(Color.BLUE);
-        paintCanvas.setStrokeWidth(10f);
-        paintCanvas.setAntiAlias(true);
-        paintCanvas.setStrokeJoin(Paint.Join.ROUND);
-
-        paintMark.setStyle(Paint.Style.STROKE);
-        paintMark.setColor(Color.GREEN);
-        paintMark.setStrokeWidth(5f);
-        paintMark.setAntiAlias(true);
-        paintMark.setStrokeJoin(Paint.Join.ROUND);
+        pathColorPaint=settingPaint(R.color.blue,10f);
+        startAndFinishMarkColorPaint=settingPaint(R.color.green,5f);
+        intermediatePaint=settingPaint(R.color.black,5f);
         canvasPaint=new Paint(Paint.DITHER_FLAG);
 
-        intermediatePaint.setStyle(Paint.Style.STROKE);
-        intermediatePaint.setColor(Color.BLACK);
-        intermediatePaint.setStrokeWidth(5f);
-        intermediatePaint.setAntiAlias(true);
-        intermediatePaint.setStrokeJoin(Paint.Join.ROUND);
     }
 
+    public Paint settingPaint(int colorId,float strokeWidth){
+        Paint paint=new Paint();
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(ContextCompat.getColor(getContext(),colorId));
+        paint.setStrokeWidth(strokeWidth);
+        paint.setAntiAlias(true);
+        paint.setStrokeJoin(Paint.Join.ROUND);
+
+        return paint;
+    }
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -70,6 +67,8 @@ public class drawCanvas extends View {
             canvas = new Canvas(bitmapForbackTracking);
             startX = width-endX;
             startY = height-endY;
+
+            pathColorPaint=settingPaint(R.color.gray,10f);
             path.moveTo(startX, startY);
 
 
@@ -102,14 +101,14 @@ public class drawCanvas extends View {
             endY = startY - 3;
             theta = r_azimuth;
             path.lineTo(endX,endY);
-            canvas.drawOval(startX-8,startY-8,startX+8,endY+8,paintMark);//스타트 마크, 여기에 있어야 사라지지 않음
-            canvas.drawPath(path,paintCanvas);
+            canvas.drawOval(startX-8,startY-8,startX+8,endY+8, startAndFinishMarkColorPaint);//스타트 마크, 여기에 있어야 사라지지 않음
+            canvas.drawPath(path, pathColorPaint);
         } else {
             angleDiff=r_azimuth - theta;
             angleDiffRadian =modifyDirection(angleDiff);
             updateLocation(startX,startY,angleDiffRadian);
             path.lineTo(endX,endY);
-            canvas.drawPath(path,paintCanvas);
+            canvas.drawPath(path, pathColorPaint);
 
             if(r_local_step % 80 == 0) {
                 canvas.drawOval(startX-8, startY-8, startX+8, endY+8, intermediatePaint);
@@ -131,8 +130,8 @@ public class drawCanvas extends View {
     }
 
     public void finished(){
-        paintMark.setColor(Color.RED);
-        canvas.drawOval(startX-8,startY-8,startX+8,endY+8,paintMark);
+        startAndFinishMarkColorPaint=settingPaint(R.color.red,5f);
+        canvas.drawOval(startX-8,startY-8,startX+8,endY+8, startAndFinishMarkColorPaint);
         invalidate();
     }
 
