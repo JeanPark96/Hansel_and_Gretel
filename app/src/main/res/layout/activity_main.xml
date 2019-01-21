@@ -7,11 +7,27 @@
     android:layout_gravity="center"
     tools:context="com.example.jean.mapcanvas.MainActivity">
 
+    <TextView
+        android:id="@+id/interval"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:text="간격"
+        android:textColor="#FFFFFF"/>
+
     <ImageView
         android:id="@+id/orientationImg"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:src="@drawable/orientation"/>
+        android:src="@drawable/orientation"
+        android:layout_below="@+id/interval"/>
+
+    <TextView
+        android:id="@+id/interval2"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:text="간격"
+        android:textColor="#FFFFFF"
+        android:layout_below="@+id/orientationImg" />
 
     <com.example.jean.mapcanvas.drawCanvas
         android:id="@+id/drawing"
@@ -19,7 +35,7 @@
         android:layout_height="400dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/orientationImg">
+        android:layout_below="@+id/interval2">
     </com.example.jean.mapcanvas.drawCanvas>
 
     <LinearLayout
@@ -35,26 +51,26 @@
             android:layout_height="wrap_content"
             android:text="보폭(m) : "
             android:textColor="#000000"
-            android:textSize="10dp"/>
+            android:textSize="15dp"/>
         <EditText
             android:id="@+id/stride_editText"
             android:layout_width="100dp"
             android:layout_height="40dp"
             android:textColor="#000000"
-            android:textSize="10dp" />
+            android:textSize="15dp" />
         <TextView
             android:id="@+id/step_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="step : "
             android:textColor="@color/colorPrimary"
-            android:textSize="10dp"/>
+            android:textSize="15dp"/>
         <TextView
-            android:id="@+id/step_editText"
+            android:id="@+id/stepText"
             android:layout_width="100dp"
-            android:layout_height="37dp"
+            android:layout_height="40dp"
             android:textColor="@color/colorPrimary"
-            android:textSize="10dp" />
+            android:textSize="15dp" />
         </LinearLayout>
 
     <LinearLayout
@@ -70,13 +86,13 @@
             android:layout_height="wrap_content"
             android:text="distance(m) : "
             android:textColor="@color/colorAccent"
-            android:textSize="10dp" />
+            android:textSize="15dp" />
         <TextView
             android:id="@+id/distanceText"
-            android:layout_width="100dp"
-            android:layout_height="45dp"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
             android:textColor="@color/colorAccent"
-            android:textSize="10dp" />
+            android:textSize="15dp" />
         <TextView
             android:id="@+id/orientation_textView"
             android:layout_width="wrap_content"
@@ -97,7 +113,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_below="@+id/LinearLayout2"
-            android:layout_alignParentRight="true">
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true">
             <ImageButton
                 android:id="@+id/start_button"
                 android:layout_width="60dp"
