@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,7 +13,6 @@
         android:layout_height="100dp"
         android:src="@drawable/orientation"/>
 
-
     <com.example.jean.mapcanvas.drawCanvas
         android:id="@+id/drawing"
         android:layout_width="350dp"
@@ -22,8 +21,6 @@
         android:layout_weight="7"
         >
     </com.example.jean.mapcanvas.drawCanvas>
-
-
 
     <LinearLayout
         android:layout_weight="1"
@@ -75,9 +72,6 @@
             </LinearLayout>
         </LinearLayout>
 
-
-
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -121,20 +115,29 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <Button
-                android:id="@+id/button"
-                android:layout_width="100dp"
-                android:layout_height="40dp"
-                android:text="Start " />
+            android:orientation="horizontal"
+            android:layout_alignParentRight="true">
+            <ImageButton
+                android:id="@+id/start_button"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/start"
+                android:scaleType="fitCenter" />
 
             <Button
-                android:id="@+id/backTrack_button"
-                android:layout_width="140dp"
-                android:layout_height="40dp"
-                android:text="BackTracking"
+                android:id="@+id/save_button"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:text="SAVE" />
+
+            <ImageButton
+                android:id="@+id/backTracking_button"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/backtracking"
+                android:scaleType="fitCenter"
                 android:onClick="backTracking"/>
         </LinearLayout>
 

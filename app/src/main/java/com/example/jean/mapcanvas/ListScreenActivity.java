@@ -19,7 +19,7 @@ import android.widget.TextView;
  * Created by i on 2019-01-17.
  */
 
-public class ListScreenActivity extends AppCompatActivity{
+public class ListScreenActivity extends AppCompatActivity {
     ListView listView;
     ImageButton shareButton, folderAddButton, beginButton;
 

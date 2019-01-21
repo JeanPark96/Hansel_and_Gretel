@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     boolean flag = true;
     TextView countText, distanceText, orientationText;
 
-    Button Btn;
+    ImageButton Btn;
     EditText walkText;
     double stride_length=0, numOfStep=0, distance_result=0,radianConst=3.15192/180;
     String orientation_result;
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         countText = (TextView) findViewById(R.id.stepText);
         distanceText = (TextView) findViewById(R.id.distanceText);
         orientationText = (TextView) findViewById(R.id.orientationText);
-        Btn = (Button) findViewById(R.id.button);
+        Btn = (ImageButton) findViewById(R.id.start_button);
         walkText = (EditText) findViewById(R.id.walkText);
 
         orientationImg = (ImageView)findViewById(R.id.orientationImg);
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (flag) {
-                    Btn.setText("STOP");
+                    Btn.setImageResource(R.drawable.stop);
 
                     try {
                         onStartCommand();
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 else {
-                    Btn.setText("START");
+                    Btn.setImageResource(R.drawable.start);
                     showCanvas.finished();
                     try {
                        // onDestroy();
