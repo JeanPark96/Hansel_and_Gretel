@@ -19,7 +19,7 @@ import java.io.IOException;
 
 public class drawCanvas extends View {
     public static File tempFile;
-    public static Bitmap drawBitmap, firstBitmap,newBitmap;
+    public static Bitmap drawBitmap, firstBitmap;
     public Bitmap bitmapForbackTracking;
     private Paint pathColorPaint, startAndFinishMarkColorPaint,canvasPaint, intermediatePaint;
     private Canvas canvas;
@@ -27,10 +27,10 @@ public class drawCanvas extends View {
     private double radianConst=3.15192/180,theta=0,angleDiff,one_fourth_rad=90*radianConst,half_rad=180*radianConst,three_fourth=270*radianConst;
     private float angleDiffRadian;
     private float startX, startY,endX,endY;
-    private int r_local_step,flag=0;
+    private int r_local_step;
     private float r_azimuth;
     private int width,height;
-    private Path path=new Path();
+    private Path path = new Path();
 
     public drawCanvas(Context context, AttributeSet attrs) {
         super(context,attrs);
@@ -42,11 +42,10 @@ public class drawCanvas extends View {
         startAndFinishMarkColorPaint=settingPaint(R.color.green,5f);
         intermediatePaint=settingPaint(R.color.black,5f);
         canvasPaint=new Paint(Paint.DITHER_FLAG);
-
     }
 
     public Paint settingPaint(int colorId,float strokeWidth){
-        Paint paint=new Paint();
+        Paint paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
         paint.setColor(ContextCompat.getColor(getContext(),colorId));
         paint.setStrokeWidth(strokeWidth);
@@ -55,6 +54,7 @@ public class drawCanvas extends View {
 
         return paint;
     }
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -71,7 +71,8 @@ public class drawCanvas extends View {
             pathColorPaint=settingPaint(R.color.gray,10f);
             path.moveTo(startX, startY);
 
-
+            theta += 180; //backTracking 시 길 방향 보정
+            theta %= 360;
         }else{
             drawBitmap = Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);
             canvas = new Canvas(drawBitmap);
@@ -88,11 +89,12 @@ public class drawCanvas extends View {
             return false;
     }
 
-    public void drawing(float azimuth,int msg) {
-        r_local_step=msg;
-        r_azimuth=azimuth;
+    public void drawing(float azimuth,int local_step) {
+        r_local_step = local_step;
+        r_azimuth = azimuth;
+
         Log.d("drawing method working",r_local_step+"drawing");
-        if (r_local_step <= 1) {
+        if (r_local_step <= 1 && !isBackTrackActivated()) {
             startX = (width/ 2);
             startY = (height / 2) + 300;
             path.moveTo(startX,startY);
@@ -105,12 +107,12 @@ public class drawCanvas extends View {
             canvas.drawPath(path, pathColorPaint);
         } else {
             angleDiff=r_azimuth - theta;
-            angleDiffRadian =modifyDirection(angleDiff);
+            angleDiffRadian = modifyDirection(angleDiff);
             updateLocation(startX,startY,angleDiffRadian);
             path.lineTo(endX,endY);
             canvas.drawPath(path, pathColorPaint);
 
-            if(r_local_step % 80 == 0) {
+            if(r_local_step % 80 == 0 && r_local_step!=0) {
                 canvas.drawOval(startX-8, startY-8, startX+8, endY+8, intermediatePaint);
             }
         }
@@ -126,7 +128,6 @@ public class drawCanvas extends View {
         super.onDraw(canvas);
         canvas.drawBitmap(firstBitmap,0,0,canvasPaint);
         canvas.drawBitmap(drawBitmap,0,0,canvasPaint);
-
     }
 
     public void finished(){
@@ -149,10 +150,6 @@ public class drawCanvas extends View {
         String fileName = name + ".jpg";  // 파일이름은 마음대로!
         tempFile = new File(storage, fileName);
 
-        /*if(tempFile.exists()){
-            drawBitmap = BitmapFactory.decodeFile(tempFile.getAbsolutePath());
-            TestActivity.imageView.setImageBitmap(drawBitmap);
-        }*/
         try{
             tempFile.createNewFile();  // 파일을 생성해주고
             FileOutputStream out = new FileOutputStream(tempFile);
@@ -216,6 +213,5 @@ public class drawCanvas extends View {
             endX = startX - 3 * (float) Math.cos(this.angleDiffRadian - three_fourth);
             endY = startY - 3 * (float) Math.sin(this.angleDiffRadian - three_fourth);
         }
-
     }
 }

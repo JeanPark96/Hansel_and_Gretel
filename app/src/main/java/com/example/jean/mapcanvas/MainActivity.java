@@ -249,6 +249,9 @@ public class MainActivity extends AppCompatActivity {
         makeNewBitmapFromPath(filePath);
         showCanvas.onSizeChanged(showCanvas.getWidth(),showCanvas.getHeight(),showCanvas.getWidth(),showCanvas.getHeight());
 
+        StepValue.Step = 0;
+        local_step = 0;
+        count = 0;
     }
 
     public Bitmap makeNewBitmapFromPath(String filePath){
