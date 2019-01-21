@@ -20,8 +20,8 @@ public class StartScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_startscreen);
     }
 
-    /*public void onClick(View view){
+    public void onClick(View view){
         Intent intent = new Intent(StartScreenActivity.this, ListScreenActivity.class);
         startActivity(intent);
-    }*/
+    }
 }
