@@ -7,8 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 
 /**
  * Created by i on 2019-01-17.
@@ -32,6 +30,7 @@ public class StartScreenActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(StartScreenActivity.this, ListScreenActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
         alert.setMessage("dnpajdkfbkxjch lzsdkhfksd");
