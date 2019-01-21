@@ -53,11 +53,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         showCanvas= (drawCanvas) findViewById(R.id.drawing);
 
-        countText = (TextView) findViewById(R.id.stepText);
+        countText = (TextView) findViewById(R.id.step_editText);
         distanceText = (TextView) findViewById(R.id.distanceText);
         orientationText = (TextView) findViewById(R.id.orientationText);
         Btn = (ImageButton) findViewById(R.id.start_button);
-        walkText = (EditText) findViewById(R.id.walkText);
+        walkText = (EditText) findViewById(R.id.stride_editText);
 
         orientationImg = (ImageView)findViewById(R.id.orientationImg);
         orientationImg.setRotation(0);
