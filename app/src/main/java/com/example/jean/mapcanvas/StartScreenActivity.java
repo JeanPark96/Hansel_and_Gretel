@@ -21,7 +21,6 @@ public class StartScreenActivity extends AppCompatActivity {
     }
 
     public void onClick(View view){
-
         AlertDialog.Builder alert = new AlertDialog.Builder(StartScreenActivity.this);
         alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
@@ -33,7 +32,7 @@ public class StartScreenActivity extends AppCompatActivity {
                 finish();
             }
         });
-        alert.setMessage("dnpajdkfbkxjch lzsdkhfksd");
+        alert.setMessage("경고창");
         alert.show();
     }
 }

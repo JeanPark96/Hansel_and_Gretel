@@ -1,5 +1,7 @@
 package com.example.jean.mapcanvas;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Sensor;
@@ -7,6 +9,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -24,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
     boolean flag = true;
     TextView countText, distanceText, orientationText;
 
-    ImageButton Btn;
-    EditText walkText;
+    ImageButton Btn, closeButton;
+    EditText strideText;
     double stride_length=0, numOfStep=0, distance_result=0,radianConst=3.15192/180;
     String orientation_result;
 
@@ -53,11 +56,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         showCanvas= (drawCanvas) findViewById(R.id.drawing);
 
-        countText = (TextView) findViewById(R.id.step_editText);
+        Btn = (ImageButton) findViewById(R.id.start_button);
+        closeButton = (ImageButton) findViewById(R.id.close_button);
+
+        countText = (TextView) findViewById(R.id.stepText);
         distanceText = (TextView) findViewById(R.id.distanceText);
         orientationText = (TextView) findViewById(R.id.orientationText);
-        Btn = (ImageButton) findViewById(R.id.start_button);
-        walkText = (EditText) findViewById(R.id.stride_editText);
+        strideText = (EditText) findViewById(R.id.stride_editText);
 
         orientationImg = (ImageView)findViewById(R.id.orientationImg);
         orientationImg.setRotation(0);
@@ -129,7 +134,6 @@ public class MainActivity extends AppCompatActivity {
             StepValue.Step = 0; //다시 초기화
         }
     }
-
 
     private class accelerometerListener implements SensorEventListener {
         public void onSensorChanged(SensorEvent event) {
@@ -232,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
     public void printResult(){
         countText.setText(Integer.toString(local_step)); //step 수 출력
 
-        stride_length = Double.parseDouble(walkText.getText().toString()); //보폭 변환
+        stride_length = Double.parseDouble(strideText.getText().toString()); //보폭 변환
         numOfStep = Double.parseDouble(countText.getText().toString()); //step 수 변환
         distance_result = stride_length*numOfStep; //거리 계산
         distanceText.setText(Double.toString(distance_result)); //거리 출력
@@ -265,5 +269,27 @@ public class MainActivity extends AppCompatActivity {
         return newBitmap;
     }
 
+    public void closeButton(View view){
+        AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+        alert.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
 
+        alert.setPositiveButton("예", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+
+                Intent intent = new Intent(MainActivity.this, ListScreenActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        alert.setMessage("강제 종료하시겠습니까?");
+        alert.show();
+    }
 }

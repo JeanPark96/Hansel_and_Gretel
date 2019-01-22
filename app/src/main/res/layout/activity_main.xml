@@ -8,21 +8,40 @@
     tools:context="com.example.jean.mapcanvas.MainActivity">
 
     <TextView
-        android:id="@+id/interval"
+        android:id="@+id/upper_interval"
         android:layout_width="match_parent"
         android:layout_height="10dp"
         android:text="간격"
         android:textColor="#FFFFFF"/>
+
+    <TextView
+        android:id="@+id/left_interval"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:text="간격"
+        android:textColor="#FFFFFF"
+        android:layout_below="@+id/upper_interval"/>
 
     <ImageView
         android:id="@+id/orientationImg"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:src="@drawable/orientation"
-        android:layout_below="@+id/interval"/>
+        android:layout_below="@+id/upper_interval"
+        android:layout_toRightOf="@+id/left_interval"
+        tools:ignore="UnknownId" />
+
+    <ImageButton
+        android:id="@+id/close_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/close"
+        android:scaleType="fitCenter"
+        android:layout_alignParentRight="true"
+        android:onClick="closeButton"/>
 
     <TextView
-        android:id="@+id/interval2"
+        android:id="@+id/under_interval"
         android:layout_width="match_parent"
         android:layout_height="10dp"
         android:text="간격"
@@ -35,7 +54,7 @@
         android:layout_height="400dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/interval2">
+        android:layout_below="@+id/under_interval">
     </com.example.jean.mapcanvas.drawCanvas>
 
     <LinearLayout
