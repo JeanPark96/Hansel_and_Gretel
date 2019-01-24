@@ -37,13 +37,13 @@ public class DBhelper extends SQLiteOpenHelper {
         ContentValues content=new ContentValues();
         content.put("name",name);
         content.put("date",date);
-        db.update("date",content,"row_id=?",new String[]{Integer.toString(id)});
+        db.update("path",content,"row_id=?",new String[]{Integer.toString(id)});
         return true;
     }
 
     public Integer deleteDB(int id){
         SQLiteDatabase db=this.getWritableDatabase();
-        return db.delete("date","row_id=?",new String[]{Integer.toString(id)});
+        return db.delete("path","row_id=?",new String[]{Integer.toString(id)});
     }
 
     public ArrayList<PathInfo> getAllData(){

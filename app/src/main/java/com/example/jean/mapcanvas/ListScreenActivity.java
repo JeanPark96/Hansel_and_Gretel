@@ -1,5 +1,6 @@
 package com.example.jean.mapcanvas;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -49,7 +50,6 @@ public class ListScreenActivity extends AppCompatActivity {
     SQLiteDatabase db;
     CustomList myList;
     ArrayList<PathInfo> pathList;
-    int id=1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,68 +63,35 @@ public class ListScreenActivity extends AppCompatActivity {
         delete_ad = new AlertDialog.Builder(ListScreenActivity.this);
         begin_ad = new AlertDialog.Builder(ListScreenActivity.this);
 
-        helper=new DBhelper(this);
-        try{
-            db=helper.getWritableDatabase();
-        }catch (SQLException ex){
-            db=helper.getReadableDatabase();
-        }
+        helper = new DBhelper(this);
+        db = helper.getWritableDatabase();
 
         pathList=helper.getAllData();
         myList=new CustomList(pathList,this);
         listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(myList);
 
-        /*Bundle extras=getIntent().getExtras();
-        if(extras!=null){
-            int value=extras.getInt("row_id");
-            if(value>0){
-                Cursor rs=helper.getData(value);
-                id=value;
-                rs.moveToFirst();
-                String n=rs.getString(rs.getColumnIndex(DBhelper.PATH_NAME));
-                String d=rs.getString(rs.getColumnIndex(DBhelper.PATH_DATE));
-                if(!rs.isClosed()){
-                    rs.close();
-                }
-
-                pathName_editText.setText((CharSequence)n);
-            }
-        }*/
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 PathInfo info= (PathInfo) ((CustomList)adapterView.getAdapter()).getItem(position);
-                id=info.getId();
-
+                final int id=info.getId();
                 Toast.makeText(getApplicationContext(),"id:"+id,Toast.LENGTH_SHORT).show();
-                Bundle data=new Bundle();
+                final Bundle data=new Bundle();
                 data.putInt("row_id",id);
-                /*Intent intent=new Intent(getApplicationContext(),PathInfoModification.class);
-                intent.putExtras(data);
-                startActivity(intent);*/
 
-                final String TAG = "Delete_Alert_Dialog";
-                delete_ad.setTitle("DELETE");       // 제목 설정
-                delete_ad.setMessage("삭제하시겠습니까?");   // 내용 설정
+                final String TAG = "Modify_Alert_Dialog";
+                delete_ad.setTitle("MODIFY");
+                delete_ad.setMessage("수정 / 삭제 하시겠습니까?");
 
                 delete_ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.v(TAG, "Yes Btn Click");
-                        /*Bundle extras=getIntent().getExtras();
-                        if(extras!=null){
-                            int value=extras.getInt("row_id");
-                            if(value>0){
-                                helper.deleteDB(id);
-                                finish();
-                            }
-                        }*/
-                        pathList.remove(id);
-                        onResume();
                         dialog.dismiss();
-                        Toast.makeText(getApplicationContext(),"삭제되었습니다.",Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getApplicationContext(),PathInfoModification.class);
+                        intent.putExtras(data);
+                        startActivity(intent);
                     }
                 });
 
@@ -132,13 +99,12 @@ public class ListScreenActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Log.v(TAG,"No Btn Click");
-                        dialog.dismiss();     //닫기
+                        dialog.dismiss();
                     }
                 });
 
                 delete_ad.show();
             }
-
         });
     }
 
@@ -151,8 +117,9 @@ public class ListScreenActivity extends AppCompatActivity {
         listView.setAdapter(myList);
     }
 
+    @SuppressLint("RestrictedApi")
     public void beginPath(View view){
-        final String TAG = "New_Alert_Dialog";
+        final String TAG = "Begin_Alert_Dialog";
         begin_ad.setTitle("NEW");       // 제목 설정
         begin_ad.setMessage("경로명");   // 내용 설정
         begin_ad.setView(pathName_editText, 50, 0, 50, 0);
@@ -179,11 +146,10 @@ public class ListScreenActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Log.v(TAG,"No Btn Click");
-                dialog.dismiss();     //닫기
+                dialog.dismiss();
             }
         });
 
-        // 창 띄우기
         begin_ad.show();
     }
 
