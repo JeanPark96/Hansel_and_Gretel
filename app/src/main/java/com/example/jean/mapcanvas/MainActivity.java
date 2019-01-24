@@ -13,7 +13,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -31,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     EditText strideText;
     double stride_length=0, numOfStep=0, distance_result=0,radianConst=3.15192/180;
     String orientation_result;
-
+    String filePath;
     int count = StepValue.Step;
     private long lastTime;
     int local_step,n=0;
@@ -108,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
         if (sensorManager != null) {
             sensorManager.unregisterListener(accL);
             sensorManager.unregisterListener(magN);
-            //다시 초기화
         }
     }
 
@@ -249,9 +247,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void backTracking(View view){
-        String filePath = showCanvas.saveBitmap(this.getApplicationContext(), showCanvas.drawBitmap, "NewBitmap");
-        Toast.makeText(this.getApplicationContext(), "경로가 저장되었습니다.", Toast.LENGTH_LONG).show();
-        makeNewBitmapFromPath(filePath);
         showCanvas.onSizeChanged(showCanvas.getWidth(),showCanvas.getHeight(),showCanvas.getWidth(),showCanvas.getHeight());
 
         StepValue.Step = 0;
@@ -259,6 +254,11 @@ public class MainActivity extends AppCompatActivity {
         count = 0;
     }
 
+    public void saveCurrentPath(View v){
+        filePath = showCanvas.saveBitmap(this.getApplicationContext(), showCanvas.drawBitmap, "NewBitmap");
+        Toast.makeText(this.getApplicationContext(), "경로가 저장되었습니다.", Toast.LENGTH_LONG).show();
+        makeNewBitmapFromPath(filePath);
+    }
     public Bitmap makeNewBitmapFromPath(String filePath){
         BitmapFactory.Options newBitmapOption= new BitmapFactory.Options();
         newBitmap= BitmapFactory.decodeFile(filePath,newBitmapOption);
@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
-
+                newBitmapAvailable=false;
                 Intent intent = new Intent(MainActivity.this, ListScreenActivity.class);
                 startActivity(intent);
                 finish();
