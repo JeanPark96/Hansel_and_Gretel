@@ -22,7 +22,7 @@ public class StartScreenActivity extends AppCompatActivity {
 
     public void onClick(View view){
         AlertDialog.Builder alert = new AlertDialog.Builder(StartScreenActivity.this);
-        alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();

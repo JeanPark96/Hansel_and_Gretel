@@ -255,6 +255,46 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void saveCurrentPath(View v){
+
+        //팝업 창 띄우기
+        AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
+        final String TAG = "Test_Alert_Dialog";
+
+        ad.setTitle("SAVE");       // 제목 설정
+        ad.setMessage("경로명");   // 내용 설정
+        // EditText 삽입하기
+        final EditText et = new EditText(MainActivity.this);
+        ad.setView(et, 50, 0, 50, 0);
+
+        // 확인 버튼 설정
+        ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.v(TAG, "Yes Btn Click");
+
+                // Text 값 받아서 로그 남기기
+                String value = et.getText().toString();
+                Log.v(TAG, value);
+
+                dialog.dismiss();     //닫기
+                // Event
+            }
+        });
+
+        // 취소 버튼 설정
+        ad.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.v(TAG,"No Btn Click");
+                dialog.dismiss();     //닫기
+                // Event
+            }
+        });
+
+        // 창 띄우기
+        ad.show();
+
+
         filePath = showCanvas.saveBitmap(this.getApplicationContext(), showCanvas.drawBitmap, "NewBitmap");
         Toast.makeText(this.getApplicationContext(), "경로가 저장되었습니다.", Toast.LENGTH_LONG).show();
         makeNewBitmapFromPath(filePath);
@@ -271,14 +311,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void closeButton(View view){
         AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
-        alert.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
 
-        alert.setPositiveButton("예", new DialogInterface.OnClickListener() {
+        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
