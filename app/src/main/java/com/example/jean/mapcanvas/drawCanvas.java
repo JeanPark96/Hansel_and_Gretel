@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -163,6 +164,16 @@ public class drawCanvas extends View {
         }
 
         return tempFile.getAbsolutePath();   // 임시파일 저장경로를 리턴해주면 끝!
+    }
+
+    public void saveImageToBitmap(int id, Bitmap bitmap){
+        byte[] data =getBitmapAsByteArray(bitmap);
+
+    }
+    public static byte[] getBitmapAsByteArray(Bitmap bitmap){
+        ByteArrayOutputStream outputStream=new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,0,outputStream);
+        return outputStream.toByteArray();
     }
 
     private float modifyDirection(double angleDiff){

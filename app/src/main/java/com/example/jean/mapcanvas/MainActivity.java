@@ -299,6 +299,7 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this.getApplicationContext(), "경로가 저장되었습니다.", Toast.LENGTH_LONG).show();
         makeNewBitmapFromPath(filePath);
     }
+
     public Bitmap makeNewBitmapFromPath(String filePath){
         BitmapFactory.Options newBitmapOption= new BitmapFactory.Options();
         newBitmap= BitmapFactory.decodeFile(filePath,newBitmapOption);
