@@ -43,6 +43,7 @@ public class drawCanvas extends View {
         startAndFinishMarkColorPaint=settingPaint(R.color.green,5f);
         intermediatePaint=settingPaint(R.color.black,5f);
         canvasPaint=new Paint(Paint.DITHER_FLAG);
+
     }
 
     public Paint settingPaint(int colorId,float strokeWidth){
@@ -77,7 +78,15 @@ public class drawCanvas extends View {
         }else{
             drawBitmap = Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);
             canvas = new Canvas(drawBitmap);
-            firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),width,height,false);
+            if(MainActivity.pathAvailableNumber==0){
+                firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),width,height,false);
+            }
+            else{
+                MainActivity main=new MainActivity();
+                //firstBitmap =Bitmap.createScaledBitmap(main.makeNewBitmapFromPath(MainActivity.filePathInDB),width,height,false);
+                firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),width,height,false);
+
+            }
         }
   }
 
@@ -148,7 +157,7 @@ public class drawCanvas extends View {
 
     public static String saveBitmap(Context context, Bitmap bitmap, String name){
         File storage = context.getCacheDir(); // 이 부분이 임시파일 저장 경로
-        String fileName = name + ".jpg";  // 파일이름은 마음대로!
+        String fileName = name + ".png";  // 파일이름은 마음대로!
         tempFile = new File(storage, fileName);
 
         try{

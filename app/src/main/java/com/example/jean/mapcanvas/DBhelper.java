@@ -16,6 +16,7 @@ public class DBhelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION=2;
     public static final String PATH_NAME="name";
     public static final String PATH_DATE="date";
+    public static final String PATH_PATHNAME="pathName";
 
     public  DBhelper(Context context){
         super(context,DATABASE_NAME,null,DATABASE_VERSION);
@@ -23,7 +24,7 @@ public class DBhelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS path ( "+" row_id INTEGER PRIMARY KEY AUTOINCREMENT,"+" name TEXT, date TEXT);");
+        db.execSQL("CREATE TABLE IF NOT EXISTS path ( "+" row_id INTEGER PRIMARY KEY AUTOINCREMENT,"+" name TEXT, date TEXT, pathName STRING);");
     }
 
     @Override
@@ -32,11 +33,12 @@ public class DBhelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean updateDB(int id,String name,String date){
+    public boolean updateDB(int id,String name,String date,String pathName){
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues content=new ContentValues();
         content.put("name",name);
         content.put("date",date);
+        content.put("pathName",pathName);
         db.update("path",content,"row_id=?",new String[]{Integer.toString(id)});
         return true;
     }
@@ -55,7 +57,8 @@ public class DBhelper extends SQLiteOpenHelper {
             int id=res.getInt(0);
             String name=res.getString(1);
             String date=res.getString(2);
-            PathInfo newPath=new PathInfo(id,name,date);
+            String pathName=res.getString(3);
+            PathInfo newPath=new PathInfo(id,name,date,pathName);
             path_list.add(newPath);
             res.moveToNext();
         }

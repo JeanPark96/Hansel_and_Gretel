@@ -1,15 +1,11 @@
 package com.example.jean.mapcanvas;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.health.PackageHealthStats;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -19,17 +15,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,7 +37,7 @@ public class ListScreenActivity extends AppCompatActivity {
     long now = System.currentTimeMillis();
     Date currentDate = new Date(now);
     AlertDialog.Builder delete_ad, begin_ad;
-
+    String listPathName;
     private DBhelper helper;
     SQLiteDatabase db;
     CustomList myList;
@@ -76,9 +68,15 @@ public class ListScreenActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 PathInfo info= (PathInfo) ((CustomList)adapterView.getAdapter()).getItem(position);
                 final int id=info.getId();
+                final String name=info.getName(),date=info.getName(),pathName=info.getPathName();
+
                 Toast.makeText(getApplicationContext(),"id:"+id,Toast.LENGTH_SHORT).show();
                 final Bundle data=new Bundle();
                 data.putInt("row_id",id);
+                data.putString("name",name);
+                data.putString("date",date);
+                data.putString("pathName",pathName);
+                //data.putString("pathName", listPathName);
 
                 final String TAG = "Modify_Alert_Dialog";
                 delete_ad.setTitle("MODIFY");
@@ -100,6 +98,16 @@ public class ListScreenActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         Log.v(TAG,"No Btn Click");
                         dialog.dismiss();
+                        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                        Bundle data2=new Bundle();
+                        data2.putInt("row_id",id);
+                        data2.putString("name",name);
+                        data2.putString("date",date);
+                        data2.putString("pathName",pathName);
+                        int pathImgAvailable=1;
+                        data2.putInt("pathImgAvailable",pathImgAvailable);
+                        intent.putExtras(data2);
+                        startActivity(intent);
                     }
                 });
 
@@ -135,9 +143,13 @@ public class ListScreenActivity extends AppCompatActivity {
                 String name=pathName_editText.getText().toString();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 String date = sdf.format(currentDate);
-                db.execSQL("INSERT INTO path VALUES(null,'"+name+"','"+date+"');");
+
+                String tempPathName=null;
+                db.execSQL("INSERT INTO path VALUES(null,'"+name+"','"+date+"','"+tempPathName+"');");
 
                 Intent intent = new Intent(ListScreenActivity.this, MainActivity.class);
+                Bundle data=new Bundle();
+                data.putInt("pathImgAvailable",0);
                 startActivity(intent);
             }
         });
@@ -185,10 +197,11 @@ public class ListScreenActivity extends AppCompatActivity {
                 convertView = inflater.inflate(R.layout.list, null, true);
                 TextView names = (TextView) convertView.findViewById(R.id.path_name);
                 TextView dates = (TextView) convertView.findViewById(R.id.path_date);
-
+                TextView filepath =(TextView) convertView.findViewById(R.id.path_file);
                 PathInfo pathInfo = pathInfoList.get(position);
                 names.setText(pathInfo.getName());
                 dates.setText(pathInfo.getDate());
+                filepath.setText(pathInfo.getPathName());
             }
             return convertView;
         }

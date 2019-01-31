@@ -50,8 +50,9 @@ public class PathInfoModification extends AppCompatActivity{
         Bundle extras=getIntent().getExtras();
         if(extras!=null){
             int value=extras.getInt("row_id");
+            String pathName=extras.getString("pathName");
             if(value>0){
-                if(dbHelper.updateDB(id,name_editText.getText().toString(),date_editText.getText().toString())){
+                if(dbHelper.updateDB(id,name_editText.getText().toString(),date_editText.getText().toString(),pathName)){
                     Toast.makeText(getApplicationContext(),"수정되었습니다.",Toast.LENGTH_SHORT).show();
                     Intent intent=new Intent(getApplicationContext(), ListScreenActivity.class);
                     startActivity(intent);

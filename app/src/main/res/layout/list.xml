@@ -25,5 +25,13 @@
         android:layout_marginTop="1dp"
         android:layout_toRightOf="@+id/path_name"
         android:textSize="15dp" />
+    <TextView
+        android:id="@+id/path_file"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/path_date"
+        android:layout_marginTop="1dp"
+        android:layout_toRightOf="@+id/path_name"
+        android:textSize="15dp" />
 
 </RelativeLayout>
