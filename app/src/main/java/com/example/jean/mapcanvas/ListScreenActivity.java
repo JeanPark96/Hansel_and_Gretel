@@ -1,15 +1,14 @@
 package com.example.jean.mapcanvas;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.os.health.PackageHealthStats;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -19,9 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -29,7 +26,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,11 +41,14 @@ public class ListScreenActivity extends AppCompatActivity {
     long now = System.currentTimeMillis();
     Date currentDate = new Date(now);
     AlertDialog.Builder delete_ad, begin_ad;
-
     private DBhelper helper;
-    SQLiteDatabase db;
+    SQLiteDatabase db, imgdb;
     CustomList myList;
     ArrayList<PathInfo> pathList;
+    private PathInfo info;
+    ImageDBhelper IMGhelper;
+    ArrayList<ImageInfo> path_imageList;
+    private ImageInfo imageInfo;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,20 +64,31 @@ public class ListScreenActivity extends AppCompatActivity {
 
         helper = new DBhelper(this);
         db = helper.getWritableDatabase();
+        IMGhelper = new ImageDBhelper(this);
+        imgdb = IMGhelper.getWritableDatabase();
 
+        path_imageList=IMGhelper.getAllData();
         pathList=helper.getAllData();
-        myList=new CustomList(pathList,this);
+
+        myList=new CustomList(pathList,path_imageList,this);
+
         listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(myList);
+
+        final Bundle extras=getIntent().getExtras();
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                PathInfo info= (PathInfo) ((CustomList)adapterView.getAdapter()).getItem(position);
+                info= (PathInfo) ((CustomList)adapterView.getAdapter()).getItem(position);
+                imageInfo = (ImageInfo) ((CustomList)adapterView.getAdapter()).getItem(position);
                 final int id=info.getId();
-                Toast.makeText(getApplicationContext(),"id:"+id,Toast.LENGTH_SHORT).show();
+                final int imgid=imageInfo.getId();
+                Toast.makeText(getApplicationContext(),"imgid:"+imgid,Toast.LENGTH_SHORT).show();
+
                 final Bundle data=new Bundle();
                 data.putInt("row_id",id);
+                data.putInt("img_id",imgid);
 
                 final String TAG = "Modify_Alert_Dialog";
                 delete_ad.setTitle("MODIFY");
@@ -102,7 +112,6 @@ public class ListScreenActivity extends AppCompatActivity {
                         dialog.dismiss();
                     }
                 });
-
                 delete_ad.show();
             }
         });
@@ -113,7 +122,8 @@ public class ListScreenActivity extends AppCompatActivity {
         super.onResume();
         listView.setAdapter(null);
         pathList=helper.getAllData();
-        myList=new CustomList(pathList,this);
+        path_imageList=IMGhelper.getAllData();
+        myList=new CustomList(pathList,path_imageList,this);
         listView.setAdapter(myList);
     }
 
@@ -129,13 +139,15 @@ public class ListScreenActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 Log.v(TAG, "Yes Btn Click");
                 String value = pathName_editText.getText().toString();
-                Log.v(TAG, value);
                 dialog.dismiss();
 
-                String name=pathName_editText.getText().toString();
+                String name = pathName_editText.getText().toString();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 String date = sdf.format(currentDate);
                 db.execSQL("INSERT INTO path VALUES(null,'"+name+"','"+date+"');");
+
+                byte[] image= null;
+                imgdb.execSQL("INSERT INTO path_image VALUES(null,'"+image+"');");
 
                 Intent intent = new Intent(ListScreenActivity.this, MainActivity.class);
                 startActivity(intent);
@@ -156,9 +168,11 @@ public class ListScreenActivity extends AppCompatActivity {
     public class CustomList extends BaseAdapter {
         private Context context;
         private ArrayList<PathInfo> pathInfoList;
+        private ArrayList<ImageInfo> imageInfoList;
 
-        public CustomList(ArrayList<PathInfo> list,Context context){
+        public CustomList(ArrayList<PathInfo> list, ArrayList<ImageInfo> imagelist, Context context){
             this.pathInfoList=list;
+            this.imageInfoList=imagelist;
             this.context=context;
         }
 
@@ -185,10 +199,13 @@ public class ListScreenActivity extends AppCompatActivity {
                 convertView = inflater.inflate(R.layout.list, null, true);
                 TextView names = (TextView) convertView.findViewById(R.id.path_name);
                 TextView dates = (TextView) convertView.findViewById(R.id.path_date);
+                //ImageView images = (ImageView) convertView.findViewById(R.id.path_image);
 
                 PathInfo pathInfo = pathInfoList.get(position);
                 names.setText(pathInfo.getName());
                 dates.setText(pathInfo.getDate());
+                //Bitmap bitmap = BitmapFactory.decodeByteArray(pathInfo.getImage(), 0, pathInfo.getImage().length);
+                //images.setImageBitmap(bitmap);
             }
             return convertView;
         }
