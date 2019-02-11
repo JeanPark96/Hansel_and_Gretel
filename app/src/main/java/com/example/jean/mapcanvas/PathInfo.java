@@ -19,7 +19,5 @@ public class PathInfo {
         return this.id;
     }
     public String getName(){ return  this.name; }
-    public String getDate(){
-        return  this.date;
-    }
+    public String getDate(){ return  this.date; }
 }

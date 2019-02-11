@@ -31,6 +31,14 @@
         android:layout_toRightOf="@+id/left_interval"
         tools:ignore="UnknownId"
         android:background="@android:color/transparent"/>
+    <ImageView
+        android:id="@+id/Img"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_below="@+id/upper_interval"
+        android:layout_toRightOf="@+id/orientationImg"
+        tools:ignore="UnknownId"
+        android:background="@android:color/transparent"/>
 
     <ImageButton
         android:id="@+id/close_button"

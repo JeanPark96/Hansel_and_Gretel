@@ -1,7 +1,11 @@
 package com.example.jean.mapcanvas;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Sensor;
@@ -19,13 +23,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+
 import static android.app.Service.START_STICKY;
 
 public class MainActivity extends AppCompatActivity {
     static final float ALPHA = 0.8f; // if ALPHA = 1 OR 0, no filter applies.
     boolean flag = true;
     TextView countText, distanceText, orientationText;
-
     ImageButton Btn, closeButton;
     EditText strideText;
     double stride_length=0, numOfStep=0, distance_result=0,radianConst=3.15192/180;
@@ -36,18 +43,28 @@ public class MainActivity extends AppCompatActivity {
     int local_step,n=0;
     private float deltaTotalAcc, x, y, z, azimuth, pitch, roll,totalAccDiff,lastDeltaTotalAcc,low_peak,high_peak,totalAbsAcc,lastTotalAbsAcc;
     private float customThresholdTotal=0,averageCustomThreshold=0;
-    private static double AMPLITUDE_THRESHOLD = 4.3;
+    private static double AMPLITUDE_THRESHOLD = 2.1;
     public static boolean newBitmapAvailable=false;
     public static Bitmap newBitmap;
+    public static int pathAvailableNumber;
     private SensorManager sensorManager;
     private Sensor accelerometerSensor; //가속도 센서
     private Sensor magneticSensor; //지자기 센서
     private SensorEventListener accL;
     private SensorEventListener magN;
+
     float[] Gravity;
     float[] Magnetic;
-    private drawCanvas showCanvas,backTrackingCanvas;
+    public static drawCanvas showCanvas;
     ImageView orientationImg;
+    public static ImageView Img;
+    //public static byte[] image;
+    ImageDBhelper IMGhelper;
+    ArrayList<ImageInfo> path_imageList;
+    DBhelper dbHelper;
+    SQLiteDatabase db, imgdb;
+    public int imgid;
+    SQLiteStatement p;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,12 +82,17 @@ public class MainActivity extends AppCompatActivity {
 
         orientationImg = (ImageView)findViewById(R.id.orientationImg);
         orientationImg.setRotation(0);
+        Img = (ImageView)findViewById(R.id.Img);
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         magneticSensor = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         accL = new accelerometerListener();
         magN = new magneticListener();
+
+        IMGhelper = new ImageDBhelper(this);
+        imgdb = IMGhelper.getWritableDatabase();
+        path_imageList=IMGhelper.getAllData();
 
         Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
                     Btn.setImageResource(R.drawable.start);
                     showCanvas.finished();
                     try {
-                       // onDestroy();
                         onStop();
                     } catch (Exception e) {
                         Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
@@ -131,6 +152,12 @@ public class MainActivity extends AppCompatActivity {
             sensorManager.unregisterListener(magN);
             StepValue.Step = 0; //다시 초기화
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //path_imageList=IMGhelper.getAllData();
     }
 
     private class accelerometerListener implements SensorEventListener {
@@ -239,64 +266,65 @@ public class MainActivity extends AppCompatActivity {
         distance_result = stride_length*numOfStep; //거리 계산
         distanceText.setText(Double.toString(distance_result)); //거리 출력
 
-        orientation_result = "Azimut:"+azimuth+"\n"+"Pitch:"+pitch+"\n"+"Roll:"+roll;
+        orientation_result = "Azimuth:"+azimuth+"\n"+"Pitch:"+pitch+"\n"+"Roll:"+roll;
         orientationText.setText(orientation_result); //방향 출력
 
         showCanvas.drawing(azimuth,local_step);
-
     }
 
     public void backTracking(View view){
         showCanvas.onSizeChanged(showCanvas.getWidth(),showCanvas.getHeight(),showCanvas.getWidth(),showCanvas.getHeight());
-
         StepValue.Step = 0;
         local_step = 0;
         count = 0;
     }
 
+    @SuppressLint("RestrictedApi")
     public void saveCurrentPath(View v){
-
-        //팝업 창 띄우기
         AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
         final String TAG = "Test_Alert_Dialog";
 
-        ad.setTitle("SAVE");       // 제목 설정
-        ad.setMessage("경로명");   // 내용 설정
-        // EditText 삽입하기
+        ad.setTitle("SAVE");
+        ad.setMessage("경로명");
         final EditText et = new EditText(MainActivity.this);
         ad.setView(et, 50, 0, 50, 0);
 
-        // 확인 버튼 설정
         ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Log.v(TAG, "Yes Btn Click");
-
-                // Text 값 받아서 로그 남기기
                 String value = et.getText().toString();
                 Log.v(TAG, value);
-
-                dialog.dismiss();     //닫기
-                // Event
+                dialog.dismiss();
             }
         });
 
-        // 취소 버튼 설정
         ad.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Log.v(TAG,"No Btn Click");
-                dialog.dismiss();     //닫기
-                // Event
+                dialog.dismiss();
+                /*Img.setImageBitmap(showCanvas.drawBitmap);
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                showCanvas.drawBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
+                image = byteArray;
+                Intent intent = new Intent(MainActivity.this, ListScreenActivity.class);
+                intent.putExtra("mainByte", image);
+                startActivity(intent);*/
+
+                //db.execSQL("INSERT INTO path_image VALUES(null,'"+image+"');");
+                byte[] image= IMGhelper.getBytes(showCanvas.drawBitmap);
+                IMGhelper.updateDB(imgid,image);
+                Toast.makeText(getApplicationContext(),"이미지id:"+imgid,Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"바이트:"+image,Toast.LENGTH_LONG).show();
+                Img.setImageBitmap(IMGhelper.retrieveImage(image));
             }
         });
-
-        // 창 띄우기
         ad.show();
 
-
         filePath = showCanvas.saveBitmap(this.getApplicationContext(), showCanvas.drawBitmap, "NewBitmap");
-        Toast.makeText(this.getApplicationContext(), "경로가 저장되었습니다.", Toast.LENGTH_LONG).show();
+        Toast.makeText(this.getApplicationContext(), "경로가 저장되었습니다.", Toast.LENGTH_SHORT).show();
         makeNewBitmapFromPath(filePath);
     }
 
