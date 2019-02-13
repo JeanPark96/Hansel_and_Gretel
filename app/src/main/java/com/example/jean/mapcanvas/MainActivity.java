@@ -284,6 +284,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void backTracking(View view){
+        newBitmap = showCanvas.RotateBitmap(newBitmap);
         showCanvas.onSizeChanged(showCanvas.getWidth(),showCanvas.getHeight(),showCanvas.getWidth(),showCanvas.getHeight());
         StepValue.Step = 0;
         local_step = 0;
@@ -340,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
         newBitmap=Bitmap.createScaledBitmap(newBitmap,showCanvas.getWidth(),showCanvas.getHeight(),false);
 
         newBitmapAvailable=true;
-        newBitmap = showCanvas.RotateBitmap(newBitmap);
+       // newBitmap = showCanvas.RotateBitmap(newBitmap);
         return newBitmap;
     }
 

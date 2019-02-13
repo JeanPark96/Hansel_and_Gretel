@@ -76,11 +76,7 @@ public class ListScreenActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 info= (PathInfo) ((CustomList)adapterView.getAdapter()).getItem(position);
-               // imageInfo = (ImageInfo) ((CustomList)adapterView.getAdapter()).getItem(position);
                 final int id=info.getId();
-               // final int imgid=imageInfo.getId();
-              //  Toast.makeText(getApplicationContext(),"imgid:"+imgid,Toast.LENGTH_SHORT).show();
-
                 final Bundle data=new Bundle();
                 data.putInt("row_id",id);
 
@@ -143,8 +139,6 @@ public class ListScreenActivity extends AppCompatActivity {
                 byte[] image= null;
                 imgdb.execSQL("INSERT INTO path_image VALUES(null,'"+image+"');");
 
-                //Intent intent = new Intent(ListScreenActivity.this, MainActivity.class);
-                //startActivity(intent);
                 dialog.dismiss();
             }
         });
@@ -163,11 +157,9 @@ public class ListScreenActivity extends AppCompatActivity {
     public class CustomList extends BaseAdapter {
         private Context context;
         private ArrayList<PathInfo> pathInfoList;
-       // private ArrayList<ImageInfo> imageInfoList;
 
         public CustomList(ArrayList<PathInfo> list, Context context){
             this.pathInfoList=list;
-           // this.imageInfoList=imagelist;
             this.context=context;
         }
 
@@ -194,13 +186,10 @@ public class ListScreenActivity extends AppCompatActivity {
                 convertView = inflater.inflate(R.layout.list, null, true);
                 TextView names = (TextView) convertView.findViewById(R.id.path_name);
                 TextView dates = (TextView) convertView.findViewById(R.id.path_date);
-                //ImageView images = (ImageView) convertView.findViewById(R.id.path_image);
 
                 PathInfo pathInfo = pathInfoList.get(position);
                 names.setText(pathInfo.getName());
                 dates.setText(pathInfo.getDate());
-                //Bitmap bitmap = BitmapFactory.decodeByteArray(pathInfo.getImage(), 0, pathInfo.getImage().length);
-                //images.setImageBitmap(bitmap);
             }
             return convertView;
         }
