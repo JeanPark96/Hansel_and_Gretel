@@ -5,9 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,10 +18,8 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -70,7 +65,7 @@ public class ListScreenActivity extends AppCompatActivity {
         path_imageList=IMGhelper.getAllData();
         pathList=helper.getAllData();
 
-        myList=new CustomList(pathList,path_imageList,this);
+        myList=new CustomList(pathList,this);
 
         listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(myList);
@@ -81,14 +76,14 @@ public class ListScreenActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 info= (PathInfo) ((CustomList)adapterView.getAdapter()).getItem(position);
-                imageInfo = (ImageInfo) ((CustomList)adapterView.getAdapter()).getItem(position);
+               // imageInfo = (ImageInfo) ((CustomList)adapterView.getAdapter()).getItem(position);
                 final int id=info.getId();
-                final int imgid=imageInfo.getId();
-                Toast.makeText(getApplicationContext(),"imgid:"+imgid,Toast.LENGTH_SHORT).show();
+               // final int imgid=imageInfo.getId();
+              //  Toast.makeText(getApplicationContext(),"imgid:"+imgid,Toast.LENGTH_SHORT).show();
 
                 final Bundle data=new Bundle();
                 data.putInt("row_id",id);
-                data.putInt("img_id",imgid);
+               // data.putInt("img_id",imgid);
 
                 final String TAG = "Modify_Alert_Dialog";
                 delete_ad.setTitle("MODIFY");
@@ -123,7 +118,7 @@ public class ListScreenActivity extends AppCompatActivity {
         listView.setAdapter(null);
         pathList=helper.getAllData();
         path_imageList=IMGhelper.getAllData();
-        myList=new CustomList(pathList,path_imageList,this);
+        myList=new CustomList(pathList,this);
         listView.setAdapter(myList);
     }
 
@@ -168,11 +163,11 @@ public class ListScreenActivity extends AppCompatActivity {
     public class CustomList extends BaseAdapter {
         private Context context;
         private ArrayList<PathInfo> pathInfoList;
-        private ArrayList<ImageInfo> imageInfoList;
+       // private ArrayList<ImageInfo> imageInfoList;
 
-        public CustomList(ArrayList<PathInfo> list, ArrayList<ImageInfo> imagelist, Context context){
+        public CustomList(ArrayList<PathInfo> list, Context context){
             this.pathInfoList=list;
-            this.imageInfoList=imagelist;
+           // this.imageInfoList=imagelist;
             this.context=context;
         }
 

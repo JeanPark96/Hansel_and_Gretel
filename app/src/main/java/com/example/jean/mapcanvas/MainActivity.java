@@ -3,7 +3,6 @@ package com.example.jean.mapcanvas;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.graphics.Bitmap;
@@ -23,8 +22,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import static android.app.Service.START_STICKY;
@@ -315,6 +312,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //db.execSQL("INSERT INTO path_image VALUES(null,'"+image+"');");
                 byte[] image= IMGhelper.getBytes(showCanvas.drawBitmap);
+                imgid=1;
                 IMGhelper.updateDB(imgid,image);
                 Toast.makeText(getApplicationContext(),"이미지id:"+imgid,Toast.LENGTH_LONG).show();
                 Toast.makeText(getApplicationContext(),"바이트:"+image,Toast.LENGTH_LONG).show();
