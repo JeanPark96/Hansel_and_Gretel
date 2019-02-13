@@ -3,6 +3,7 @@ package com.example.jean.mapcanvas;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.graphics.Bitmap;
@@ -90,6 +91,19 @@ public class MainActivity extends AppCompatActivity {
         IMGhelper = new ImageDBhelper(this);
         imgdb = IMGhelper.getWritableDatabase();
         path_imageList=IMGhelper.getAllData();
+
+        Bundle extra= getIntent().getExtras();
+        if(extra!=null){
+            int value=extra.getInt("row_id");
+            if(value > 0){
+                Cursor res = IMGhelper.getData(value);
+                imgid = value;
+
+                if(!res.isClosed()){
+                    res.close();
+                }
+            }
+        }
 
         Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -292,6 +306,11 @@ public class MainActivity extends AppCompatActivity {
                 Log.v(TAG, "Yes Btn Click");
                 String value = et.getText().toString();
                 Log.v(TAG, value);
+                Bundle pathInfoModificationBundle=new Bundle();
+                pathInfoModificationBundle.putInt("row_id",imgid);
+                Intent intent = new Intent(getApplicationContext(),PathInfoModification.class);
+                intent.putExtras(pathInfoModificationBundle);
+                startActivity(intent);
                 dialog.dismiss();
             }
         });
@@ -301,18 +320,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 Log.v(TAG,"No Btn Click");
                 dialog.dismiss();
-                /*Img.setImageBitmap(showCanvas.drawBitmap);
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                showCanvas.drawBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                byte[] byteArray = stream.toByteArray();
-                image = byteArray;
-                Intent intent = new Intent(MainActivity.this, ListScreenActivity.class);
-                intent.putExtra("mainByte", image);
-                startActivity(intent);*/
-
-                //db.execSQL("INSERT INTO path_image VALUES(null,'"+image+"');");
                 byte[] image= IMGhelper.getBytes(showCanvas.drawBitmap);
-                imgid=1;
                 IMGhelper.updateDB(imgid,image);
                 Toast.makeText(getApplicationContext(),"이미지id:"+imgid,Toast.LENGTH_LONG).show();
                 Toast.makeText(getApplicationContext(),"바이트:"+image,Toast.LENGTH_LONG).show();

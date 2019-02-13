@@ -83,7 +83,6 @@ public class ListScreenActivity extends AppCompatActivity {
 
                 final Bundle data=new Bundle();
                 data.putInt("row_id",id);
-               // data.putInt("img_id",imgid);
 
                 final String TAG = "Modify_Alert_Dialog";
                 delete_ad.setTitle("MODIFY");
@@ -94,7 +93,7 @@ public class ListScreenActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         Log.v(TAG, "Yes Btn Click");
                         dialog.dismiss();
-                        Intent intent = new Intent(getApplicationContext(),PathInfoModification.class);
+                        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                         intent.putExtras(data);
                         startActivity(intent);
                     }
@@ -134,7 +133,7 @@ public class ListScreenActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 Log.v(TAG, "Yes Btn Click");
                 String value = pathName_editText.getText().toString();
-                dialog.dismiss();
+
 
                 String name = pathName_editText.getText().toString();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -144,8 +143,9 @@ public class ListScreenActivity extends AppCompatActivity {
                 byte[] image= null;
                 imgdb.execSQL("INSERT INTO path_image VALUES(null,'"+image+"');");
 
-                Intent intent = new Intent(ListScreenActivity.this, MainActivity.class);
-                startActivity(intent);
+                //Intent intent = new Intent(ListScreenActivity.this, MainActivity.class);
+                //startActivity(intent);
+                dialog.dismiss();
             }
         });
 
