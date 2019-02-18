@@ -297,11 +297,11 @@ public class MainActivity extends AppCompatActivity {
         final String TAG = "Test_Alert_Dialog";
 
         ad.setTitle("SAVE");
-        ad.setMessage("경로명");
-        final EditText et = new EditText(MainActivity.this);
-        ad.setView(et, 50, 0, 50, 0);
+        //ad.setMessage("경로명");
+        //final EditText et = new EditText(MainActivity.this);
+        //ad.setView(et, 50, 0, 50, 0);
 
-        ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        /*ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Log.v(TAG, "Yes Btn Click");
@@ -314,12 +314,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 dialog.dismiss();
             }
-        });
+        });*/
 
-        ad.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        ad.setNegativeButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Log.v(TAG,"No Btn Click");
+                Log.v(TAG,"Yes Btn Click");
                 dialog.dismiss();
                 byte[] image= IMGhelper.getBytes(showCanvas.drawBitmap);
                 IMGhelper.updateDB(imgid,image);

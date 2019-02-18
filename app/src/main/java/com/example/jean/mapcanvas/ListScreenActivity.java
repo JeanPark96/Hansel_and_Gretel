@@ -89,8 +89,10 @@ public class ListScreenActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         Log.v(TAG, "Yes Btn Click");
                         dialog.dismiss();
-                        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                        intent.putExtras(data);
+                        Bundle pathInfoModificationBundle=new Bundle();
+                        pathInfoModificationBundle.putInt("row_id",id);
+                        Intent intent = new Intent(getApplicationContext(),PathInfoModification.class);
+                        intent.putExtras(pathInfoModificationBundle);
                         startActivity(intent);
                     }
                 });
@@ -100,6 +102,9 @@ public class ListScreenActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         Log.v(TAG,"No Btn Click");
                         dialog.dismiss();
+                        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                        intent.putExtras(data);
+                        startActivity(intent);
                     }
                 });
                 delete_ad.show();
