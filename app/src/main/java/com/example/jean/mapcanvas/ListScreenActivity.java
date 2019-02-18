@@ -21,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,14 +37,13 @@ public class ListScreenActivity extends AppCompatActivity {
     long now = System.currentTimeMillis();
     Date currentDate = new Date(now);
     AlertDialog.Builder delete_ad, begin_ad;
-    private DBhelper helper;
+
+    private DBhelper helper; ImageDBhelper IMGhelper;
     SQLiteDatabase db, imgdb;
     CustomList myList;
     ArrayList<PathInfo> pathList;
-    private PathInfo info;
-    ImageDBhelper IMGhelper;
     ArrayList<ImageInfo> path_imageList;
-    private ImageInfo imageInfo;
+    Intent temp_intent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,41 +75,54 @@ public class ListScreenActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                info= (PathInfo) ((CustomList)adapterView.getAdapter()).getItem(position);
+                PathInfo info= (PathInfo) ((CustomList)adapterView.getAdapter()).getItem(position);
                 final int id=info.getId();
                 final Bundle data=new Bundle();
                 data.putInt("row_id",id);
 
-                final String TAG = "Modify_Alert_Dialog";
-                delete_ad.setTitle("MODIFY");
-                delete_ad.setMessage("수정 / 삭제 하시겠습니까?");
-
-                delete_ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.v(TAG, "Yes Btn Click");
-                        dialog.dismiss();
-                        Bundle pathInfoModificationBundle=new Bundle();
-                        pathInfoModificationBundle.putInt("row_id",id);
-                        Intent intent = new Intent(getApplicationContext(),PathInfoModification.class);
-                        intent.putExtras(pathInfoModificationBundle);
-                        startActivity(intent);
-                    }
-                });
-
-                delete_ad.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.v(TAG,"No Btn Click");
-                        dialog.dismiss();
-                        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                        intent.putExtras(data);
-                        startActivity(intent);
-                    }
-                });
-                delete_ad.show();
+                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                intent.putExtras(data);
+                startActivity(intent);
             }
         });
+
+        listView.setOnItemLongClickListener(new ListViewItemLongClickListener());
+    }
+
+    class ListViewItemLongClickListener implements AdapterView.OnItemLongClickListener{
+        @Override
+        public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l){
+            PathInfo info= (PathInfo) ((CustomList)adapterView.getAdapter()).getItem(position);
+            final int id = info.getId();
+            final Bundle pathInfoModificationBundle=new Bundle();
+            pathInfoModificationBundle.putInt("row_id",id);
+
+            final String TAG = "Modify_Alert_Dialog";
+            delete_ad.setTitle("MODIFY");
+            delete_ad.setMessage("수정 / 삭제 하시겠습니까?");
+
+            delete_ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Log.v(TAG, "Yes Btn Click");
+                    dialog.dismiss();
+                    Intent intent = new Intent(getApplicationContext(),PathInfoModification.class);
+                    intent.putExtras(pathInfoModificationBundle);
+                    startActivity(intent);
+                }
+            });
+
+            delete_ad.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Log.v(TAG,"No Btn Click");
+                    dialog.dismiss();
+                }
+            });
+
+            delete_ad.show();
+            return true;
+        }
     }
 
     @Override
@@ -143,7 +156,8 @@ public class ListScreenActivity extends AppCompatActivity {
 
                 byte[] image= null;
                 imgdb.execSQL("INSERT INTO path_image VALUES(null,'"+image+"');");
-
+                
+                onResume();
                 dialog.dismiss();
             }
         });
@@ -157,6 +171,10 @@ public class ListScreenActivity extends AppCompatActivity {
         });
 
         begin_ad.show();
+    }
+
+    public void modifyPath(View view){
+        startActivity(temp_intent);
     }
 
     public class CustomList extends BaseAdapter {
