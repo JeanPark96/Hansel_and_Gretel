@@ -103,10 +103,21 @@ public class MainActivity extends AppCompatActivity {
 
                 int i=res.getInt(res.getColumnIndex(IMGhelper.PATH_AVAILABLE_NUM));
                 Toast.makeText(getApplicationContext(),"pathavailable_id:"+i,Toast.LENGTH_LONG).show();
-                if(i!=0) {
-                    byte[] image = res.getBlob(res.getColumnIndex(IMGhelper.PATH_IMAGE));
-                    Img.setImageBitmap(IMGhelper.retrieveImage(image));
+                if(i==1) {
                     pathAvailableNumber=1;
+                    newBitmapAvailable=false;
+                    byte[] image = res.getBlob(res.getColumnIndex(IMGhelper.PATH_IMAGE));
+
+                    BitmapFactory.Options option=new BitmapFactory.Options();
+                    option.inMutable=true;
+                    //Bitmap tempBitmap=BitmapFactory.decodeResource(getResources(),option);
+                    Bitmap tempBitmap=Bitmap.createBitmap(IMGhelper.retrieveImage(image));
+                    tempBitmap=tempBitmap.copy(Bitmap.Config.ARGB_8888,true);
+                    Img.setImageBitmap(tempBitmap);
+                   showCanvas.setBitmap(tempBitmap);
+                    //showCanvas.drawBitmap=IMGhelper.retrieveImage(image);
+                    //newBitmap=IMGhelper.retrieveImage(image);
+
                 }
 
                 if(!res.isClosed()){
@@ -351,6 +362,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
                 newBitmapAvailable=false;
+                newBitmap=null;
+                showCanvas.drawBitmap=null;
                 Intent intent = new Intent(MainActivity.this, ListScreenActivity.class);
                 startActivity(intent);
                 finish();
