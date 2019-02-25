@@ -99,11 +99,12 @@ public class MainActivity extends AppCompatActivity {
                 Cursor res = IMGhelper.getData(value);
                 imgid = value;
 
-                res.move(imgid);
-                byte[] image = res.getBlob(res.getColumnIndex(IMGhelper.PATH_IMAGE));
-                Img.setImageBitmap(IMGhelper.retrieveImage(image));
+                if(res.moveToFirst()) {
+                    byte[] image = res.getBlob(res.getColumnIndex(IMGhelper.PATH_IMAGE));
+                    Img.setImageBitmap(IMGhelper.retrieveImage(image));
+                }
 
-                if(!res.isClosed()){
+                if(!res.isClosed()) {
                     res.close();
                 }
             }
@@ -328,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
                 byte[] image= IMGhelper.getBytes(showCanvas.drawBitmap);
                 IMGhelper.updateDB(imgid,image);
                 Toast.makeText(getApplicationContext(),"이미지id:"+imgid,Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(),"바이트:"+image,Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(),"바이트:"+image,Toast.LENGTH_LONG).show();
             }
         });
         ad.show();
