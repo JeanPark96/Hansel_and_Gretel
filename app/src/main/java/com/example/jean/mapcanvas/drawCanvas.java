@@ -12,7 +12,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -76,17 +75,11 @@ public class drawCanvas extends View {
             theta += 180; //backTracking 시 길 방향 보정
             theta %= 360;
         }else{
-            drawBitmap = Bitmap.createBitmap(getWidth(),getHeight(),Bitmap.Config.ARGB_8888);
+            if(MainActivity.pathAvailableNumber==0) {
+                drawBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+            }
             canvas = new Canvas(drawBitmap);
-            if(MainActivity.pathAvailableNumber==0){
-                firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),width,height,false);
-            }
-            else{
-                MainActivity main=new MainActivity();
-                //firstBitmap =Bitmap.createScaledBitmap(main.makeNewBitmapFromPath(MainActivity.filePathInDB),width,height,false);
-                firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),width,height,false);
-
-            }
+            firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),width,height,false);
         }
   }
 
@@ -151,6 +144,14 @@ public class drawCanvas extends View {
         matrix.setScale(-1, -1); //상하좌우반전
 
         drawBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
+
+        return drawBitmap;
+    }
+
+    public Bitmap setBitmap(Bitmap bitmap){
+        Matrix matrix = new Matrix();
+        matrix.setScale(1, 1);
+        drawBitmap=Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,false);
 
         return drawBitmap;
     }

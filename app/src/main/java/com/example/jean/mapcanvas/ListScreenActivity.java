@@ -21,7 +21,6 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -81,6 +80,8 @@ public class ListScreenActivity extends AppCompatActivity {
                 data.putInt("row_id",id);
 
                 Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+
+                //Toast.makeText(getApplicationContext(),"imgid:"+id,Toast.LENGTH_LONG).show();
                 intent.putExtras(data);
                 startActivity(intent);
             }
@@ -155,8 +156,8 @@ public class ListScreenActivity extends AppCompatActivity {
                 db.execSQL("INSERT INTO path VALUES(null,'"+name+"','"+date+"');");
 
                 byte[] image= null;
-                imgdb.execSQL("INSERT INTO path_image VALUES(null,'"+image+"');");
-
+                int path_available=0;
+                imgdb.execSQL("INSERT INTO path_image VALUES(null,'"+path_available+"','"+image+"');");
                 onResume();
                 dialog.dismiss();
             }

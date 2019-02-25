@@ -98,10 +98,16 @@ public class MainActivity extends AppCompatActivity {
             if(value > 0){
                 Cursor res = IMGhelper.getData(value);
                 imgid = value;
+                //Toast.makeText(getApplicationContext(),"imgid:"+imgid,Toast.LENGTH_LONG).show();
+                res.moveToFirst();
 
-                res.move(imgid);
-                byte[] image = res.getBlob(res.getColumnIndex(IMGhelper.PATH_IMAGE));
-                Img.setImageBitmap(IMGhelper.retrieveImage(image));
+                int i=res.getInt(res.getColumnIndex(IMGhelper.PATH_AVAILABLE_NUM));
+                Toast.makeText(getApplicationContext(),"pathavailable_id:"+i,Toast.LENGTH_LONG).show();
+                if(i!=0) {
+                    byte[] image = res.getBlob(res.getColumnIndex(IMGhelper.PATH_IMAGE));
+                    Img.setImageBitmap(IMGhelper.retrieveImage(image));
+                    pathAvailableNumber=1;
+                }
 
                 if(!res.isClosed()){
                     res.close();
@@ -301,24 +307,7 @@ public class MainActivity extends AppCompatActivity {
         final String TAG = "Test_Alert_Dialog";
 
         ad.setTitle("SAVE");
-        //ad.setMessage("경로명");
-        //final EditText et = new EditText(MainActivity.this);
-        //ad.setView(et, 50, 0, 50, 0);
 
-        /*ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Log.v(TAG, "Yes Btn Click");
-                String value = et.getText().toString();
-                Log.v(TAG, value);
-                Bundle pathInfoModificationBundle=new Bundle();
-                pathInfoModificationBundle.putInt("row_id",imgid);
-                Intent intent = new Intent(getApplicationContext(),PathInfoModification.class);
-                intent.putExtras(pathInfoModificationBundle);
-                startActivity(intent);
-                dialog.dismiss();
-            }
-        });*/
 
         ad.setNegativeButton("Yes", new DialogInterface.OnClickListener() {
             @Override
@@ -326,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.v(TAG,"Yes Btn Click");
                 dialog.dismiss();
                 byte[] image= IMGhelper.getBytes(showCanvas.drawBitmap);
-                IMGhelper.updateDB(imgid,image);
+                IMGhelper.updateDB(imgid,1,image);
                 Toast.makeText(getApplicationContext(),"이미지id:"+imgid,Toast.LENGTH_LONG).show();
                 Toast.makeText(getApplicationContext(),"바이트:"+image,Toast.LENGTH_LONG).show();
             }

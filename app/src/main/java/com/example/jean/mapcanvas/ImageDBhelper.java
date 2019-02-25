@@ -22,6 +22,7 @@ public class ImageDBhelper extends SQLiteOpenHelper {
     private static final String DATABASE_TABLE="image_table";
     //Column Name
     public static final String PATH_IMAGE="image";
+    public static final String PATH_AVAILABLE_NUM="path_available";
 
     public  ImageDBhelper(Context context){
         super(context,DATABASE_NAME,null,DATABASE_VERSION);
@@ -29,7 +30,7 @@ public class ImageDBhelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS path_image ( "+" row_id INTEGER PRIMARY KEY AUTOINCREMENT,"+" image BLOB);");
+        db.execSQL("CREATE TABLE IF NOT EXISTS path_image ( "+" row_id INTEGER PRIMARY KEY AUTOINCREMENT,"+"path_available INTEGER,"+" image BLOB);");
     }
 
     @Override
@@ -38,10 +39,11 @@ public class ImageDBhelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean updateDB(int id,byte[] image){
+    public boolean updateDB(int id,int path_available,byte[] image){
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues content=new ContentValues();
         content.put(PATH_IMAGE,image);
+        content.put(PATH_AVAILABLE_NUM,path_available);
         db.update("path_image",content,"row_id=?",new String[]{Integer.toString(id)});
         return true;
     }
@@ -58,8 +60,9 @@ public class ImageDBhelper extends SQLiteOpenHelper {
         res.moveToFirst();
         while(res.isAfterLast()==false){
             int id=res.getInt(0);
-            byte[] image=res.getBlob(1);
-            ImageInfo newImage=new ImageInfo(id,image);
+            int path_available=res.getInt(1);
+            byte[] image=res.getBlob(2);
+            ImageInfo newImage=new ImageInfo(id,path_available,image);
             image_list.add(newImage);
             res.moveToNext();
         }
