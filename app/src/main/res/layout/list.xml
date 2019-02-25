@@ -23,11 +23,4 @@
         android:layout_below="@+id/path_name"
         android:layout_marginTop="1dp"
         android:textSize="15dp" />
-
-    <ImageView
-        android:id="@+id/path_image"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="1dp"
-        android:layout_alignParentRight="true"/>
 </RelativeLayout>

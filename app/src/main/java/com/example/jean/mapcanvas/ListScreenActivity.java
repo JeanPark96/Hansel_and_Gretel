@@ -156,7 +156,7 @@ public class ListScreenActivity extends AppCompatActivity {
 
                 byte[] image= null;
                 imgdb.execSQL("INSERT INTO path_image VALUES(null,'"+image+"');");
-                
+
                 onResume();
                 dialog.dismiss();
             }

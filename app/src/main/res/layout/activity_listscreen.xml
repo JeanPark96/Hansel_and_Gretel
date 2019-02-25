@@ -47,5 +47,4 @@
         android:layout_below="@+id/LinearLayout"
         tools:ignore="UnknownId">
     </ListView>
-
 </RelativeLayout>
