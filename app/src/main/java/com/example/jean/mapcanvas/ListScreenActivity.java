@@ -80,7 +80,6 @@ public class ListScreenActivity extends AppCompatActivity {
                 data.putInt("row_id",id);
 
                 Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-
                 //Toast.makeText(getApplicationContext(),"imgid:"+id,Toast.LENGTH_LONG).show();
                 intent.putExtras(data);
                 startActivity(intent);
@@ -149,7 +148,6 @@ public class ListScreenActivity extends AppCompatActivity {
                 Log.v(TAG, "Yes Btn Click");
                 String value = pathName_editText.getText().toString();
 
-
                 String name = pathName_editText.getText().toString();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 String date = sdf.format(currentDate);
@@ -157,7 +155,10 @@ public class ListScreenActivity extends AppCompatActivity {
 
                 byte[] image= null;
                 int path_available=0;
-                imgdb.execSQL("INSERT INTO path_image VALUES(null,'"+path_available+"','"+image+"');");
+                float azimuth=0;
+                float position_x=0;
+                float position_y=0;
+                imgdb.execSQL("INSERT INTO path_image VALUES(null,'"+path_available+"','"+image+"','"+azimuth+"','"+position_x+"','"+position_y+"');");
                 onResume();
                 dialog.dismiss();
             }

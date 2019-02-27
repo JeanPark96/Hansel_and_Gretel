@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     int count = StepValue.Step;
     private long lastTime;
     int local_step,n=0;
-    private float deltaTotalAcc, x, y, z, azimuth, pitch, roll,totalAccDiff,lastDeltaTotalAcc,low_peak,high_peak,totalAbsAcc,lastTotalAbsAcc;
+    private float deltaTotalAcc, x, y, z, azimuth, first_azimuth,pitch, position_x,position_y,roll,totalAccDiff,lastDeltaTotalAcc,low_peak,high_peak,totalAbsAcc,lastTotalAbsAcc;
     private float customThresholdTotal=0,averageCustomThreshold=0;
     private static double AMPLITUDE_THRESHOLD = 2.1;
     public static boolean newBitmapAvailable=false;
@@ -308,7 +308,8 @@ public class MainActivity extends AppCompatActivity {
 
         orientation_result = "Azimuth:"+azimuth+"\n"+"Pitch:"+pitch+"\n"+"Roll:"+roll;
         orientationText.setText(orientation_result); //방향 출력
-
+        if(local_step==1)
+            first_azimuth=azimuth;
         showCanvas.drawing(azimuth,local_step);
     }
 
@@ -334,7 +335,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.v(TAG,"Yes Btn Click");
                 dialog.dismiss();
                 byte[] image= IMGhelper.getBytes(showCanvas.drawBitmap);
-                IMGhelper.updateDB(imgid,1,image);
+                position_x = showCanvas.endX;
+                position_y = showCanvas.endY;
+                IMGhelper.updateDB(imgid,1,image,first_azimuth,position_x,position_y);
                 Toast.makeText(getApplicationContext(),"이미지id:"+imgid,Toast.LENGTH_LONG).show();
                 Toast.makeText(getApplicationContext(),"바이트:"+image,Toast.LENGTH_LONG).show();
             }

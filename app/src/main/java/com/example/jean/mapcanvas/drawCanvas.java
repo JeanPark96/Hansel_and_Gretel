@@ -26,7 +26,8 @@ public class drawCanvas extends View {
 
     private double radianConst=3.15192/180,theta=0,angleDiff,one_fourth_rad=90*radianConst,half_rad=180*radianConst,three_fourth=270*radianConst;
     private float angleDiffRadian;
-    private float startX, startY,endX,endY;
+    private float startX, startY;
+    public static float endX,endY;
     private int r_local_step;
     private float r_azimuth;
     private int width,height;
@@ -62,6 +63,7 @@ public class drawCanvas extends View {
 
         width = getWidth();
         height = getHeight();
+
         if(isBackTrackActivated()){
             path.reset();
 
@@ -75,7 +77,6 @@ public class drawCanvas extends View {
             theta += 180; //backTracking 시 길 방향 보정
             theta %= 360;
         }else{
-
             if(MainActivity.pathAvailableNumber==0) {
                 drawBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
             }else{
