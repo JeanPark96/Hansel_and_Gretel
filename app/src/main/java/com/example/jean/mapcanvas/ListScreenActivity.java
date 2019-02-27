@@ -155,10 +155,11 @@ public class ListScreenActivity extends AppCompatActivity {
 
                 byte[] image= null;
                 int path_available=0;
-                float azimuth=0;
+                float first_azimuth=0;
+                float last_azimuth=0;
                 float position_x=0;
                 float position_y=0;
-                imgdb.execSQL("INSERT INTO path_image VALUES(null,'"+path_available+"','"+image+"','"+azimuth+"','"+position_x+"','"+position_y+"');");
+                imgdb.execSQL("INSERT INTO path_image VALUES(null,'"+path_available+"','"+image+"','"+first_azimuth+"','"+last_azimuth+"','"+position_x+"','"+position_y+"');");
                 onResume();
                 dialog.dismiss();
             }

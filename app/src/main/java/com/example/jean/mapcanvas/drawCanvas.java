@@ -24,10 +24,10 @@ public class drawCanvas extends View {
     private Paint pathColorPaint, startAndFinishMarkColorPaint,canvasPaint, intermediatePaint;
     private Canvas canvas;
 
-    private double radianConst=3.15192/180,theta=0,angleDiff,one_fourth_rad=90*radianConst,half_rad=180*radianConst,three_fourth=270*radianConst;
+    private double radianConst=3.15192/180,angleDiff,one_fourth_rad=90*radianConst,half_rad=180*radianConst,three_fourth=270*radianConst;
+    public static double theta=0;
     private float angleDiffRadian;
-    private float startX, startY;
-    public static float endX,endY;
+    public static float startX, startY, endX, endY;
     private int r_local_step;
     private float r_azimuth;
     private int width,height;

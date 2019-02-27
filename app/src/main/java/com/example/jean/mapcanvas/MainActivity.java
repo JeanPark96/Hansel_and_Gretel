@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     int count = StepValue.Step;
     private long lastTime;
     int local_step,n=0;
-    private float deltaTotalAcc, x, y, z, azimuth, first_azimuth,pitch, position_x,position_y,roll,totalAccDiff,lastDeltaTotalAcc,low_peak,high_peak,totalAbsAcc,lastTotalAbsAcc;
+    private float deltaTotalAcc, x, y, z, azimuth, first_azimuth, last_azimuth, pitch, position_x,position_y,roll,totalAccDiff,lastDeltaTotalAcc,low_peak,high_peak,totalAbsAcc,lastTotalAbsAcc;
     private float customThresholdTotal=0,averageCustomThreshold=0;
     private static double AMPLITUDE_THRESHOLD = 2.1;
     public static boolean newBitmapAvailable=false;
@@ -105,14 +105,14 @@ public class MainActivity extends AppCompatActivity {
                 int i=res.getInt(res.getColumnIndex(IMGhelper.PATH_AVAILABLE_NUM));
                 Toast.makeText(getApplicationContext(),"pathavailable_id:"+i,Toast.LENGTH_LONG).show();
 
-
                 if(i==1) {
                     Toast.makeText(getApplicationContext(),"삐삐",Toast.LENGTH_LONG).show();
-
-
                     pathAvailableNumber=1;
                     newBitmapAvailable=false;
                     byte[] image = res.getBlob(res.getColumnIndex(IMGhelper.PATH_IMAGE));
+                    showCanvas.theta = res.getDouble(res.getColumnIndex(IMGhelper.PATH_LAST_AZIMUTH));
+                    showCanvas.endX = res.getFloat(res.getColumnIndex(IMGhelper.PATH_LAST_POSITION_X));
+                    showCanvas.endY = res.getFloat(res.getColumnIndex(IMGhelper.PATH_LAST_POSITION_Y));
 
                    // BitmapFactory.Options option=new BitmapFactory.Options();
                    // option.inMutable=true;
@@ -315,6 +315,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void backTracking(View view){
         newBitmap = showCanvas.RotateBitmap(newBitmap);
+        newBitmapAvailable=true;
         showCanvas.onSizeChanged(showCanvas.getWidth(),showCanvas.getHeight(),showCanvas.getWidth(),showCanvas.getHeight());
         StepValue.Step = 0;
         local_step = 0;
@@ -325,9 +326,7 @@ public class MainActivity extends AppCompatActivity {
     public void saveCurrentPath(View v){
         AlertDialog.Builder ad = new AlertDialog.Builder(MainActivity.this);
         final String TAG = "Test_Alert_Dialog";
-
         ad.setTitle("SAVE");
-
 
         ad.setNegativeButton("Yes", new DialogInterface.OnClickListener() {
             @Override
@@ -335,9 +334,10 @@ public class MainActivity extends AppCompatActivity {
                 Log.v(TAG,"Yes Btn Click");
                 dialog.dismiss();
                 byte[] image= IMGhelper.getBytes(showCanvas.drawBitmap);
+                last_azimuth = azimuth;
                 position_x = showCanvas.endX;
                 position_y = showCanvas.endY;
-                IMGhelper.updateDB(imgid,1,image,first_azimuth,position_x,position_y);
+                IMGhelper.updateDB(imgid,1,image,first_azimuth,last_azimuth,position_x,position_y);
                 Toast.makeText(getApplicationContext(),"이미지id:"+imgid,Toast.LENGTH_LONG).show();
                 Toast.makeText(getApplicationContext(),"바이트:"+image,Toast.LENGTH_LONG).show();
             }
@@ -347,7 +347,6 @@ public class MainActivity extends AppCompatActivity {
         filePath = showCanvas.saveBitmap(this.getApplicationContext(), showCanvas.drawBitmap, "NewBitmap");
         Toast.makeText(this.getApplicationContext(), "경로가 저장되었습니다.", Toast.LENGTH_SHORT).show();
         makeNewBitmapFromPath(filePath);
-        //pathAvailableNumber = 1;
     }
 
     public Bitmap makeNewBitmapFromPath(String filePath){
