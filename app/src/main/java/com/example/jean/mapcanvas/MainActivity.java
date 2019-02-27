@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -103,22 +104,29 @@ public class MainActivity extends AppCompatActivity {
 
                 int i=res.getInt(res.getColumnIndex(IMGhelper.PATH_AVAILABLE_NUM));
                 Toast.makeText(getApplicationContext(),"pathavailable_id:"+i,Toast.LENGTH_LONG).show();
+
+
                 if(i==1) {
+                    Toast.makeText(getApplicationContext(),"삐삐",Toast.LENGTH_LONG).show();
+
+
                     pathAvailableNumber=1;
                     newBitmapAvailable=false;
                     byte[] image = res.getBlob(res.getColumnIndex(IMGhelper.PATH_IMAGE));
 
-                    BitmapFactory.Options option=new BitmapFactory.Options();
-                    option.inMutable=true;
+                   // BitmapFactory.Options option=new BitmapFactory.Options();
+                   // option.inMutable=true;
                     //Bitmap tempBitmap=BitmapFactory.decodeResource(getResources(),option);
                     Bitmap tempBitmap=Bitmap.createBitmap(IMGhelper.retrieveImage(image));
-                    tempBitmap=tempBitmap.copy(Bitmap.Config.ARGB_8888,true);
-                    Img.setImageBitmap(tempBitmap);
-                   showCanvas.setBitmap(tempBitmap);
+                    Bitmap tempBitmap2=tempBitmap.copy(Bitmap.Config.ARGB_8888,true);
+                    Img.setImageBitmap(tempBitmap2);
+                    newBitmap=showCanvas.setBitmap(tempBitmap2);
                     //showCanvas.drawBitmap=IMGhelper.retrieveImage(image);
                     //newBitmap=IMGhelper.retrieveImage(image);
+                   // showCanvas.setBitmap(IMGhelper.retrieveImage(image));
 
                 }
+
 
                 if(!res.isClosed()){
                     res.close();
@@ -336,6 +344,7 @@ public class MainActivity extends AppCompatActivity {
         filePath = showCanvas.saveBitmap(this.getApplicationContext(), showCanvas.drawBitmap, "NewBitmap");
         Toast.makeText(this.getApplicationContext(), "경로가 저장되었습니다.", Toast.LENGTH_SHORT).show();
         makeNewBitmapFromPath(filePath);
+        //pathAvailableNumber = 1;
     }
 
     public Bitmap makeNewBitmapFromPath(String filePath){
@@ -364,6 +373,7 @@ public class MainActivity extends AppCompatActivity {
                 newBitmapAvailable=false;
                 newBitmap=null;
                 showCanvas.drawBitmap=null;
+                pathAvailableNumber=0;
                 Intent intent = new Intent(MainActivity.this, ListScreenActivity.class);
                 startActivity(intent);
                 finish();

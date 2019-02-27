@@ -75,12 +75,12 @@ public class drawCanvas extends View {
             theta += 180; //backTracking 시 길 방향 보정
             theta %= 360;
         }else{
+
             if(MainActivity.pathAvailableNumber==0) {
                 drawBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+            }else{
+                drawBitmap = Bitmap.createBitmap(MainActivity.newBitmap);
             }
-           // else{
-            //    drawBitmap=Bitmap.createBitmap(tempBitmap,bitmap.getWidth(),bitmap.getHeight())
-            //}
             canvas = new Canvas(drawBitmap);
             firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),width,height,false);
         }
