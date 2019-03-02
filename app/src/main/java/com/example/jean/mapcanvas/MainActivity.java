@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -110,7 +109,8 @@ public class MainActivity extends AppCompatActivity {
                     pathAvailableNumber=1;
                     newBitmapAvailable=false;
                     byte[] image = res.getBlob(res.getColumnIndex(IMGhelper.PATH_IMAGE));
-                    showCanvas.theta = res.getDouble(res.getColumnIndex(IMGhelper.PATH_LAST_AZIMUTH));
+
+                    showCanvas.theta = res.getDouble(res.getColumnIndex(IMGhelper.PATH_FIRST_AZIMUTH));
                     showCanvas.endX = res.getFloat(res.getColumnIndex(IMGhelper.PATH_LAST_POSITION_X));
                     showCanvas.endY = res.getFloat(res.getColumnIndex(IMGhelper.PATH_LAST_POSITION_Y));
 

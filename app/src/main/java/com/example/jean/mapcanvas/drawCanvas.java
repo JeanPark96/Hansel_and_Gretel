@@ -102,16 +102,29 @@ public class drawCanvas extends View {
 
         Log.d("drawing method working",r_local_step+"drawing");
         if (r_local_step <= 1 && !isBackTrackActivated()) {
-            startX = (width/ 2);
-            startY = (height / 2) + 300;
-            path.moveTo(startX,startY);
-            invalidate();
-            endX = startX;
-            endY = startY - 3;
-            theta = r_azimuth;
-            path.lineTo(endX,endY);
-            canvas.drawOval(startX-8,startY-8,startX+8,endY+8, startAndFinishMarkColorPaint);//스타트 마크, 여기에 있어야 사라지지 않음
-            canvas.drawPath(path, pathColorPaint);
+            if(MainActivity.pathAvailableNumber==0) {
+                startX = (width / 2);
+                startY = (height / 2) + 300;
+                path.moveTo(startX, startY);
+                invalidate();
+                endX = startX;
+                endY = startY - 3;
+                theta = r_azimuth;
+                path.lineTo(endX, endY);
+                canvas.drawOval(startX - 8, startY - 8, startX + 8, endY + 8, startAndFinishMarkColorPaint);//스타트 마크, 여기에 있어야 사라지지 않음
+                canvas.drawPath(path, pathColorPaint);
+
+            }
+            else{
+                startX=endX;
+                startY=endY;
+                path.moveTo(startX, startY);
+                invalidate();
+                endX = startX;
+                endY = startY - 3;
+                path.lineTo(endX, endY);
+                canvas.drawPath(path, pathColorPaint);
+            }
         } else {
             angleDiff=r_azimuth - theta;
             angleDiffRadian = modifyDirection(angleDiff);
