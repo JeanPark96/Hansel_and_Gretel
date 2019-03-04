@@ -18,8 +18,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,7 +65,8 @@ public class MainActivity extends AppCompatActivity {
     SQLiteDatabase db, imgdb;
     public int imgid;
     SQLiteStatement p;
-
+    ScrollView scroll;
+    HorizontalScrollView horizontalScrollView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,48 +94,10 @@ public class MainActivity extends AppCompatActivity {
         IMGhelper = new ImageDBhelper(this);
         imgdb = IMGhelper.getWritableDatabase();
         path_imageList=IMGhelper.getAllData();
+        scroll=(ScrollView)findViewById(R.id.scrollView);
+        horizontalScrollView=(HorizontalScrollView)findViewById(R.id.horizontal_scroll);
 
-        Bundle extra= getIntent().getExtras();
-        if(extra!=null){
-            int value=extra.getInt("row_id");
-            if(value > 0){
-                Cursor res = IMGhelper.getData(value);
-                imgid = value;
-                //Toast.makeText(getApplicationContext(),"imgid:"+imgid,Toast.LENGTH_LONG).show();
-                res.moveToFirst();
-
-                int i=res.getInt(res.getColumnIndex(IMGhelper.PATH_AVAILABLE_NUM));
-                Toast.makeText(getApplicationContext(),"pathavailable_id:"+i,Toast.LENGTH_LONG).show();
-
-                if(i==1) {
-                    Toast.makeText(getApplicationContext(),"삐삐",Toast.LENGTH_LONG).show();
-                    pathAvailableNumber=1;
-                    newBitmapAvailable=false;
-                    byte[] image = res.getBlob(res.getColumnIndex(IMGhelper.PATH_IMAGE));
-
-                    showCanvas.theta = res.getDouble(res.getColumnIndex(IMGhelper.PATH_FIRST_AZIMUTH));
-                    showCanvas.endX = res.getFloat(res.getColumnIndex(IMGhelper.PATH_LAST_POSITION_X));
-                    showCanvas.endY = res.getFloat(res.getColumnIndex(IMGhelper.PATH_LAST_POSITION_Y));
-
-                   // BitmapFactory.Options option=new BitmapFactory.Options();
-                   // option.inMutable=true;
-                    //Bitmap tempBitmap=BitmapFactory.decodeResource(getResources(),option);
-                    Bitmap tempBitmap=Bitmap.createBitmap(IMGhelper.retrieveImage(image));
-                    Bitmap tempBitmap2=tempBitmap.copy(Bitmap.Config.ARGB_8888,true);
-                    Img.setImageBitmap(tempBitmap2);
-                    newBitmap=showCanvas.setBitmap(tempBitmap2);
-                    //showCanvas.drawBitmap=IMGhelper.retrieveImage(image);
-                    //newBitmap=IMGhelper.retrieveImage(image);
-                   // showCanvas.setBitmap(IMGhelper.retrieveImage(image));
-
-                }
-
-
-                if(!res.isClosed()){
-                    res.close();
-                }
-            }
-        }
+        callPathImageFromDataBase();
 
         Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,6 +125,52 @@ public class MainActivity extends AppCompatActivity {
                 flag = !flag;
             }
         });
+    }
+
+    public void callPathImageFromDataBase() {
+        Bundle extra= getIntent().getExtras();
+        if(extra!=null){
+            int value=extra.getInt("row_id");
+            if(value > 0){
+                Cursor res = IMGhelper.getData(value);
+                imgid = value;
+                //Toast.makeText(getApplicationContext(),"imgid:"+imgid,Toast.LENGTH_LONG).show();
+                res.moveToFirst();
+
+                int i=res.getInt(res.getColumnIndex(IMGhelper.PATH_AVAILABLE_NUM));
+                Toast.makeText(getApplicationContext(),"pathavailable_id:"+i,Toast.LENGTH_LONG).show();
+
+                if(i==1) {
+                    Toast.makeText(getApplicationContext(),"삐삐",Toast.LENGTH_LONG).show();
+                    pathAvailableNumber=1;
+                    newBitmapAvailable=false;
+                    byte[] image = res.getBlob(res.getColumnIndex(IMGhelper.PATH_IMAGE));
+
+                    showCanvas.theta = res.getDouble(res.getColumnIndex(IMGhelper.PATH_FIRST_AZIMUTH));
+                    showCanvas.endX = res.getFloat(res.getColumnIndex(IMGhelper.PATH_LAST_POSITION_X));
+                    showCanvas.endY = res.getFloat(res.getColumnIndex(IMGhelper.PATH_LAST_POSITION_Y));
+
+                    // BitmapFactory.Options option=new BitmapFactory.Options();
+                    // option.inMutable=true;
+                    //Bitmap tempBitmap=BitmapFactory.decodeResource(getResources(),option);
+                    Bitmap tempBitmap=Bitmap.createBitmap(IMGhelper.retrieveImage(image));
+                    Bitmap tempBitmap2=tempBitmap.copy(Bitmap.Config.ARGB_8888,true);
+                    Img.setImageBitmap(tempBitmap2);
+                    newBitmap=showCanvas.setBitmap(tempBitmap2);
+                    //showCanvas.drawBitmap=IMGhelper.retrieveImage(image);
+                    //newBitmap=IMGhelper.retrieveImage(image);
+                    // showCanvas.setBitmap(IMGhelper.retrieveImage(image));
+
+                }
+
+
+                if(!res.isClosed()){
+                    res.close();
+                }
+            }
+        }
+
+
     }
 
     @Override
@@ -316,7 +327,8 @@ public class MainActivity extends AppCompatActivity {
     public void backTracking(View view){
         newBitmap = showCanvas.RotateBitmap(newBitmap);
         newBitmapAvailable=true;
-        showCanvas.onSizeChanged(showCanvas.getWidth(),showCanvas.getHeight(),showCanvas.getWidth(),showCanvas.getHeight());
+       // showCanvas.onSizeChanged(showCanvas.getWidth(),showCanvas.getHeight(),showCanvas.getWidth(),showCanvas.getHeight());
+        showCanvas.onSizeChanged(1000,1000,1000,1000);
         StepValue.Step = 0;
         local_step = 0;
         count = 0;
@@ -352,8 +364,8 @@ public class MainActivity extends AppCompatActivity {
     public Bitmap makeNewBitmapFromPath(String filePath){
         BitmapFactory.Options newBitmapOption= new BitmapFactory.Options();
         newBitmap= BitmapFactory.decodeFile(filePath,newBitmapOption);
-        newBitmap=Bitmap.createScaledBitmap(newBitmap,showCanvas.getWidth(),showCanvas.getHeight(),false);
-
+        //newBitmap=Bitmap.createScaledBitmap(newBitmap,showCanvas.getWidth(),showCanvas.getHeight(),false);
+        newBitmap=Bitmap.createScaledBitmap(newBitmap,1000,1000,false);
         newBitmapAvailable=true;
        // newBitmap = showCanvas.RotateBitmap(newBitmap);
         return newBitmap;

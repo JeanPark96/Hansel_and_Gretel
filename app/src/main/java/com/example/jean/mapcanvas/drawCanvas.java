@@ -39,9 +39,9 @@ public class drawCanvas extends View {
         startAndFinishMarkColorPaint = new Paint();
         intermediatePaint = new Paint();
 
-        pathColorPaint=settingPaint(R.color.blue,10f);
-        startAndFinishMarkColorPaint=settingPaint(R.color.green,5f);
-        intermediatePaint=settingPaint(R.color.black,5f);
+        pathColorPaint=settingPaint(R.color.blue,30f);
+        startAndFinishMarkColorPaint=settingPaint(R.color.green,15f);
+        intermediatePaint=settingPaint(R.color.black,15f);
         canvasPaint=new Paint(Paint.DITHER_FLAG);
 
     }
@@ -61,9 +61,10 @@ public class drawCanvas extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
-        width = getWidth();
-        height = getHeight();
-
+       // width = getWidth();
+       // height = getHeight();
+        width=3000;
+        height=3000;
         if(isBackTrackActivated()){
             path.reset();
 
@@ -78,12 +79,12 @@ public class drawCanvas extends View {
             theta %= 360;
         }else{
             if(MainActivity.pathAvailableNumber==0) {
-                drawBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+                drawBitmap = Bitmap.createBitmap(width,height , Bitmap.Config.ARGB_8888);
             }else{
                 drawBitmap = Bitmap.createBitmap(MainActivity.newBitmap);
             }
             canvas = new Canvas(drawBitmap);
-            firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),width,height,false);
+            firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.blackgrid),width,height,false);
         }
   }
 
@@ -104,7 +105,7 @@ public class drawCanvas extends View {
         if (r_local_step <= 1 && !isBackTrackActivated()) {
             if(MainActivity.pathAvailableNumber==0) {
                 startX = (width / 2);
-                startY = (height / 2) + 300;
+                startY = (height / 2) + 1000;
                 path.moveTo(startX, startY);
                 invalidate();
                 endX = startX;
@@ -148,6 +149,14 @@ public class drawCanvas extends View {
         super.onDraw(canvas);
         canvas.drawBitmap(firstBitmap,0,0,canvasPaint);
         canvas.drawBitmap(drawBitmap,0,0,canvasPaint);
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+       // int width = MeasureSpec.getSize(widthMeasureSpec);
+        int width=3000+50;
+        int height = 3000+50; // Since 3000 is bottom of last Rect to be drawn added and 50 for padding.
+        setMeasuredDimension(width, height);
     }
 
     public void finished(){
