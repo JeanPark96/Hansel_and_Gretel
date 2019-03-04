@@ -2,7 +2,6 @@ package com.example.jean.mapcanvas;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
@@ -84,7 +83,8 @@ public class drawCanvas extends View {
                 drawBitmap = Bitmap.createBitmap(MainActivity.newBitmap);
             }
             canvas = new Canvas(drawBitmap);
-            firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.blackgrid),width,height,false);
+            //firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.blackgrid),width,height,false);
+
         }
   }
 
@@ -106,6 +106,7 @@ public class drawCanvas extends View {
             if(MainActivity.pathAvailableNumber==0) {
                 startX = (width / 2);
                 startY = (height / 2) + 1000;
+                //canvas.translate(0,-startY);
                 path.moveTo(startX, startY);
                 invalidate();
                 endX = startX;
@@ -147,15 +148,15 @@ public class drawCanvas extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawBitmap(firstBitmap,0,0,canvasPaint);
+       // canvas.drawBitmap(firstBitmap,0,0,canvasPaint);
         canvas.drawBitmap(drawBitmap,0,0,canvasPaint);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
        // int width = MeasureSpec.getSize(widthMeasureSpec);
-        int width=3000+50;
-        int height = 3000+50; // Since 3000 is bottom of last Rect to be drawn added and 50 for padding.
+        int width=3000;
+        int height = 3000; // Since 3000 is bottom of last Rect to be drawn added and 50 for padding.
         setMeasuredDimension(width, height);
     }
 

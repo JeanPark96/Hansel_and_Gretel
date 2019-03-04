@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     public static boolean newBitmapAvailable=false;
     public static Bitmap newBitmap;
     public static int pathAvailableNumber;
+    private int scrollPos=0;
     private SensorManager sensorManager;
     private Sensor accelerometerSensor; //가속도 센서
     private Sensor magneticSensor; //지자기 센서
@@ -97,7 +98,12 @@ public class MainActivity extends AppCompatActivity {
         scroll=(ScrollView)findViewById(R.id.scrollView);
         horizontalScrollView=(HorizontalScrollView)findViewById(R.id.horizontal_scroll);
 
+
         callPathImageFromDataBase();
+        scroll.removeCallbacks(verticalScrollDrag);
+       scroll.post(verticalScrollDrag);
+       horizontalScrollView.post(horizontalScrollDrag);
+
 
         Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,6 +132,30 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private Runnable verticalScrollDrag=new Runnable() {
+        @Override
+        public void run() {
+            if(local_step<20) {
+                scroll.smoothScrollBy(0, 2000);
+            }else if(local_step>=20&&local_step<40){
+                scroll.smoothScrollBy(0,1500);
+            }else if(local_step<60){
+                scroll.smoothScrollBy(0,1000);
+            }
+            else{
+                scroll.smoothScrollBy(0,500);
+            }
+        }
+
+    };
+
+    private Runnable horizontalScrollDrag=new Runnable() {
+        @Override
+        public void run() {
+            horizontalScrollView.smoothScrollBy(1000,0);
+        }
+    };
 
     public void callPathImageFromDataBase() {
         Bundle extra= getIntent().getExtras();
@@ -208,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //path_imageList=IMGhelper.getAllData();
+
     }
 
     private class accelerometerListener implements SensorEventListener {
@@ -321,7 +351,14 @@ public class MainActivity extends AppCompatActivity {
         orientationText.setText(orientation_result); //방향 출력
         if(local_step==1)
             first_azimuth=azimuth;
+        moveScrollView();
         showCanvas.drawing(azimuth,local_step);
+    }
+    public void moveScrollView(){
+        scrollPos							= 	(int) (scroll.getScrollY() - 10.0);
+
+        scroll.scrollTo(0,scrollPos);
+        Log.e("moveScrollView","moveScrollView");
     }
 
     public void backTracking(View view){
