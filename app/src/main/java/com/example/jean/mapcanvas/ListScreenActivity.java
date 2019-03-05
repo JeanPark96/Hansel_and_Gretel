@@ -31,11 +31,11 @@ import java.util.Date;
 
 public class ListScreenActivity extends AppCompatActivity {
     ListView listView;
-    ImageButton shareButton, folderAddButton, beginButton;
+    ImageButton shareButton, folderAddButton, beginButton, helpButton;
     EditText pathName_editText;
     long now = System.currentTimeMillis();
     Date currentDate = new Date(now);
-    AlertDialog.Builder delete_ad, begin_ad;
+    AlertDialog.Builder delete_ad, begin_ad, help_ad;
 
     private DBhelper helper; ImageDBhelper IMGhelper;
     SQLiteDatabase db, imgdb;
@@ -52,9 +52,11 @@ public class ListScreenActivity extends AppCompatActivity {
         shareButton = findViewById(R.id.shareButton);
         folderAddButton = findViewById(R.id.folderAddButton);
         beginButton = findViewById(R.id.beginButton);
+        helpButton = findViewById(R.id.helpButton);
         pathName_editText = new EditText(ListScreenActivity.this);
         delete_ad = new AlertDialog.Builder(ListScreenActivity.this);
         begin_ad = new AlertDialog.Builder(ListScreenActivity.this);
+        help_ad = new AlertDialog.Builder(ListScreenActivity.this);
 
         helper = new DBhelper(this);
         db = helper.getWritableDatabase();
@@ -133,6 +135,23 @@ public class ListScreenActivity extends AppCompatActivity {
         path_imageList=IMGhelper.getAllData();
         myList=new CustomList(pathList,this);
         listView.setAdapter(myList);
+    }
+
+    public void helpUser(View view){
+        final String TAG = "Help_Alert_Dialog";
+        help_ad.setTitle("도움말");       // 제목 설정
+        help_ad.setMessage("사용법");   // 내용 설정
+
+        help_ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.v(TAG, "Yes Btn Click");
+
+                dialog.dismiss();
+            }
+        });
+
+        help_ad.show();
     }
 
     @SuppressLint("RestrictedApi")

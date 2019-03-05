@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.widget.ScrollView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,7 +44,6 @@ public class drawCanvas extends View {
         startAndFinishMarkColorPaint=settingPaint(R.color.green,5f);
         intermediatePaint=settingPaint(R.color.black,5f);
         canvasPaint=new Paint(Paint.DITHER_FLAG);
-
     }
 
     public Paint settingPaint(int colorId,float strokeWidth){
@@ -113,7 +113,6 @@ public class drawCanvas extends View {
                 path.lineTo(endX, endY);
                 canvas.drawOval(startX - 8, startY - 8, startX + 8, endY + 8, startAndFinishMarkColorPaint);//스타트 마크, 여기에 있어야 사라지지 않음
                 canvas.drawPath(path, pathColorPaint);
-
             }
             else{
                 startX=endX;

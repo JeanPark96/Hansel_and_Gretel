@@ -18,8 +18,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,13 +65,31 @@ public class MainActivity extends AppCompatActivity {
     DBhelper dbHelper;
     SQLiteDatabase db, imgdb;
     public int imgid;
-    SQLiteStatement p;
+    ScrollView scrollView;
+    HorizontalScrollView horscrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         showCanvas= (drawCanvas) findViewById(R.id.drawing);
+
+        scrollView = (ScrollView)findViewById(R.id.scrollView);
+        scrollView.setVerticalScrollBarEnabled(true);
+        horscrollView = (HorizontalScrollView)findViewById(R.id.horscrollView);
+        horscrollView.setHorizontalScrollBarEnabled(true);
+
+        scrollView.post(new Runnable() {
+            @Override public void run() {
+                scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        });
+        horscrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                horscrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+            }
+        });
 
         Btn = (ImageButton) findViewById(R.id.start_button);
         closeButton = (ImageButton) findViewById(R.id.close_button);
@@ -124,9 +145,7 @@ public class MainActivity extends AppCompatActivity {
                     //showCanvas.drawBitmap=IMGhelper.retrieveImage(image);
                     //newBitmap=IMGhelper.retrieveImage(image);
                    // showCanvas.setBitmap(IMGhelper.retrieveImage(image));
-
                 }
-
 
                 if(!res.isClosed()){
                     res.close();
