@@ -1,11 +1,11 @@
 package com.example.jean.mapcanvas;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Sensor;
@@ -21,7 +21,6 @@ import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     int count = StepValue.Step;
     private long lastTime;
     int local_step,n=0;
+    int received_row_id;
     private float deltaTotalAcc, x, y, z, azimuth, first_azimuth, last_azimuth, pitch, position_x,position_y,roll,totalAccDiff,lastDeltaTotalAcc,low_peak,high_peak,totalAbsAcc,lastTotalAbsAcc;
     private float customThresholdTotal=0,averageCustomThreshold=0;
     private static double AMPLITUDE_THRESHOLD = 2.1;
@@ -215,7 +215,11 @@ public class MainActivity extends AppCompatActivity {
                 String name = pathName_editText.getText().toString();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                 String date = sdf.format(currentDate);
-                db.execSQL("INSERT INTO path VALUES(null,'"+name+"','"+date+"');");
+                ContentValues content= new ContentValues();
+                content.put(helper.PATH_NAME,name);
+                content.put(helper.PATH_DATE,date);
+                //db.execSQL("INSERT INTO path VALUES(null,'"+name+"','"+date+"');");
+                received_row_id=(int)db.insert(helper.DATABASE_TABLE,null,content);
 
                 byte[] image= null;
                 int path_available=0;
@@ -420,7 +424,10 @@ public class MainActivity extends AppCompatActivity {
                 last_azimuth = azimuth;
                 position_x = showCanvas.endX;
                 position_y = showCanvas.endY;
-                IMGhelper.updateDB(imgid,1,image,first_azimuth,last_azimuth,position_x,position_y);
+                if(received_row_id!=0)
+                    IMGhelper.updateDB(received_row_id,1,image,first_azimuth,last_azimuth,position_x,position_y);
+                else
+                    IMGhelper.updateDB(imgid,1,image,first_azimuth,last_azimuth,position_x,position_y);
                 Toast.makeText(getApplicationContext(),"이미지id:"+imgid,Toast.LENGTH_LONG).show();
                 Toast.makeText(getApplicationContext(),"바이트:"+image,Toast.LENGTH_LONG).show();
             }

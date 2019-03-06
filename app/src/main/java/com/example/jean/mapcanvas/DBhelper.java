@@ -9,10 +9,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 public class DBhelper extends SQLiteOpenHelper {
@@ -20,7 +17,7 @@ public class DBhelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME="path.db";
     private static final int DATABASE_VERSION=2;
     //Table Name
-    private static final String DATABASE_TABLE="path_table";
+    public static final String DATABASE_TABLE="path";
     //Column Name
     public static final String PATH_NAME="name";
     public static final String PATH_DATE="date";
