@@ -46,8 +46,19 @@
         android:layout_height="40dp"
         android:src="@drawable/close"
         android:scaleType="fitCenter"
-        android:layout_alignParentRight="true"
+        android:layout_toLeftOf="@id/beginButton"
         android:onClick="closeButton"
+        android:background="@android:color/transparent"
+        android:padding="5dp"/>
+
+    <ImageButton
+        android:id="@+id/beginButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/begin"
+        android:scaleType="fitCenter"
+        android:onClick="beginPath"
+        android:layout_alignParentRight="true"
         android:background="@android:color/transparent"
         android:padding="5dp"/>
 
@@ -170,6 +181,16 @@
                 android:background="@android:color/transparent"
                 android:padding="5dp"/>
 
+            <ImageButton
+                android:id="@+id/backTracking_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/backtracking"
+                android:scaleType="fitCenter"
+                android:onClick="backTracking"
+                android:background="@android:color/transparent"
+                android:padding="5dp"/>
+
             <Button
                 android:id="@+id/save_button"
                 android:layout_width="40dp"
@@ -179,12 +200,12 @@
                 android:onClick="saveCurrentPath"/>
 
             <ImageButton
-                android:id="@+id/backTracking_button"
+                android:id="@+id/list_button"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@drawable/backtracking"
+                android:src="@drawable/list"
                 android:scaleType="fitCenter"
-                android:onClick="backTracking"
+                android:onClick="goToList"
                 android:background="@android:color/transparent"
                 android:padding="5dp"/>
         </LinearLayout>

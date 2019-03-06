@@ -21,8 +21,8 @@ public class ImageDBhelper extends SQLiteOpenHelper {
     //Table Name
     private static final String DATABASE_TABLE="image_table";
     //Column Name
-    public static final String PATH_IMAGE="image";
     public static final String PATH_AVAILABLE_NUM="path_available";
+    public static final String PATH_IMAGE="image";
     public static final String PATH_FIRST_AZIMUTH="first_azimuth";
     public static final String PATH_LAST_AZIMUTH="last_azimuth";
     public static final String PATH_LAST_POSITION_X="path_position_x";
@@ -46,8 +46,8 @@ public class ImageDBhelper extends SQLiteOpenHelper {
     public boolean updateDB(int id,int path_available,byte[] image,float fisrt_azimuth,float last_azimuth, float path_position_x, float path_position_y){
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues content=new ContentValues();
-        content.put(PATH_IMAGE,image);
         content.put(PATH_AVAILABLE_NUM,path_available);
+        content.put(PATH_IMAGE,image);
         content.put(PATH_FIRST_AZIMUTH, fisrt_azimuth);
         content.put(PATH_LAST_AZIMUTH, last_azimuth);
         content.put(PATH_LAST_POSITION_X, path_position_x);

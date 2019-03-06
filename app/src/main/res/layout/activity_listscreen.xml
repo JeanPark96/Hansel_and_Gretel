@@ -40,12 +40,13 @@
             android:padding="5dp" />
 
         <ImageButton
-            android:id="@+id/beginButton"
+            android:id="@+id/backToMainButton"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/begin"
+            android:src="@drawable/back"
             android:scaleType="fitCenter"
-            android:onClick="beginPath"
+            android:onClick="backToMain"
+            android:layout_alignParentRight="true"
             android:background="@android:color/transparent"
             android:padding="5dp"/>
     </LinearLayout>

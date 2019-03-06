@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +22,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,18 +34,14 @@ import java.util.Date;
 
 public class ListScreenActivity extends AppCompatActivity {
     ListView listView;
-    ImageButton shareButton, folderAddButton, beginButton, helpButton;
-    EditText pathName_editText;
-    long now = System.currentTimeMillis();
-    Date currentDate = new Date(now);
-    AlertDialog.Builder delete_ad, begin_ad, help_ad;
+    ImageButton shareButton, folderAddButton, helpButton;
+    AlertDialog.Builder delete_ad, help_ad;
 
     private DBhelper helper; ImageDBhelper IMGhelper;
     SQLiteDatabase db, imgdb;
     CustomList myList;
     ArrayList<PathInfo> pathList;
-    ArrayList<ImageInfo> path_imageList;
-    Intent temp_intent;
+    ArrayList<ImageInfo> path_imageList;;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,11 +50,8 @@ public class ListScreenActivity extends AppCompatActivity {
 
         shareButton = findViewById(R.id.shareButton);
         folderAddButton = findViewById(R.id.folderAddButton);
-        beginButton = findViewById(R.id.beginButton);
         helpButton = findViewById(R.id.helpButton);
-        pathName_editText = new EditText(ListScreenActivity.this);
         delete_ad = new AlertDialog.Builder(ListScreenActivity.this);
-        begin_ad = new AlertDialog.Builder(ListScreenActivity.this);
         help_ad = new AlertDialog.Builder(ListScreenActivity.this);
 
         helper = new DBhelper(this);
@@ -81,8 +77,8 @@ public class ListScreenActivity extends AppCompatActivity {
                 final Bundle data=new Bundle();
                 data.putInt("row_id",id);
 
-                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                //Toast.makeText(getApplicationContext(),"imgid:"+id,Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                Toast.makeText(getApplicationContext(),"ListScreen_id:"+id,Toast.LENGTH_LONG).show();
                 intent.putExtras(data);
                 startActivity(intent);
             }
@@ -127,6 +123,16 @@ public class ListScreenActivity extends AppCompatActivity {
         }
     }
 
+    public void backToMain(View view){
+        MainActivity.newBitmapAvailable=false;
+        MainActivity.newBitmap=null;
+        MainActivity.showCanvas.drawBitmap=null;
+        MainActivity.pathAvailableNumber=0;
+
+        Intent intent = new Intent(ListScreenActivity.this, MainActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -146,57 +152,11 @@ public class ListScreenActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Log.v(TAG, "Yes Btn Click");
-
                 dialog.dismiss();
             }
         });
 
         help_ad.show();
-    }
-
-    @SuppressLint("RestrictedApi")
-    public void beginPath(View view){
-        final String TAG = "Begin_Alert_Dialog";
-        begin_ad.setTitle("NEW");       // 제목 설정
-        begin_ad.setMessage("경로명");   // 내용 설정
-        begin_ad.setView(pathName_editText, 50, 0, 50, 0);
-
-        begin_ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Log.v(TAG, "Yes Btn Click");
-                String value = pathName_editText.getText().toString();
-
-                String name = pathName_editText.getText().toString();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                String date = sdf.format(currentDate);
-                db.execSQL("INSERT INTO path VALUES(null,'"+name+"','"+date+"');");
-
-                byte[] image= null;
-                int path_available=0;
-                float first_azimuth=0;
-                float last_azimuth=0;
-                float position_x=0;
-                float position_y=0;
-                imgdb.execSQL("INSERT INTO path_image VALUES(null,'"+path_available+"','"+image+"','"+first_azimuth+"','"+last_azimuth+"','"+position_x+"','"+position_y+"');");
-                onResume();
-                dialog.dismiss();
-            }
-        });
-
-        begin_ad.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Log.v(TAG,"No Btn Click");
-                dialog.dismiss();
-            }
-        });
-
-        begin_ad.show();
-    }
-
-    public void modifyPath(View view){
-        startActivity(temp_intent);
     }
 
     public class CustomList extends BaseAdapter {

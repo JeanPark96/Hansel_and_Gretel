@@ -26,7 +26,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import static android.app.Service.START_STICKY;
 
@@ -54,42 +56,45 @@ public class MainActivity extends AppCompatActivity {
     private Sensor magneticSensor; //지자기 센서
     private SensorEventListener accL;
     private SensorEventListener magN;
-
     float[] Gravity;
     float[] Magnetic;
+
     public static drawCanvas showCanvas;
     ImageView orientationImg;
     public static ImageView Img;
-    //public static byte[] image;
-    ImageDBhelper IMGhelper;
-    ArrayList<ImageInfo> path_imageList;
-    DBhelper dbHelper;
+    ImageDBhelper IMGhelper; DBhelper helper;
+    ArrayList<ImageInfo> path_imageList; ArrayList<PathInfo> pathList;
     SQLiteDatabase db, imgdb;
-    public int imgid;
-    ScrollView scrollView;
-    HorizontalScrollView horscrollView;
+    public int imgid = 1;
+    ScrollView scrollView; HorizontalScrollView horscrollView;
+    AlertDialog.Builder begin_ad;
+    EditText pathName_editText;
+    long now = System.currentTimeMillis();
+    Date currentDate = new Date(now);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         showCanvas= (drawCanvas) findViewById(R.id.drawing);
+
+        helper = new DBhelper(this);
+        db = helper.getWritableDatabase();
+        pathList = helper.getAllData();
+
+        IMGhelper = new ImageDBhelper(this);
+        imgdb = IMGhelper.getWritableDatabase();
+        path_imageList=IMGhelper.getAllData();
+
+        begin_ad = new AlertDialog.Builder(MainActivity.this);
+        pathName_editText = new EditText(MainActivity.this);
 
         scrollView = (ScrollView)findViewById(R.id.scrollView);
         scrollView.setVerticalScrollBarEnabled(true);
         horscrollView = (HorizontalScrollView)findViewById(R.id.horscrollView);
         horscrollView.setHorizontalScrollBarEnabled(true);
 
-        /*scrollView.post(new Runnable() {
-            @Override public void run() {
-                scrollView.fullScroll(ScrollView.FOCUS_DOWN);
-            }
-        });
-        horscrollView.post(new Runnable() {
-            @Override
-            public void run() {
-                horscrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT);}
-        });*/
         scrollView.removeCallbacks(verticalScrollDrag);
         scrollView.post(verticalScrollDrag);
         horscrollView.post(horizontalScrollDrag);
@@ -112,51 +117,10 @@ public class MainActivity extends AppCompatActivity {
         accL = new accelerometerListener();
         magN = new magneticListener();
 
-        IMGhelper = new ImageDBhelper(this);
-        imgdb = IMGhelper.getWritableDatabase();
-        path_imageList=IMGhelper.getAllData();
-
-        Bundle extra= getIntent().getExtras();
-        if(extra!=null){
-            int value=extra.getInt("row_id");
-            if(value > 0){
-                Cursor res = IMGhelper.getData(value);
-                imgid = value;
-                //Toast.makeText(getApplicationContext(),"imgid:"+imgid,Toast.LENGTH_LONG).show();
-                res.moveToFirst();
-
-                int i=res.getInt(res.getColumnIndex(IMGhelper.PATH_AVAILABLE_NUM));
-                Toast.makeText(getApplicationContext(),"pathavailable_id:"+i,Toast.LENGTH_LONG).show();
-
-                if(i==1) {
-                    Toast.makeText(getApplicationContext(),"삐삐",Toast.LENGTH_LONG).show();
-                    pathAvailableNumber=1;
-                    newBitmapAvailable=false;
-                    byte[] image = res.getBlob(res.getColumnIndex(IMGhelper.PATH_IMAGE));
-
-                    showCanvas.theta = res.getDouble(res.getColumnIndex(IMGhelper.PATH_FIRST_AZIMUTH));
-                    showCanvas.endX = res.getFloat(res.getColumnIndex(IMGhelper.PATH_LAST_POSITION_X));
-                    showCanvas.endY = res.getFloat(res.getColumnIndex(IMGhelper.PATH_LAST_POSITION_Y));
-
-                   // BitmapFactory.Options option=new BitmapFactory.Options();
-                   // option.inMutable=true;
-                    //Bitmap tempBitmap=BitmapFactory.decodeResource(getResources(),option);
-                    Bitmap tempBitmap=Bitmap.createBitmap(IMGhelper.retrieveImage(image));
-                    Bitmap tempBitmap2=tempBitmap.copy(Bitmap.Config.ARGB_8888,true);
-                    Img.setImageBitmap(tempBitmap2);
-                    newBitmap=showCanvas.setBitmap(tempBitmap2);
-                    //showCanvas.drawBitmap=IMGhelper.retrieveImage(image);
-                    //newBitmap=IMGhelper.retrieveImage(image);
-                   // showCanvas.setBitmap(IMGhelper.retrieveImage(image));
-                }
-
-                if(!res.isClosed()){
-                    res.close();
-                }
-            }
-        }
+        callPathImageFromDataBase();
 
         Btn.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("RestrictedApi")
             @Override
             public void onClick(View v) {
                 if (flag) {
@@ -188,9 +152,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run(){
                 scrollView.smoothScrollBy(0, 1800);
-
         }
-
     };
 
     private Runnable horizontalScrollDrag=new Runnable() {
@@ -235,7 +197,83 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //path_imageList=IMGhelper.getAllData();
+    }
+
+    @SuppressLint("RestrictedApi")
+    public void beginPath(View view){
+        final String TAG = "Begin_Alert_Dialog";
+        begin_ad.setTitle("NEW");       // 제목 설정
+        begin_ad.setMessage("경로명");   // 내용 설정
+        begin_ad.setView(pathName_editText, 50, 0, 50, 0);
+
+        begin_ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.v(TAG, "Yes Btn Click");
+                String value = pathName_editText.getText().toString();
+
+                String name = pathName_editText.getText().toString();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String date = sdf.format(currentDate);
+                db.execSQL("INSERT INTO path VALUES(null,'"+name+"','"+date+"');");
+
+                byte[] image= null;
+                int path_available=0;
+                float first_azimuth=0;
+                float last_azimuth=0;
+                float position_x=0;
+                float position_y=0;
+                imgdb.execSQL("INSERT INTO path_image VALUES(null,'"+path_available+"','"+image+"','"+first_azimuth+"','"+last_azimuth+"','"+position_x+"','"+position_y+"');");
+                onResume();
+                dialog.dismiss();
+            }
+        });
+
+        begin_ad.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.v(TAG,"No Btn Click");
+                dialog.dismiss();
+            }
+        });
+
+        begin_ad.show();
+    }
+
+    public void callPathImageFromDataBase() {
+        Bundle extra= getIntent().getExtras();
+        if(extra!=null){
+            int value=extra.getInt("row_id");
+            if(value > 0){
+                Cursor res = IMGhelper.getData(value);
+                imgid = value;
+                Toast.makeText(getApplicationContext(),"Main_id:"+imgid,Toast.LENGTH_LONG).show();
+                res.moveToFirst();
+
+                int i=res.getInt(res.getColumnIndex(IMGhelper.PATH_AVAILABLE_NUM));
+                Toast.makeText(getApplicationContext(),"pathavailable_id:"+i,Toast.LENGTH_LONG).show();
+
+                if(i==1) {
+                    Toast.makeText(getApplicationContext(),"삐삐",Toast.LENGTH_LONG).show();
+                    pathAvailableNumber=1;
+                    newBitmapAvailable=false;
+                    byte[] image = res.getBlob(res.getColumnIndex(IMGhelper.PATH_IMAGE));
+
+                    showCanvas.theta = res.getDouble(res.getColumnIndex(IMGhelper.PATH_FIRST_AZIMUTH));
+                    showCanvas.endX = res.getFloat(res.getColumnIndex(IMGhelper.PATH_LAST_POSITION_X));
+                    showCanvas.endY = res.getFloat(res.getColumnIndex(IMGhelper.PATH_LAST_POSITION_Y));
+
+                    Bitmap tempBitmap=Bitmap.createBitmap(IMGhelper.retrieveImage(image));
+                    Bitmap tempBitmap2=tempBitmap.copy(Bitmap.Config.ARGB_8888,true);
+                    Img.setImageBitmap(tempBitmap2);
+                    newBitmap=showCanvas.setBitmap(tempBitmap2);
+                }
+
+                if(!res.isClosed()){
+                    res.close();
+                }
+            }
+        }
     }
 
     private class accelerometerListener implements SensorEventListener {
@@ -354,7 +392,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void moveScrollView(){
         scrollPos = (int) (scrollView.getScrollY() - 10.0);
-
         scrollView.scrollTo(0,scrollPos);
         Log.e("moveScrollView","moveScrollView");
     }
@@ -395,18 +432,30 @@ public class MainActivity extends AppCompatActivity {
         makeNewBitmapFromPath(filePath);
     }
 
+    public void goToList(View view){
+        newBitmapAvailable=false;
+        newBitmap=null;
+        showCanvas.drawBitmap=null;
+        pathAvailableNumber=0;
+
+        Intent intent = new Intent(MainActivity.this, ListScreenActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     public Bitmap makeNewBitmapFromPath(String filePath){
         BitmapFactory.Options newBitmapOption= new BitmapFactory.Options();
         newBitmap= BitmapFactory.decodeFile(filePath,newBitmapOption);
         newBitmap=Bitmap.createScaledBitmap(newBitmap,showCanvas.getWidth(),showCanvas.getHeight(),false);
 
         newBitmapAvailable=true;
-       // newBitmap = showCanvas.RotateBitmap(newBitmap);
         return newBitmap;
     }
 
     public void closeButton(View view){
         AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+        alert.setMessage("강제 종료하시겠습니까?");
+
         alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -422,13 +471,13 @@ public class MainActivity extends AppCompatActivity {
                 newBitmap=null;
                 showCanvas.drawBitmap=null;
                 pathAvailableNumber=0;
-                Intent intent = new Intent(MainActivity.this, ListScreenActivity.class);
+
+                Intent intent = new Intent(MainActivity.this, StartScreenActivity.class);
                 startActivity(intent);
                 finish();
             }
         });
 
-        alert.setMessage("강제 종료하시겠습니까?");
         alert.show();
     }
 }
