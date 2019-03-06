@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     public static boolean newBitmapAvailable=false;
     public static Bitmap newBitmap;
     public static int pathAvailableNumber;
+    private int scrollPos=0;
     private SensorManager sensorManager;
     private Sensor accelerometerSensor; //가속도 센서
     private Sensor magneticSensor; //지자기 센서
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         horscrollView = (HorizontalScrollView)findViewById(R.id.horscrollView);
         horscrollView.setHorizontalScrollBarEnabled(true);
 
-        scrollView.post(new Runnable() {
+        /*scrollView.post(new Runnable() {
             @Override public void run() {
                 scrollView.fullScroll(ScrollView.FOCUS_DOWN);
             }
@@ -87,9 +88,11 @@ public class MainActivity extends AppCompatActivity {
         horscrollView.post(new Runnable() {
             @Override
             public void run() {
-                horscrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
-            }
-        });
+                horscrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT);}
+        });*/
+        scrollView.removeCallbacks(verticalScrollDrag);
+        scrollView.post(verticalScrollDrag);
+        horscrollView.post(horizontalScrollDrag);
 
         Btn = (ImageButton) findViewById(R.id.start_button);
         closeButton = (ImageButton) findViewById(R.id.close_button);
@@ -180,6 +183,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private Runnable verticalScrollDrag=new Runnable() {
+        @Override
+        public void run(){
+                scrollView.smoothScrollBy(0, 1800);
+
+        }
+
+    };
+
+    private Runnable horizontalScrollDrag=new Runnable() {
+        @Override
+        public void run() {
+            horscrollView.smoothScrollBy(600,0);
+        }
+    };
 
     @Override
     protected void onStop() {
@@ -329,7 +348,15 @@ public class MainActivity extends AppCompatActivity {
         orientationText.setText(orientation_result); //방향 출력
         if(local_step==1)
             first_azimuth=azimuth;
+        moveScrollView();
         showCanvas.drawing(azimuth,local_step);
+    }
+
+    public void moveScrollView(){
+        scrollPos = (int) (scrollView.getScrollY() - 10.0);
+
+        scrollView.scrollTo(0,scrollPos);
+        Log.e("moveScrollView","moveScrollView");
     }
 
     public void backTracking(View view){

@@ -40,9 +40,9 @@ public class drawCanvas extends View {
         startAndFinishMarkColorPaint = new Paint();
         intermediatePaint = new Paint();
 
-        pathColorPaint=settingPaint(R.color.blue,10f);
-        startAndFinishMarkColorPaint=settingPaint(R.color.green,5f);
-        intermediatePaint=settingPaint(R.color.black,5f);
+        pathColorPaint=settingPaint(R.color.blue,15f);
+        startAndFinishMarkColorPaint=settingPaint(R.color.green,8f);
+        intermediatePaint=settingPaint(R.color.black,8f);
         canvasPaint=new Paint(Paint.DITHER_FLAG);
     }
 
@@ -71,7 +71,7 @@ public class drawCanvas extends View {
             startX = width-endX;
             startY = height-endY;
 
-            pathColorPaint=settingPaint(R.color.gray,10f);
+            pathColorPaint=settingPaint(R.color.gray,15f);
             path.moveTo(startX, startY);
 
             theta += 180; //backTracking 시 길 방향 보정
@@ -104,14 +104,14 @@ public class drawCanvas extends View {
         if (r_local_step <= 1 && !isBackTrackActivated()) {
             if(MainActivity.pathAvailableNumber==0) {
                 startX = (width / 2);
-                startY = (height / 2) + 300;
+                startY = (height / 2) + 700;
                 path.moveTo(startX, startY);
                 invalidate();
                 endX = startX;
                 endY = startY - 3;
                 theta = r_azimuth;
                 path.lineTo(endX, endY);
-                canvas.drawOval(startX - 8, startY - 8, startX + 8, endY + 8, startAndFinishMarkColorPaint);//스타트 마크, 여기에 있어야 사라지지 않음
+                canvas.drawOval(startX - 12, startY - 12, startX + 12, endY + 12, startAndFinishMarkColorPaint);//스타트 마크, 여기에 있어야 사라지지 않음
                 canvas.drawPath(path, pathColorPaint);
             }
             else{
@@ -132,7 +132,7 @@ public class drawCanvas extends View {
             canvas.drawPath(path, pathColorPaint);
 
             if(r_local_step % 80 == 0 && r_local_step!=0) {
-                canvas.drawOval(startX-8, startY-8, startX+8, endY+8, intermediatePaint);
+                canvas.drawOval(startX-12, startY-12, startX+12, endY+12, intermediatePaint);
             }
         }
 
@@ -150,8 +150,8 @@ public class drawCanvas extends View {
     }
 
     public void finished(){
-        startAndFinishMarkColorPaint=settingPaint(R.color.red,5f);
-        canvas.drawOval(startX-8,startY-8,startX+8,endY+8, startAndFinishMarkColorPaint);
+        startAndFinishMarkColorPaint=settingPaint(R.color.red,8f);
+        canvas.drawOval(startX-12,startY-12,startX+12,endY+12, startAndFinishMarkColorPaint);
         invalidate();
     }
 

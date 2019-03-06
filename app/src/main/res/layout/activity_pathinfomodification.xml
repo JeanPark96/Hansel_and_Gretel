@@ -14,21 +14,21 @@
 
     <TextView
         android:id="@+id/name_textView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="경로명 : "
-        android:textSize="20dp"
-        android:textColor="#FFFFFF"
+        android:layout_below="@+id/image"
         android:paddingLeft="10dp"
         android:paddingTop="10dp"
-        android:layout_below="@+id/image" />
+        android:text="경로명 : "
+        android:textColor="#FFFFFF"
+        android:textSize="20dp" />
     <EditText
         android:id="@+id/name_delete"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#FFFFFF"
         android:layout_below="@+id/image"
-        android:layout_toRightOf="@+id/name_textView"/>
+        android:layout_toRightOf="@+id/name_textView"
+        android:textColor="#FFFFFF" />
 
     <TextView
         android:id="@+id/date_textView"
