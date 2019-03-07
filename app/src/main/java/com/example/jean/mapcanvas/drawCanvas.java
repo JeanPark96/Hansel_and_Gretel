@@ -89,8 +89,7 @@ public class drawCanvas extends View {
 
     public boolean isBackTrackActivated(){
         if(MainActivity.newBitmapAvailable==true) {
-            Bitmap tempBitmap = MainActivity.newBitmap;
-            bitmapForbackTracking = tempBitmap.copy(Bitmap.Config.ARGB_8888,true);;
+            bitmapForbackTracking = MainActivity.newBitmap;
 
             return true;
         }
