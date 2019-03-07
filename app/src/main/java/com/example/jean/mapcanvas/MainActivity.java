@@ -14,6 +14,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -76,7 +77,8 @@ public class MainActivity extends AppCompatActivity {
     EditText pathName_editText;
     long now = System.currentTimeMillis();
     Date currentDate = new Date(now);
-    RadioGroup radioGroup;
+    RadioButton man_stride, woman_stride;
+    boolean man=false, woman=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,9 +88,10 @@ public class MainActivity extends AppCompatActivity {
         setTitle("PATH_RECORD");
         setContentView(R.layout.activity_main);
 
-        radioGroup = (RadioGroup)findViewById(R.id.radioGroup);
-
         showCanvas= (drawCanvas) findViewById(R.id.drawing);
+
+        man_stride = (RadioButton)findViewById(R.id.man_stride);
+        woman_stride = (RadioButton)findViewById(R.id.woman_stride);
 
         helper = new DBhelper(this);
         db = helper.getWritableDatabase();
@@ -390,17 +393,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void printResult(){
         countText.setText(Integer.toString(local_step)); //step 수 출력
-
-        int id = radioGroup.getCheckedRadioButtonId();
-        RadioButton rb = (RadioButton) findViewById(id);
-        if(rb.getText() == "남자 평균보폭"){
-            stride_length = 0.76;
-        } else if(rb.getText() == "여자 평균보폭"){
-            stride_length = 0.67;
-        } else{
-            stride_length = Double.parseDouble(strideText.getText().toString()); //보폭 변환
-        }
         numOfStep = Double.parseDouble(countText.getText().toString()); //step 수 변환
+        stride_length = Double.parseDouble(strideText.getText().toString()); //보폭 변환
         distance_result = stride_length*numOfStep; //거리 계산
         distanceText.setText(Double.toString(distance_result)); //거리 출력
 
@@ -408,6 +402,20 @@ public class MainActivity extends AppCompatActivity {
             first_azimuth=azimuth;
         moveScrollView();
         showCanvas.drawing(azimuth,local_step);
+    }
+
+    public void averageStrideSet(View view){
+        switch (view.getId()){
+            case R.id.man_stride:
+                man = true;
+                strideText.setText("0.76");
+                break;
+
+            case R.id.woman_stride:
+                woman = true;
+                strideText.setText("0.67");
+                break;
+        }
     }
 
     public void moveScrollView(){

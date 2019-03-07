@@ -145,7 +145,8 @@
             android:layout_height="wrap_content"
             android:text="남자 평균보폭"
             android:textColor="#696969"
-            android:textSize="10dp"/>
+            android:textSize="10dp"
+            android:onClick="averageStrideSet"/>
         <RadioButton
             android:id="@+id/woman_stride"
             android:layout_width="wrap_content"
@@ -153,7 +154,8 @@
             android:layout_toRightOf="@+id/man_stride"
             android:text="여자 평균보폭"
             android:textColor="#696969"
-            android:textSize="10dp"/>
+            android:textSize="10dp"
+            android:onClick="averageStrideSet"/>
     </RadioGroup>
 
     <LinearLayout
