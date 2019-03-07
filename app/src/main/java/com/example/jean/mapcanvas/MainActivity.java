@@ -8,6 +8,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -17,6 +19,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
@@ -34,7 +37,7 @@ import static android.app.Service.START_STICKY;
 public class MainActivity extends AppCompatActivity {
     static final float ALPHA = 0.8f; // if ALPHA = 1 OR 0, no filter applies.
     boolean flag = true;
-    TextView countText, distanceText, orientationText;
+    TextView countText, distanceText;
     ImageButton Btn, closeButton;
     EditText strideText;
     double stride_length=0, numOfStep=0, distance_result=0,radianConst=3.15192/180;
@@ -71,11 +74,18 @@ public class MainActivity extends AppCompatActivity {
     EditText pathName_editText;
     long now = System.currentTimeMillis();
     Date currentDate = new Date(now);
+    CheckBox man_checkbox, woman_checkbox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //android.app.ActionBar actionBar = getActionBar();
+        //actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#F0F8FF")));
+        setTitle("PATH_RECORD");
         setContentView(R.layout.activity_main);
+
+        man_checkbox = (CheckBox)findViewById(R.id.man_checkbox);
+        woman_checkbox = (CheckBox)findViewById(R.id.woman_checkbox);
 
         showCanvas= (drawCanvas) findViewById(R.id.drawing);
 
@@ -104,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
 
         countText = (TextView) findViewById(R.id.stepText);
         distanceText = (TextView) findViewById(R.id.distanceText);
-        orientationText = (TextView) findViewById(R.id.orientationText);
         strideText = (EditText) findViewById(R.id.stride_editText);
 
         orientationImg = (ImageView)findViewById(R.id.orientationImg);
@@ -381,13 +390,17 @@ public class MainActivity extends AppCompatActivity {
     public void printResult(){
         countText.setText(Integer.toString(local_step)); //step 수 출력
 
-        stride_length = Double.parseDouble(strideText.getText().toString()); //보폭 변환
+        if(man_checkbox.isChecked() == true){
+            stride_length = 0.76;
+        } else if(woman_checkbox.isChecked() == true){
+            stride_length = 0.67;
+        } else{
+            stride_length = Double.parseDouble(strideText.getText().toString()); //보폭 변환
+        }
         numOfStep = Double.parseDouble(countText.getText().toString()); //step 수 변환
         distance_result = stride_length*numOfStep; //거리 계산
         distanceText.setText(Double.toString(distance_result)); //거리 출력
 
-        orientation_result = "Azimuth:"+azimuth+"\n"+"Pitch:"+pitch+"\n"+"Roll:"+roll;
-        orientationText.setText(orientation_result); //방향 출력
         if(local_step==1)
             first_azimuth=azimuth;
         moveScrollView();

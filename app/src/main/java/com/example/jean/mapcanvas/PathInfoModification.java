@@ -2,6 +2,8 @@ package com.example.jean.mapcanvas;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +26,7 @@ public class PathInfoModification extends AppCompatActivity{
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("PATH_MODIFY");
         setContentView(R.layout.activity_pathinfomodification);
 
         image = (ImageView)findViewById(R.id.image);
