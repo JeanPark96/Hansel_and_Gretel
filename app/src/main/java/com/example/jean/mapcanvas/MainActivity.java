@@ -24,6 +24,8 @@ import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -74,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
     EditText pathName_editText;
     long now = System.currentTimeMillis();
     Date currentDate = new Date(now);
-    CheckBox man_checkbox, woman_checkbox;
+    RadioGroup radioGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,8 +86,7 @@ public class MainActivity extends AppCompatActivity {
         setTitle("PATH_RECORD");
         setContentView(R.layout.activity_main);
 
-        man_checkbox = (CheckBox)findViewById(R.id.man_checkbox);
-        woman_checkbox = (CheckBox)findViewById(R.id.woman_checkbox);
+        radioGroup = (RadioGroup)findViewById(R.id.radioGroup);
 
         showCanvas= (drawCanvas) findViewById(R.id.drawing);
 
@@ -390,9 +391,11 @@ public class MainActivity extends AppCompatActivity {
     public void printResult(){
         countText.setText(Integer.toString(local_step)); //step 수 출력
 
-        if(man_checkbox.isChecked() == true){
+        int id = radioGroup.getCheckedRadioButtonId();
+        RadioButton rb = (RadioButton) findViewById(id);
+        if(rb.getText() == "남자 평균보폭"){
             stride_length = 0.76;
-        } else if(woman_checkbox.isChecked() == true){
+        } else if(rb.getText() == "여자 평균보폭"){
             stride_length = 0.67;
         } else{
             stride_length = Double.parseDouble(strideText.getText().toString()); //보폭 변환

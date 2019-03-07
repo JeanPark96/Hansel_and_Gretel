@@ -101,34 +101,60 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_below="@+id/horscrollView"
-        android:layout_alignParentLeft="true">
+        android:layout_alignParentLeft="true"
+        android:paddingLeft="10dp">
         <TextView
             android:id="@+id/stride_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="보폭(m) : "
             android:textColor="#000000"
-            android:textSize="15dp"/>
+            android:textSize="12dp"
+            android:textStyle="bold"/>
         <EditText
             android:id="@+id/stride_editText"
             android:layout_width="100dp"
             android:layout_height="40dp"
             android:textColor="#000000"
-            android:textSize="15dp" />
+            android:textSize="10dp" />
         <TextView
             android:id="@+id/step_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="step : "
             android:textColor="@color/colorPrimary"
-            android:textSize="15dp"/>
+            android:textSize="12dp"
+            android:paddingLeft="10dp"
+            android:textStyle="bold"/>
         <TextView
             android:id="@+id/stepText"
             android:layout_width="100dp"
             android:layout_height="40dp"
             android:textColor="@color/colorPrimary"
-            android:textSize="15dp" />
+            android:textSize="12dp" />
         </LinearLayout>
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/LinearLayout">
+        <RadioButton
+            android:id="@+id/man_stride"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="남자 평균보폭"
+            android:textColor="#696969"
+            android:textSize="10dp"/>
+        <RadioButton
+            android:id="@+id/woman_stride"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/man_stride"
+            android:text="여자 평균보폭"
+            android:textColor="#696969"
+            android:textSize="10dp"/>
+    </RadioGroup>
 
     <LinearLayout
         android:id="@+id/LinearLayout2"
@@ -136,33 +162,24 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_below="@+id/LinearLayout"
-        android:layout_alignParentLeft="true">
+        android:layout_toRightOf="@+id/radioGroup"
+        android:layout_alignParentLeft="true"
+        android:paddingLeft="165dp"
+        tools:ignore="UnknownId">
         <TextView
             android:id="@+id/distance_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="distance(m) : "
             android:textColor="@color/colorAccent"
-            android:textSize="15dp" />
+            android:textSize="12dp"
+            android:textStyle="bold"/>
         <TextView
             android:id="@+id/distanceText"
             android:layout_width="80dp"
             android:layout_height="40dp"
             android:textColor="@color/colorAccent"
-            android:textSize="15dp" />
-        <TextView
-            android:id="@+id/orientation_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="orientation : "
-            android:textColor="#000000"
-            android:textSize="10dp" />
-        <TextView
-            android:id="@+id/orientationText"
-            android:layout_width="100dp"
-            android:layout_height="50dp"
-            android:textColor="#000000"
-            android:textSize="10dp" />
+            android:textSize="12dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -171,11 +188,11 @@
             android:orientation="horizontal"
             android:layout_below="@+id/LinearLayout2"
             android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true">
+            android:paddingBottom="5dp">
             <ImageButton
                 android:id="@+id/start_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:src="@drawable/start"
                 android:scaleType="fitCenter"
                 android:background="@android:color/transparent"
@@ -183,8 +200,8 @@
 
             <ImageButton
                 android:id="@+id/backTracking_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:src="@drawable/backtracking"
                 android:scaleType="fitCenter"
                 android:onClick="backTracking"
@@ -194,15 +211,16 @@
             <Button
                 android:id="@+id/save_button"
                 android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_height="45dp"
                 android:text="SAVE"
                 android:background="@android:color/transparent"
-                android:onClick="saveCurrentPath"/>
+                android:onClick="saveCurrentPath"
+                android:paddingBottom="10dp"/>
 
             <ImageButton
                 android:id="@+id/list_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:src="@drawable/list"
                 android:scaleType="fitCenter"
                 android:onClick="goToList"
