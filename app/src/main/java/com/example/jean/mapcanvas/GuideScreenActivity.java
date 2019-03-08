@@ -2,47 +2,49 @@ package com.example.jean.mapcanvas;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import android.widget.ImageView;
 
 /**
- * Created by i on 2019-01-17.
+ * Created by i on 2019-03-08.
  */
 
-public class StartScreenActivity extends AppCompatActivity {
+public class GuideScreenActivity extends AppCompatActivity {
+    public static ImageView guideScreen;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("");
-        setContentView(R.layout.activity_startscreen);
+        setTitle("사용법");
+        setContentView(R.layout.activity_guide);
+
+        guideScreen = (ImageView)findViewById(R.id.guideScreen);
     }
 
     public void onClick(View view){
-        AlertDialog.Builder alert = new AlertDialog.Builder(StartScreenActivity.this);
+        AlertDialog.Builder alert = new AlertDialog.Builder(GuideScreenActivity.this);
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
 
-                Intent intent = new Intent(StartScreenActivity.this, GuideScreenActivity.class);
+                Intent intent = new Intent(GuideScreenActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
             }
         });
-        alert.setMessage("경고창");
+
+        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                dialogInterface.dismiss();
+            }
+        });
+        alert.setMessage("길 기록을 시작하시겠습니까?");
         alert.show();
     }
 }

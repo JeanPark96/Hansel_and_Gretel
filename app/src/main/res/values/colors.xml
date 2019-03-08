@@ -8,4 +8,5 @@
     <color name="green">#00FF00</color>
     <color name="black">#000000</color>
     <color name="gray">#a9a9a9</color>
+    <color name="transparent">#00000000</color>
 </resources>

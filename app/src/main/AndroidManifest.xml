@@ -28,6 +28,9 @@
 
         <activity android:name=".PathInfoModification"
             android:theme="@style/ModifyTheme"></activity>
+
+        <activity android:name=".GuideScreenActivity"
+            android:theme="@style/GuideTheme"></activity>
     </application>
 
 </manifest>
