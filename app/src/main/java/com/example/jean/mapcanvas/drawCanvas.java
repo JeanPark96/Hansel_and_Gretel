@@ -11,7 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.ScrollView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,11 +26,17 @@ public class drawCanvas extends View {
 
     private double radianConst=3.15192/180,angleDiff,one_fourth_rad=90*radianConst,half_rad=180*radianConst,three_fourth=270*radianConst;
     public static double theta=0;
-    private float angleDiffRadian;
+    public static short fixed_bearing=0;
+    private float angleDiffRadian,bearingDiffRadian;
     public static float startX, startY, endX, endY;
+    public static float GPS_startX, GPS_startY, GPS_endX, GPS_endY;
     private int r_local_step;
     private float r_azimuth;
     private int width,height;
+
+    private short r_bearing,bearingDifference;
+    private double r_distance;
+    private int r_GPSCall;
     private Path path = new Path();
 
     public drawCanvas(Context context, AttributeSet attrs) {
@@ -143,6 +148,53 @@ public class drawCanvas extends View {
         startY=endY;
     }
 
+    public void GPSdrawing(int countGPSCall, double distance, short bearing){
+        r_GPSCall=countGPSCall;
+        r_distance = distance;
+        r_bearing = bearing;
+
+        Log.d("drawing method working",r_local_step+"drawing");
+        if (r_GPSCall <= 1 && !isBackTrackActivated()) {
+            if(MainActivity.pathAvailableNumber==0) {
+                GPS_startX = (width / 2)+50;
+                GPS_startY = (height / 2) + 700;
+                path.moveTo(GPS_startX, GPS_startY);
+                invalidate();
+                GPS_endX = GPS_startX;
+                GPS_endY = GPS_startY - 3;
+                fixed_bearing = r_bearing;
+                path.lineTo(GPS_endX, GPS_endY);
+                canvas.drawOval(GPS_startX - 12, GPS_startY - 12, GPS_startX + 12, GPS_startY + 12, startAndFinishMarkColorPaint);//스타트 마크, 여기에 있어야 사라지지 않음
+                canvas.drawPath(path, pathColorPaint);
+            }
+            else{
+                GPS_startX=GPS_endX;
+                GPS_startY=GPS_endY;
+                path.moveTo(GPS_startX, GPS_startY);
+                invalidate();
+                GPS_endX = GPS_startX;
+                GPS_endY = GPS_startY - 3;
+                path.lineTo(endX, endY);
+                canvas.drawPath(path, pathColorPaint);
+            }
+        } else {
+            bearingDifference=(short)(r_bearing- fixed_bearing);
+            bearingDiffRadian = modifyDirection(bearingDifference);
+            updateGPSLocation(GPS_startX,GPS_startY,bearingDiffRadian,(float)r_distance);
+            path.lineTo(endX,endY);
+            canvas.drawPath(path, pathColorPaint);
+
+            if(r_local_step % 80 == 0 && r_local_step!=0) {
+                canvas.drawOval(GPS_startX-12, GPS_startY-12, GPS_startX+12, GPS_endY+12, intermediatePaint);
+            }
+        }
+
+        invalidate();
+
+        startX=endX;
+        startY=endY;
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -153,6 +205,7 @@ public class drawCanvas extends View {
     public void finished(){
         startAndFinishMarkColorPaint=settingPaint(R.color.red,8f);
         canvas.drawOval(startX-12,startY-12,startX+12,endY+12, startAndFinishMarkColorPaint);
+        canvas.drawOval(GPS_startX-12,GPS_startY-12,GPS_startX+12,GPS_endY+12, startAndFinishMarkColorPaint);
         invalidate();
     }
 
@@ -240,6 +293,21 @@ public class drawCanvas extends View {
         } else if(this.angleDiffRadian <=(2*half_rad) || this.angleDiffRadian ==0){
             endX = startX - 3 * (float) Math.cos(this.angleDiffRadian - three_fourth);
             endY = startY - 3 * (float) Math.sin(this.angleDiffRadian - three_fourth);
+        }
+    }
+    private void updateGPSLocation(float startX, float startY, float bearingDiffRadian,float r_distance){
+        if (this.angleDiffRadian >0 && this.angleDiffRadian <= one_fourth_rad) {
+            endX = startX + r_distance * (float) Math.cos(this.angleDiffRadian);
+            endY = startY - r_distance * (float) Math.sin(this.angleDiffRadian);
+        } else if (this.angleDiffRadian <= half_rad) {
+            endX = startX + r_distance * (float) Math.cos(this.angleDiffRadian - one_fourth_rad);
+            endY = startY + r_distance * (float) Math.sin(this.angleDiffRadian - one_fourth_rad);
+        } else if (this.angleDiffRadian <= three_fourth) {
+            endX = startX - r_distance * (float) Math.sin(this.angleDiffRadian - half_rad);
+            endY = startY + r_distance * (float) Math.cos(this.angleDiffRadian - half_rad);
+        } else if(this.angleDiffRadian <=(2*half_rad) || this.angleDiffRadian ==0){
+            endX = startX - r_distance * (float) Math.cos(this.angleDiffRadian - three_fourth);
+            endY = startY - r_distance * (float) Math.sin(this.angleDiffRadian - three_fourth);
         }
     }
 }

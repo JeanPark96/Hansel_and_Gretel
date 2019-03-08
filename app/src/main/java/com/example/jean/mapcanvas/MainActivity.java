@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
     double radian_bearing;
     double true_bearing;
     double last_true_bearing;
+    short bearingDiff;
     float marker_dp;
     float curr_posX;
     float curr_posY;
@@ -160,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
                     try {
                         onStartCommand();
+                        GetLocations();
 
                     } catch (Exception e) {
                         Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
@@ -422,6 +424,9 @@ public class MainActivity extends AppCompatActivity {
         moveScrollView();
         showCanvas.drawing(azimuth,local_step);
     }
+    public void printGPSResult(){
+        showCanvas.GPSdrawing(countGPSCall,distance,(short)true_bearing);
+    }
 
     public void averageStrideSet(View view){
         switch (view.getId()){
@@ -558,7 +563,7 @@ public class MainActivity extends AppCompatActivity {
                 double lat = location.getLatitude();//위도 받아오기
                 double lng = location.getLongitude();//경도 받아오
 
-                if (++count >= 2) {//위도 경도를 각각 2번 이상 받아왔을 때 거리와 방위각 계산이 가능해짐
+                if (++countGPSCall >= 2) {//위도 경도를 각각 2번 이상 받아왔을 때 거리와 방위각 계산이 가능해짐
                     // DrawMap();
                     Location location1 = new Location("point1");
                     location1.setLatitude(lastKnownlat);//location1의 위도는 이전 위치의 위도
@@ -568,9 +573,9 @@ public class MainActivity extends AppCompatActivity {
                     location2.setLongitude(lng);//location2 경도는 현재 경도
                     double temp_distance = location1.distanceTo(location2);//location1으로부터 location2까지의 거리를 구하는 메소드
                     distance = temp_distance;
-                    true_bearing = bearingTo(lastKnownlat, lastKnownlng,lat,lng);//bearingTo 함수 실행해서 방위각 구함 이전 위도경도와 현재 위도경도로 구함
-                    last_true_bearing = true_bearing;//이전 방위각을 저장해놓음->나중에 지도 그릴때 사용하기 위해
                 }
+                true_bearing = bearingTo(lastKnownlat, lastKnownlng,lat,lng);//bearingTo 함수 실행해서 방위각 구함 이전 위도경도와 현재 위도경도로 구함
+
                 lastKnownlng = lng;//현재 경도는 곧 이전 경도가 됨
                 lastKnownlat = lat;//현재 위도는 곧 이전 위도가 됨
 
@@ -586,18 +591,16 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        //Register the listener with the Location Manager to receive location updates
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);//위치갱신 요청
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);//위치갱신 요청gps
-        //gps 리퀘스트가 제대로 요청하는건지 확인해보기 반응을 더 빠르게 할 수 있는지 확인해보기
 
         // 수동으로 위치 구하기
         String locationProvider = LocationManager.GPS_PROVIDER;
 
-        Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);//마지막으로 저장된 위치 찾기->gps가 처음부터 위치측위를 하는데에 시간을 덜 걸리게 해줌
-        if (lastKnownLocation != null) {//마지막 위치 정보를 저장하고 있다면
-            double lng = lastKnownLocation.getLongitude();//마지막 경도를 현재 경도로 저장
-            double lat = lastKnownLocation.getLatitude();//마지막 위도를 현재 위도로 저장
+        Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+        if (lastKnownLocation != null) {
+            double lng = lastKnownLocation.getLongitude();
+            double lat = lastKnownLocation.getLatitude();
 
             Log.d("Main", "longtitude=" + lng + ", latitude=" + lat);
 
