@@ -595,9 +595,11 @@ public class MainActivity extends AppCompatActivity {
                 location2.setLongitude(lng);//location2 경도는 현재 경도
                 double temp_distance = location1.distanceTo(location2);//location1으로부터 location2까지의 거리를 구하는 메소드
                 distance= temp_distance;
+                true_bearing = bearingTo(lastKnownlat, lastKnownlng,lat,lng);
                 printGPSResult();
+
             }
-            true_bearing = bearingTo(lastKnownlat, lastKnownlng,lat,lng);//bearingTo 함수 실행해서 방위각 구함 이전 위도경도와 현재 위도경도로 구함
+            //bearingTo 함수 실행해서 방위각 구함 이전 위도경도와 현재 위도경도로 구함
            // Toast.makeText(getApplicationContext(),"distance: "+distance+", bearing: "+true_bearing,Toast.LENGTH_LONG).show();
 
             lastKnownlng = lng;//현재 경도는 곧 이전 경도가 됨
