@@ -162,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         onStartCommand();
                         GetLocations();
+                        printGPSResult();
 
                     } catch (Exception e) {
                         Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
@@ -443,7 +444,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void moveScrollView(){
-        scrollPos = (int) (scrollView.getScrollY() - 10.0);
+        scrollPos = (int) (scrollView.getScrollY() - 1.0);
         scrollView.scrollTo(0,scrollPos);
         Log.e("moveScrollView","moveScrollView");
     }
