@@ -21,7 +21,7 @@ public class drawCanvas extends View {
     public static File tempFile;
     public static Bitmap drawBitmap, firstBitmap,tempBitmap;
     public Bitmap bitmapForbackTracking;
-    private Paint pathColorPaint, startAndFinishMarkColorPaint,canvasPaint, intermediatePaint;
+    private Paint pathColorPaint, startAndFinishMarkColorPaint,canvasPaint, intermediatePaint,GPSPaint;
     private Canvas canvas;
 
     private double radianConst=3.15192/180,angleDiff,one_fourth_rad=90*radianConst,half_rad=180*radianConst,three_fourth=270*radianConst;
@@ -44,10 +44,12 @@ public class drawCanvas extends View {
         pathColorPaint = new Paint();
         startAndFinishMarkColorPaint = new Paint();
         intermediatePaint = new Paint();
+        GPSPaint=new Paint();
 
         pathColorPaint=settingPaint(R.color.blue,15f);
         startAndFinishMarkColorPaint=settingPaint(R.color.green,8f);
         intermediatePaint=settingPaint(R.color.black,8f);
+        GPSPaint=settingPaint(R.color.red,15f);
         canvasPaint=new Paint(Paint.DITHER_FLAG);
     }
 
@@ -156,7 +158,7 @@ public class drawCanvas extends View {
         Log.d("drawing method working",r_local_step+"drawing");
         if (r_GPSCall <= 1 && !isBackTrackActivated()) {
             if(MainActivity.pathAvailableNumber==0) {
-                GPS_startX = (width / 2)+50;
+                GPS_startX = (width / 2)+100;
                 GPS_startY = (height / 2) + 700;
                 path.moveTo(GPS_startX, GPS_startY);
                 invalidate();
@@ -165,7 +167,7 @@ public class drawCanvas extends View {
                 fixed_bearing = r_bearing;
                 path.lineTo(GPS_endX, GPS_endY);
                 canvas.drawOval(GPS_startX - 12, GPS_startY - 12, GPS_startX + 12, GPS_startY + 12, startAndFinishMarkColorPaint);//스타트 마크, 여기에 있어야 사라지지 않음
-                canvas.drawPath(path, pathColorPaint);
+                canvas.drawPath(path, GPSPaint);
             }
             else{
                 GPS_startX=GPS_endX;
@@ -174,15 +176,15 @@ public class drawCanvas extends View {
                 invalidate();
                 GPS_endX = GPS_startX;
                 GPS_endY = GPS_startY - 3;
-                path.lineTo(endX, endY);
-                canvas.drawPath(path, pathColorPaint);
+                path.lineTo(GPS_endX, GPS_endY);
+                canvas.drawPath(path, GPSPaint);
             }
         } else {
             bearingDifference=(short)(r_bearing- fixed_bearing);
             bearingDiffRadian = modifyDirection(bearingDifference);
             updateGPSLocation(GPS_startX,GPS_startY,bearingDiffRadian,(float)r_distance);
-            path.lineTo(endX,endY);
-            canvas.drawPath(path, pathColorPaint);
+            path.lineTo(GPS_endX,GPS_endY);
+            canvas.drawPath(path, GPSPaint);
 
             if(r_local_step % 80 == 0 && r_local_step!=0) {
                 canvas.drawOval(GPS_startX-12, GPS_startY-12, GPS_startX+12, GPS_endY+12, intermediatePaint);
@@ -191,8 +193,8 @@ public class drawCanvas extends View {
 
         invalidate();
 
-        startX=endX;
-        startY=endY;
+        GPS_endX=GPS_startX;
+        GPS_endY=GPS_startY;
     }
 
     @Override
