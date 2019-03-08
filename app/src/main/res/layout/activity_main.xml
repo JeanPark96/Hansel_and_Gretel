@@ -24,8 +24,8 @@
 
     <ImageView
         android:id="@+id/orientationImg"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:src="@drawable/orientation"
         android:layout_below="@+id/upper_interval"
         android:layout_toRightOf="@+id/left_interval"
@@ -41,25 +41,34 @@
         android:background="@android:color/transparent"/>
 
     <ImageButton
-        android:id="@+id/close_button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/close"
-        android:scaleType="fitCenter"
-        android:layout_toLeftOf="@id/beginButton"
-        android:onClick="closeButton"
-        android:background="@android:color/transparent"
-        android:padding="5dp"/>
-
-    <ImageButton
         android:id="@+id/beginButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:src="@drawable/begin"
         android:scaleType="fitCenter"
         android:onClick="beginPath"
-        android:layout_alignParentRight="true"
         android:background="@android:color/transparent"
+        android:layout_toLeftOf="@id/list_button"
+        android:padding="5dp"/>
+    <ImageButton
+        android:id="@+id/list_button"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:src="@drawable/list"
+        android:scaleType="fitCenter"
+        android:onClick="goToList"
+        android:background="@android:color/transparent"
+        android:layout_toLeftOf="@id/close_button"
+        android:padding="5dp"/>
+    <ImageButton
+        android:id="@+id/close_button"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:src="@drawable/close"
+        android:scaleType="fitCenter"
+        android:onClick="closeButton"
+        android:background="@android:color/transparent"
+        android:layout_alignParentRight="true"
         android:padding="5dp"/>
 
     <TextView
@@ -96,49 +105,104 @@
     </HorizontalScrollView>
 
     <LinearLayout
-        android:id="@+id/LinearLayout"
-        android:layout_width="match_parent"
+        android:id="@+id/stepLinearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/horscrollView"
+        android:paddingTop="10dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_alignParentLeft="true">
+        <ImageView
+            android:id="@+id/stepImage"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/step"/>
+        <TextView
+            android:id="@+id/stepText"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="15dp"
+            android:paddingLeft="15dp"
+            android:paddingTop="5dp"/>
+        <TextView
+            android:id="@+id/step_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="step"
+            android:textColor="#BEBEBE"
+            android:textSize="12dp"
+            android:textStyle="bold"
+            android:paddingLeft="5dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/distanceLinearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_toRightOf="@+id/stepLinearLayout"
+        android:layout_below="@+id/horscrollView"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp">
+        <ImageView
+            android:id="@+id/distanceImage"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/distance"/>
+        <TextView
+            android:id="@+id/distanceText"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:textColor="@color/colorAccent"
+            android:textSize="15dp"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"/>
+        <TextView
+            android:id="@+id/distance_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="distance(m)"
+            android:textColor="#BEBEBE"
+            android:textSize="12dp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/strideLinearLayout"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_below="@+id/horscrollView"
-        android:layout_alignParentLeft="true"
-        android:paddingLeft="10dp">
+        android:layout_alignParentRight="true"
+        android:paddingRight="80dp"
+        android:paddingTop="10dp">
         <TextView
             android:id="@+id/stride_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="보폭(m) : "
+            android:text="보폭(m)"
             android:textColor="#000000"
             android:textSize="12dp"
             android:textStyle="bold"/>
         <EditText
             android:id="@+id/stride_editText"
-            android:layout_width="100dp"
+            android:layout_width="60dp"
             android:layout_height="40dp"
             android:textColor="#000000"
             android:textSize="10dp" />
-        <TextView
-            android:id="@+id/step_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="step : "
-            android:textColor="@color/colorPrimary"
-            android:textSize="12dp"
-            android:paddingLeft="10dp"
-            android:textStyle="bold"/>
-        <TextView
-            android:id="@+id/stepText"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:textColor="@color/colorPrimary"
-            android:textSize="12dp" />
         </LinearLayout>
 
     <RadioGroup
         android:id="@+id/radioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/LinearLayout">
+        android:layout_below="@+id/strideLinearLayout"
+        android:layout_alignParentRight="true"
+        android:orientation="horizontal"
+        android:paddingRight="10dp">
         <RadioButton
             android:id="@+id/man_stride"
             android:layout_width="wrap_content"
@@ -159,74 +223,40 @@
     </RadioGroup>
 
     <LinearLayout
-        android:id="@+id/LinearLayout2"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@+id/LinearLayout"
-        android:layout_toRightOf="@+id/radioGroup"
-        android:layout_alignParentLeft="true"
-        android:paddingLeft="165dp"
-        tools:ignore="UnknownId">
-        <TextView
-            android:id="@+id/distance_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="distance(m) : "
-            android:textColor="@color/colorAccent"
-            android:textSize="12dp"
-            android:textStyle="bold"/>
-        <TextView
-            android:id="@+id/distanceText"
-            android:layout_width="80dp"
+        android:layout_below="@+id/radioGroup"
+        android:layout_alignParentRight="true"
+        android:paddingBottom="5dp"
+        android:paddingTop="20dp"
+        android:paddingRight="10dp">
+        <ImageButton
+            android:id="@+id/start_button"
+            android:layout_width="40dp"
             android:layout_height="40dp"
-            android:textColor="@color/colorAccent"
-            android:textSize="12dp" />
-        </LinearLayout>
+            android:src="@drawable/start"
+            android:scaleType="fitCenter"
+            android:background="@android:color/transparent"
+            android:padding="5dp"/>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_below="@+id/LinearLayout2"
-            android:layout_alignParentRight="true"
-            android:paddingBottom="5dp">
-            <ImageButton
-                android:id="@+id/start_button"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:src="@drawable/start"
-                android:scaleType="fitCenter"
-                android:background="@android:color/transparent"
-                android:padding="5dp"/>
+        <ImageButton
+            android:id="@+id/backTracking_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/backtracking"
+            android:scaleType="fitCenter"
+            android:onClick="backTracking"
+            android:background="@android:color/transparent"
+            android:padding="5dp"/>
 
-            <ImageButton
-                android:id="@+id/backTracking_button"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:src="@drawable/backtracking"
-                android:scaleType="fitCenter"
-                android:onClick="backTracking"
-                android:background="@android:color/transparent"
-                android:padding="5dp"/>
-
-            <Button
-                android:id="@+id/save_button"
-                android:layout_width="40dp"
-                android:layout_height="45dp"
-                android:text="SAVE"
-                android:background="@android:color/transparent"
-                android:onClick="saveCurrentPath"
-                android:paddingBottom="10dp"/>
-
-            <ImageButton
-                android:id="@+id/list_button"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:src="@drawable/list"
-                android:scaleType="fitCenter"
-                android:onClick="goToList"
-                android:background="@android:color/transparent"
-                android:padding="5dp"/>
-        </LinearLayout>
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="45dp"
+            android:layout_height="50dp"
+            android:text="SAVE"
+            android:background="@android:color/transparent"
+            android:onClick="saveCurrentPath"
+            android:paddingBottom="10dp"/>
+    </LinearLayout>
 </RelativeLayout>

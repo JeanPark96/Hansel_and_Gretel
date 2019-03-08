@@ -83,8 +83,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //android.app.ActionBar actionBar = getActionBar();
-        //actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#F0F8FF")));
         setTitle("경로 기록");
         setContentView(R.layout.activity_main);
 
