@@ -26,7 +26,7 @@ public class PathInfoModification extends AppCompatActivity{
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("PATH_MODIFY");
+        setTitle("수정 및 삭제");
         setContentView(R.layout.activity_pathinfomodification);
 
         image = (ImageView)findViewById(R.id.image);

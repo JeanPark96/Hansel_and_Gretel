@@ -48,7 +48,7 @@ public class ListScreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("PATH_LIST");
+        setTitle("목록");
         setContentView(R.layout.activity_listscreen);
 
         shareButton = findViewById(R.id.shareButton);
