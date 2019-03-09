@@ -38,6 +38,7 @@ public class drawCanvas extends View {
     private double r_distance;
     private int r_GPSCall;
     private Path path = new Path();
+    private Path path2=new Path();
 
     public drawCanvas(Context context, AttributeSet attrs) {
         super(context,attrs);
@@ -160,31 +161,31 @@ public class drawCanvas extends View {
             if(MainActivity.pathAvailableNumber==0) {
                 GPS_startX = (width / 2)+100;
                 GPS_startY = (height / 2) + 700;
-                path.moveTo(GPS_startX, GPS_startY);
+                path2.moveTo(GPS_startX, GPS_startY);
                 invalidate();
                 GPS_endX = GPS_startX;
                 GPS_endY = GPS_startY - 3;
                 fixed_bearing = (short)theta;
-                path.lineTo(GPS_endX, GPS_endY);
+                path2.lineTo(GPS_endX, GPS_endY);
                 canvas.drawOval(GPS_startX - 12, GPS_startY - 12, GPS_startX + 12, GPS_startY + 12, startAndFinishMarkColorPaint);//스타트 마크, 여기에 있어야 사라지지 않음
-                canvas.drawPath(path, GPSPaint);
+                canvas.drawPath(path2, GPSPaint);
             }
             else{
                 GPS_startX=GPS_endX;
                 GPS_startY=GPS_endY;
-                path.moveTo(GPS_startX, GPS_startY);
+                path2.moveTo(GPS_startX, GPS_startY);
                 invalidate();
                 GPS_endX = GPS_startX;
                 GPS_endY = GPS_startY - 3;
-                path.lineTo(GPS_endX, GPS_endY);
-                canvas.drawPath(path, GPSPaint);
+                path2.lineTo(GPS_endX, GPS_endY);
+                canvas.drawPath(path2, GPSPaint);
             }
         } else {
             bearingDifference=(short)(r_bearing- fixed_bearing);
             bearingDiffRadian = modifyGPSDirection(bearingDifference);
             updateGPSLocation(GPS_startX,GPS_startY,bearingDiffRadian,(float)r_distance);
-            path.lineTo(GPS_endX,GPS_endY);
-            canvas.drawPath(path, GPSPaint);
+            path2.lineTo(GPS_endX,GPS_endY);
+            canvas.drawPath(path2, GPSPaint);
 
             if(r_local_step % 80 == 0 && r_local_step!=0) {
                 canvas.drawOval(GPS_startX-12, GPS_startY-12, GPS_startX+12, GPS_endY+12, intermediatePaint);
