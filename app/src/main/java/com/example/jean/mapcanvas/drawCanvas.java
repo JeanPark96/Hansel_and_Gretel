@@ -34,7 +34,7 @@ public class drawCanvas extends View {
     private float r_azimuth;
     private int width,height;
 
-    private short r_bearing,bearingDifference;
+    private short r_bearing;
     private double r_distance;
     private int r_GPSCall;
     private Path path = new Path();
@@ -194,8 +194,8 @@ public class drawCanvas extends View {
 
         invalidate();
 
-        GPS_endX=GPS_startX;
-        GPS_endY=GPS_startY;
+        GPS_startX=GPS_endX;
+        GPS_startY=GPS_endY;
     }
 
     @Override
