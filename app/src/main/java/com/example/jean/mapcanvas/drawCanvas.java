@@ -11,7 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.ScrollView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -95,7 +94,7 @@ public class drawCanvas extends View {
                 drawBitmap = Bitmap.createBitmap(MainActivity.newBitmap);
             }
             canvas = new Canvas(drawBitmap);
-            firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),width,height,false);
+            firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.campus),width,height,false);
         }
   }
 
@@ -109,20 +108,20 @@ public class drawCanvas extends View {
             return false;
     }
 
-    public void drawing(float azimuth,int local_step,double stride) {
+    public void drawing(float azimuth,int local_step,double stride,double distanceFromMain) {
         r_local_step = local_step;
         r_azimuth = azimuth;
-        r_stride = (float) stride;
+        r_stride = 8*(float) stride;
 
         Log.d("drawing method working",r_local_step+"drawing");
         if (r_local_step <= 1 && !isBackTrackActivated()) {
             if(MainActivity.pathAvailableNumber==0) {
-                startX = (width / 2);
-                startY = (height / 2) + 700;
+                startX = (width / 2)+185;
+                startY = (height / 2) + 550;
                 path.moveTo(startX, startY);
                 invalidate();
                 endX = startX;
-                endY = startY - (float)(3*r_stride);
+                endY = startY - (float)(r_stride);
                 theta = r_azimuth;
                 path.lineTo(endX, endY);
                 canvas.drawOval(startX - 12, startY - 12, startX + 12, endY + 12, startAndFinishMarkColorPaint);//스타트 마크, 여기에 있어야 사라지지 않음
@@ -145,7 +144,7 @@ public class drawCanvas extends View {
             path.lineTo(endX,endY);
             canvas.drawPath(path, pathColorPaint);
 
-            if(r_local_step % 80 == 0 && r_local_step!=0) {
+            if(0<=distanceFromMain%50 && distanceFromMain%50<1 && r_local_step!=0) {
                 canvas.drawOval(startX-12, startY-12, startX+12, endY+12, intermediatePaint);
             }
         }
@@ -157,18 +156,18 @@ public class drawCanvas extends View {
     }
     public void GPSdrawing(int countGPSCall, double distance, short bearing){
         r_GPSCall=countGPSCall;
-        r_distance = 3*distance;
+        r_distance = 8*distance;
         r_bearing = bearing;
 
         Log.d("drawing method working",r_local_step+"drawing");
         if (r_GPSCall <= 1 && !isBackTrackActivated()) {
             if(MainActivity.pathAvailableNumber==0) {
-                GPS_startX = (width / 2)+100;
-                GPS_startY = (height / 2) + 700;
+                GPS_startX = (width / 2)+220;
+                GPS_startY = (height / 2) + 550;
                 path2.moveTo(GPS_startX, GPS_startY);
                 invalidate();
                 GPS_endX = GPS_startX;
-                GPS_endY = GPS_startY - (float)(3*r_distance);
+                GPS_endY = GPS_startY - (float)(r_distance);
                 fixed_bearing = (short)theta;
                 path2.lineTo(GPS_endX, GPS_endY);
                 canvas.drawOval(GPS_startX - 12, GPS_startY - 12, GPS_startX + 12, GPS_startY + 12, startAndFinishMarkColorPaint);//스타트 마크, 여기에 있어야 사라지지 않음
@@ -296,17 +295,17 @@ public class drawCanvas extends View {
 
     private void updateLocation(float startX, float startY, float angleDiffRadian,float stride){
         if (this.angleDiffRadian >0 && this.angleDiffRadian <= one_fourth_rad) {
-            endX = startX + 3 * (float) Math.cos(this.angleDiffRadian)* stride;
-            endY = startY - 3 * (float) Math.sin(this.angleDiffRadian)* stride;
+            endX = startX + (float) Math.cos(this.angleDiffRadian)* stride;
+            endY = startY - (float) Math.sin(this.angleDiffRadian)* stride;
         } else if (this.angleDiffRadian <= half_rad) {
-            endX = startX + 3 * (float) Math.cos(this.angleDiffRadian - one_fourth_rad)* stride;
-            endY = startY + 3 * (float) Math.sin(this.angleDiffRadian - one_fourth_rad)* stride;
+            endX = startX + (float) Math.cos(this.angleDiffRadian - one_fourth_rad)* stride;
+            endY = startY + (float) Math.sin(this.angleDiffRadian - one_fourth_rad)* stride;
         } else if (this.angleDiffRadian <= three_fourth) {
-            endX = startX - 3 * (float) Math.sin(this.angleDiffRadian - half_rad)* stride;
-            endY = startY + 3 * (float) Math.cos(this.angleDiffRadian - half_rad)* stride;
+            endX = startX - (float) Math.sin(this.angleDiffRadian - half_rad)* stride;
+            endY = startY + (float) Math.cos(this.angleDiffRadian - half_rad)* stride;
         } else if(this.angleDiffRadian <=(2*half_rad) || this.angleDiffRadian ==0){
-            endX = startX - 3 * (float) Math.cos(this.angleDiffRadian - three_fourth)* stride;
-            endY = startY - 3 * (float) Math.sin(this.angleDiffRadian - three_fourth)* stride;
+            endX = startX - (float) Math.cos(this.angleDiffRadian - three_fourth)* stride;
+            endY = startY - (float) Math.sin(this.angleDiffRadian - three_fourth)* stride;
         }
     }
     private void updateGPSLocation(float GPS_startX, float GPS_startY, float bearingDiffRadian,float r_distance){

@@ -1,7 +1,6 @@
 package com.example.jean.mapcanvas;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,13 +26,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -431,7 +428,7 @@ public class MainActivity extends AppCompatActivity {
         if(local_step==1)
             first_azimuth=azimuth;
         moveScrollView();
-        showCanvas.drawing(azimuth,local_step,stride_length);
+        showCanvas.drawing(azimuth,local_step,stride_length,distance_result);
     }
     public void printGPSResult(){
         showCanvas.GPSdrawing(countGPSCall,distance,(short)true_bearing);
