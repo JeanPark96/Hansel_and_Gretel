@@ -160,7 +160,7 @@ public class drawCanvas extends View {
         r_bearing = bearing;
 
         Log.d("drawing method working",r_local_step+"drawing");
-        if (r_GPSCall <= 1 && !isBackTrackActivated()) {
+        if (r_GPSCall <= 2 && !isBackTrackActivated()) {
             if(MainActivity.pathAvailableNumber==0) {
                 GPS_startX = (width / 2)+220;
                 GPS_startY = (height / 2) + 550;
@@ -168,7 +168,7 @@ public class drawCanvas extends View {
                 invalidate();
                 GPS_endX = GPS_startX;
                 GPS_endY = GPS_startY - (float)(r_distance);
-                fixed_bearing = (short)theta;
+                fixed_bearing = (short)r_bearing;
                 path2.lineTo(GPS_endX, GPS_endY);
                 canvas.drawOval(GPS_startX - 12, GPS_startY - 12, GPS_startX + 12, GPS_startY + 12, startAndFinishMarkColorPaint);//스타트 마크, 여기에 있어야 사라지지 않음
                 canvas.drawPath(path2, GPSPaint);

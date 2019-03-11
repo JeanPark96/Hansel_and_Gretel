@@ -617,7 +617,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
             //bearingTo 함수 실행해서 방위각 구함 이전 위도경도와 현재 위도경도로 구함
-            //Toast.makeText(getApplicationContext(),"distance: "+distance+", bearing: "+true_bearing,Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),"distance: "+distance+", bearing: "+true_bearing,Toast.LENGTH_LONG).show();
 
             lastKnownlng = lng;//현재 경도는 곧 이전 경도가 됨
             lastKnownlat = lat;//현재 위도는 곧 이전 위도가 됨
