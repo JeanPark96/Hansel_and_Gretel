@@ -46,9 +46,9 @@
         android:layout_height="35dp"
         android:src="@drawable/help"
         android:scaleType="fitCenter"
-        android:onClick="guidePath"
         android:background="@android:color/transparent"
         android:layout_toLeftOf="@id/beginButton"
+        android:onClick="guidePath"
         android:padding="5dp"/>
     <ImageButton
         android:id="@+id/beginButton"

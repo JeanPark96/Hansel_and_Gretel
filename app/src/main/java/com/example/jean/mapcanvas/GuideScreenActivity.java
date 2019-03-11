@@ -26,8 +26,8 @@ public class GuideScreenActivity extends AppCompatActivity {
     }
 
     public void onClick(View view){
-        AlertDialog.Builder alert = new AlertDialog.Builder(GuideScreenActivity.this);
-        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        AlertDialog.Builder guideAlert = new AlertDialog.Builder(GuideScreenActivity.this);
+        guideAlert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
@@ -38,13 +38,13 @@ public class GuideScreenActivity extends AppCompatActivity {
             }
         });
 
-        alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+        guideAlert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
                 dialogInterface.dismiss();
             }
         });
-        alert.setMessage("길 기록을 시작하시겠습니까?");
-        alert.show();
+        guideAlert.setMessage("길 기록을 시작하시겠습니까?");
+        guideAlert.show();
     }
 }

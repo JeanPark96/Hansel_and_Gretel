@@ -37,7 +37,7 @@ public class StartScreenActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
 
-                Intent intent = new Intent(StartScreenActivity.this, GuideScreenActivity.class);
+                Intent intent = new Intent(StartScreenActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
             }
