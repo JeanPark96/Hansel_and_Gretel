@@ -81,7 +81,7 @@ public class ListScreenActivity extends AppCompatActivity {
                 data.putInt("row_id",id);
 
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                Toast.makeText(getApplicationContext(),"ListScreen_id:"+id,Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(),"ListScreen_id:"+id,Toast.LENGTH_LONG).show();
                 intent.putExtras(data);
                 startActivity(intent);
             }

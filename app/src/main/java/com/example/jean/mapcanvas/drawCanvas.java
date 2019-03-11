@@ -31,6 +31,7 @@ public class drawCanvas extends View {
     public static float startX, startY, endX, endY;
     private int r_local_step;
     private float r_azimuth;
+    private float r_stride;
     private int width,height;
     private Path path = new Path();
 
@@ -83,23 +84,24 @@ public class drawCanvas extends View {
                 drawBitmap = Bitmap.createBitmap(MainActivity.newBitmap);
             }
             canvas = new Canvas(drawBitmap);
-            firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),width,height,false);
+            firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.myungshin),width,height,false);
+            //firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),width,height,false);
         }
   }
 
     public boolean isBackTrackActivated(){
         if(MainActivity.newBitmapAvailable==true) {
             bitmapForbackTracking = MainActivity.newBitmap;
-
             return true;
         }
         else
             return false;
     }
 
-    public void drawing(float azimuth,int local_step) {
+    public void drawing(float azimuth,int local_step,double stride) {
         r_local_step = local_step;
         r_azimuth = azimuth;
+        r_stride = (float) stride;
 
         Log.d("drawing method working",r_local_step+"drawing");
         if (r_local_step <= 1 && !isBackTrackActivated()) {
@@ -128,7 +130,7 @@ public class drawCanvas extends View {
         } else {
             angleDiff=r_azimuth - theta;
             angleDiffRadian = modifyDirection(angleDiff);
-            updateLocation(startX,startY,angleDiffRadian);
+            updateLocation(startX,startY,angleDiffRadian,r_stride);
             path.lineTo(endX,endY);
             canvas.drawPath(path, pathColorPaint);
 
@@ -227,19 +229,19 @@ public class drawCanvas extends View {
         return angleDiffRadian;
     }
 
-    private void updateLocation(float startX, float startY, float angleDiffRadian){
+    private void updateLocation(float startX, float startY, float angleDiffRadian, float stride){
         if (this.angleDiffRadian >0 && this.angleDiffRadian <= one_fourth_rad) {
-            endX = startX + 3 * (float) Math.cos(this.angleDiffRadian);
-            endY = startY - 3 * (float) Math.sin(this.angleDiffRadian);
+            endX = startX + 3 * (float) Math.cos(this.angleDiffRadian) * stride;
+            endY = startY - 3 * (float) Math.sin(this.angleDiffRadian) * stride;
         } else if (this.angleDiffRadian <= half_rad) {
-            endX = startX + 3 * (float) Math.cos(this.angleDiffRadian - one_fourth_rad);
-            endY = startY + 3 * (float) Math.sin(this.angleDiffRadian - one_fourth_rad);
+            endX = startX + 3 * (float) Math.cos(this.angleDiffRadian - one_fourth_rad) * stride;
+            endY = startY + 3 * (float) Math.sin(this.angleDiffRadian - one_fourth_rad) * stride;
         } else if (this.angleDiffRadian <= three_fourth) {
-            endX = startX - 3 * (float) Math.sin(this.angleDiffRadian - half_rad);
-            endY = startY + 3 * (float) Math.cos(this.angleDiffRadian - half_rad);
+            endX = startX - 3 * (float) Math.sin(this.angleDiffRadian - half_rad) * stride;
+            endY = startY + 3 * (float) Math.cos(this.angleDiffRadian - half_rad) * stride;
         } else if(this.angleDiffRadian <=(2*half_rad) || this.angleDiffRadian ==0){
-            endX = startX - 3 * (float) Math.cos(this.angleDiffRadian - three_fourth);
-            endY = startY - 3 * (float) Math.sin(this.angleDiffRadian - three_fourth);
+            endX = startX - 3 * (float) Math.cos(this.angleDiffRadian - three_fourth) * stride;
+            endY = startY - 3 * (float) Math.sin(this.angleDiffRadian - three_fourth) * stride;
         }
     }
 }

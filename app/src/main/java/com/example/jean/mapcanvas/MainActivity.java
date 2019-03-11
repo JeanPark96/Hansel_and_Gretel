@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
     ImageButton Btn, closeButton;
     EditText strideText;
     double stride_length=0, numOfStep=0, distance_result=0,radianConst=3.15192/180;
-    String orientation_result;
     String filePath;
     int count = StepValue.Step;
     private long lastTime;
@@ -122,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
         orientationImg = (ImageView)findViewById(R.id.orientationImg);
         orientationImg.setRotation(0);
-        Img = (ImageView)findViewById(R.id.Img);
+        //Img = (ImageView)findViewById(R.id.Img);
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -264,14 +263,14 @@ public class MainActivity extends AppCompatActivity {
             if(value > 0){
                 Cursor res = IMGhelper.getData(value);
                 imgid = value;
-                Toast.makeText(getApplicationContext(),"Main_id:"+imgid,Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(),"Main_id:"+imgid,Toast.LENGTH_LONG).show();
                 res.moveToFirst();
 
                 int i=res.getInt(res.getColumnIndex(IMGhelper.PATH_AVAILABLE_NUM));
-                Toast.makeText(getApplicationContext(),"pathavailable_id:"+i,Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(),"pathavailable_id:"+i,Toast.LENGTH_LONG).show();
 
                 if(i==1) {
-                    Toast.makeText(getApplicationContext(),"삐삐",Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(),"삐삐",Toast.LENGTH_LONG).show();
                     pathAvailableNumber=1;
                     newBitmapAvailable=false;
                     byte[] image = res.getBlob(res.getColumnIndex(IMGhelper.PATH_IMAGE));
@@ -282,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Bitmap tempBitmap=Bitmap.createBitmap(IMGhelper.retrieveImage(image));
                     Bitmap tempBitmap2=tempBitmap.copy(Bitmap.Config.ARGB_8888,true);
-                    Img.setImageBitmap(tempBitmap2);
+                    //Img.setImageBitmap(tempBitmap2);
                     newBitmap=showCanvas.setBitmap(tempBitmap2);
                 }
 
@@ -401,7 +400,7 @@ public class MainActivity extends AppCompatActivity {
         if(local_step==1)
             first_azimuth=azimuth;
         moveScrollView();
-        showCanvas.drawing(azimuth,local_step);
+        showCanvas.drawing(azimuth,local_step,stride_length);
     }
 
     public void averageStrideSet(View view){
@@ -452,8 +451,8 @@ public class MainActivity extends AppCompatActivity {
                     IMGhelper.updateDB(received_row_id,1,image,first_azimuth,last_azimuth,position_x,position_y);
                 else
                     IMGhelper.updateDB(imgid,1,image,first_azimuth,last_azimuth,position_x,position_y);
-                Toast.makeText(getApplicationContext(),"이미지id:"+imgid,Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(),"바이트:"+image,Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(),"이미지id:"+imgid,Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(),"바이트:"+image,Toast.LENGTH_LONG).show();
             }
         });
         ad.show();
