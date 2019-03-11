@@ -24,7 +24,7 @@ public class drawCanvas extends View {
     private Paint pathColorPaint, startAndFinishMarkColorPaint,canvasPaint, intermediatePaint,GPSPaint;
     private Canvas canvas;
 
-    private double radianConst=3.15192/180,angleDiff,one_fourth_rad=90*radianConst,half_rad=180*radianConst,three_fourth=270*radianConst;
+    private double radianConst=3.15192/180,angleDiff,GPS_angleDiff,one_fourth_rad=90*radianConst,half_rad=180*radianConst,three_fourth=270*radianConst;
     public static double theta=0;
     public static short fixed_bearing=0;
     private float angleDiffRadian,bearingDiffRadian;
@@ -105,7 +105,7 @@ public class drawCanvas extends View {
             return false;
     }
 
-    public void drawing(float azimuth,int local_step) {
+    public void drawing(float azimuth,int local_step,double stride_length) {
         r_local_step = local_step;
         r_azimuth = azimuth;
 
@@ -117,7 +117,7 @@ public class drawCanvas extends View {
                 path.moveTo(startX, startY);
                 invalidate();
                 endX = startX;
-                endY = startY - 3;
+                endY = startY - (float)(3*stride_length);
                 theta = r_azimuth;
                 path.lineTo(endX, endY);
                 canvas.drawOval(startX - 12, startY - 12, startX + 12, endY + 12, startAndFinishMarkColorPaint);//스타트 마크, 여기에 있어야 사라지지 않음
@@ -136,7 +136,7 @@ public class drawCanvas extends View {
         } else {
             angleDiff=r_azimuth - theta;
             angleDiffRadian = modifyDirection(angleDiff);
-            updateLocation(startX,startY,angleDiffRadian);
+            updateLocation(startX,startY,angleDiffRadian,(float)stride_length);
             path.lineTo(endX,endY);
             canvas.drawPath(path, pathColorPaint);
 
@@ -153,7 +153,7 @@ public class drawCanvas extends View {
 
     public void GPSdrawing(int countGPSCall, double distance, short bearing){
         r_GPSCall=countGPSCall;
-        r_distance = distance;
+        r_distance = 3*distance;
         r_bearing = bearing;
 
         Log.d("drawing method working",r_local_step+"drawing");
@@ -164,7 +164,7 @@ public class drawCanvas extends View {
                 path2.moveTo(GPS_startX, GPS_startY);
                 invalidate();
                 GPS_endX = GPS_startX;
-                GPS_endY = GPS_startY - 3;
+                GPS_endY = GPS_startY - (float)(3*r_distance);
                 fixed_bearing = (short)theta;
                 path2.lineTo(GPS_endX, GPS_endY);
                 canvas.drawOval(GPS_startX - 12, GPS_startY - 12, GPS_startX + 12, GPS_startY + 12, startAndFinishMarkColorPaint);//스타트 마크, 여기에 있어야 사라지지 않음
@@ -181,8 +181,8 @@ public class drawCanvas extends View {
                 canvas.drawPath(path2, GPSPaint);
             }
         } else {
-            bearingDifference=(short)(r_bearing- fixed_bearing);
-            bearingDiffRadian = modifyGPSDirection(bearingDifference);
+            GPS_angleDiff=(short)(r_bearing- theta);
+            bearingDiffRadian = modifyGPSDirection(GPS_angleDiff);
             updateGPSLocation(GPS_startX,GPS_startY,bearingDiffRadian,(float)r_distance);
             path2.lineTo(GPS_endX,GPS_endY);
             canvas.drawPath(path2, GPSPaint);
@@ -283,11 +283,11 @@ public class drawCanvas extends View {
         return angleDiffRadian;
     }
 
-    private float modifyGPSDirection(double angleDiff){
-        if (angleDiff < 0)//angleDiff 값은 무조건 양수가 나오도록 보정
-            angleDiff += 360;
+    private float modifyGPSDirection(double GPS_angleDiff){
+        if (GPS_angleDiff < 0)//angleDiff 값은 무조건 양수가 나오도록 보정
+            GPS_angleDiff += 360;
 
-        if(angleDiff>345 || angleDiff<=15){//방위각 보정
+       /* if(angleDiff>345 || angleDiff<=15){//방위각 보정
             angleDiff=0;
         }else if(angleDiff>15&&angleDiff<=45){
             angleDiff=30;
@@ -311,26 +311,26 @@ public class drawCanvas extends View {
             angleDiff=300;
         }else if(angleDiff>315&&angleDiff<=345){
             angleDiff=330;
-        }
+        }*/
 
-        bearingDiffRadian = (float) (angleDiff* radianConst);//346~15는 직선 +16~45는 30도 오른쪽, 46~75는 60도 오른쪽, 76~105는 90도 오른쪽, 106~135는 120도, 136~165는 150도, 166~195는 180도,196~225는 210도, 226~255는 240도, 256~285는 270도 , 286~315는 300도, 316~345는 330도,
+        bearingDiffRadian = (float) (GPS_angleDiff* radianConst);//346~15는 직선 +16~45는 30도 오른쪽, 46~75는 60도 오른쪽, 76~105는 90도 오른쪽, 106~135는 120도, 136~165는 150도, 166~195는 180도,196~225는 210도, 226~255는 240도, 256~285는 270도 , 286~315는 300도, 316~345는 330도,
         return bearingDiffRadian;
     }
 
 
-    private void updateLocation(float startX, float startY, float angleDiffRadian){
+    private void updateLocation(float startX, float startY, float angleDiffRadian,float stride_length){
         if (this.angleDiffRadian >0 && this.angleDiffRadian <= one_fourth_rad) {
-            endX = startX + 3 * (float) Math.cos(this.angleDiffRadian);
-            endY = startY - 3 * (float) Math.sin(this.angleDiffRadian);
+            endX = startX + 3 *(float) Math.cos(this.angleDiffRadian)*stride_length;
+            endY = startY - 3 *(float) Math.sin(this.angleDiffRadian)*stride_length;
         } else if (this.angleDiffRadian <= half_rad) {
-            endX = startX + 3 * (float) Math.cos(this.angleDiffRadian - one_fourth_rad);
-            endY = startY + 3 * (float) Math.sin(this.angleDiffRadian - one_fourth_rad);
+            endX = startX + 3 *(float) Math.cos(this.angleDiffRadian - one_fourth_rad)*stride_length;
+            endY = startY + 3 *(float) Math.sin(this.angleDiffRadian - one_fourth_rad)*stride_length;
         } else if (this.angleDiffRadian <= three_fourth) {
-            endX = startX - 3 * (float) Math.sin(this.angleDiffRadian - half_rad);
-            endY = startY + 3 * (float) Math.cos(this.angleDiffRadian - half_rad);
+            endX = startX - 3 *(float) Math.sin(this.angleDiffRadian - half_rad)*stride_length;
+            endY = startY + 3 *(float) Math.cos(this.angleDiffRadian - half_rad)*stride_length;
         } else if(this.angleDiffRadian <=(2*half_rad) || this.angleDiffRadian ==0){
-            endX = startX - 3 * (float) Math.cos(this.angleDiffRadian - three_fourth);
-            endY = startY - 3 * (float) Math.sin(this.angleDiffRadian - three_fourth);
+            endX = startX - 3  * (float) Math.cos(this.angleDiffRadian - three_fourth)*stride_length;
+            endY = startY - 3  *(float) Math.sin(this.angleDiffRadian - three_fourth)*stride_length;
         }
     }
     private void updateGPSLocation(float GPS_startX, float GPS_startY, float bearingDiffRadian,float r_distance){

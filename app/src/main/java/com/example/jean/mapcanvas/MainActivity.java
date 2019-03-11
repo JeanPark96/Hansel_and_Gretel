@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
 
         callPathImageFromDataBase();
 
+
         Btn.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("RestrictedApi")
             @Override
@@ -163,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
 
                     try {
                         onStartCommand();
-                        GetLocations();
                         printGPSResult();
 
                     } catch (Exception e) {
@@ -174,6 +174,8 @@ public class MainActivity extends AppCompatActivity {
                 else {
                     Btn.setImageResource(R.drawable.start);
                     locationManager.removeUpdates(locationListener);
+                    locationListener=null;
+                    locationManager=null;
                     showCanvas.finished();
                     try {
                         onStop();
@@ -217,6 +219,9 @@ public class MainActivity extends AppCompatActivity {
         }
         if (magneticSensor != null) {
             sensorManager.registerListener(magN, magneticSensor, sensorManager.SENSOR_DELAY_GAME);
+        }
+        if(locationManager==null){
+            GetLocations();
         }
         return START_STICKY;
     }
@@ -422,11 +427,12 @@ public class MainActivity extends AppCompatActivity {
         stride_length = Double.parseDouble(strideText.getText().toString()); //보폭 변환
         distance_result = stride_length*numOfStep; //거리 계산
         distanceText.setText(Double.toString(distance_result)); //거리 출력
+        //Toast.makeText(getApplicationContext(),"azimuth: "+azimuth,Toast.LENGTH_LONG).show();
 
         if(local_step==1)
             first_azimuth=azimuth;
         moveScrollView();
-        showCanvas.drawing(azimuth,local_step);
+        showCanvas.drawing(azimuth,local_step,stride_length);
     }
     public void printGPSResult(){
         showCanvas.GPSdrawing(countGPSCall,distance,(short)true_bearing);
@@ -600,7 +606,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
             //bearingTo 함수 실행해서 방위각 구함 이전 위도경도와 현재 위도경도로 구함
-           // Toast.makeText(getApplicationContext(),"distance: "+distance+", bearing: "+true_bearing,Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(),"distance: "+distance+", bearing: "+true_bearing,Toast.LENGTH_LONG).show();
 
             lastKnownlng = lng;//현재 경도는 곧 이전 경도가 됨
             lastKnownlat = lat;//현재 위도는 곧 이전 위도가 됨
