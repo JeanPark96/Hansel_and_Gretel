@@ -400,7 +400,7 @@ public class MainActivity extends AppCompatActivity {
         if(local_step==1)
             first_azimuth=azimuth;
         moveScrollView();
-        showCanvas.drawing(azimuth,local_step,stride_length);
+        showCanvas.drawing(azimuth,local_step,stride_length,distance_result);
     }
 
     public void averageStrideSet(View view){
@@ -418,7 +418,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void moveScrollView(){
-        scrollPos = (int) (scrollView.getScrollY() - 10.0);
+        scrollPos = (int) (scrollView.getScrollY() - 1.0);
         scrollView.scrollTo(0,scrollPos);
         Log.e("moveScrollView","moveScrollView");
     }
@@ -458,7 +458,7 @@ public class MainActivity extends AppCompatActivity {
         ad.show();
 
         filePath = showCanvas.saveBitmap(this.getApplicationContext(), showCanvas.drawBitmap, "NewBitmap");
-        Toast.makeText(this.getApplicationContext(), "경로가 저장되었습니다.", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this.getApplicationContext(), "경로가 저장되었습니다.", Toast.LENGTH_SHORT).show();
         makeNewBitmapFromPath(filePath);
     }
 

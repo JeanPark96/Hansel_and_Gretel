@@ -67,6 +67,9 @@ public class drawCanvas extends View {
 
         if(isBackTrackActivated()){
             path.reset();
+            Matrix matrix = new Matrix();
+            matrix.setScale(-1, -1); //상하좌우반전
+            firstBitmap = Bitmap.createBitmap(firstBitmap, 0, 0, firstBitmap.getWidth(), firstBitmap.getHeight(), matrix, false);
 
             canvas = new Canvas(bitmapForbackTracking);
             startX = width-endX;
@@ -84,7 +87,8 @@ public class drawCanvas extends View {
                 drawBitmap = Bitmap.createBitmap(MainActivity.newBitmap);
             }
             canvas = new Canvas(drawBitmap);
-            firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.myungshin),width,height,false);
+            firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.campus),width,height,false);
+            //firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.myungshin),width,height,false);
             //firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),width,height,false);
         }
   }
@@ -98,20 +102,20 @@ public class drawCanvas extends View {
             return false;
     }
 
-    public void drawing(float azimuth,int local_step,double stride) {
+    public void drawing(float azimuth,int local_step,double stride,double distanceFromMain) {
         r_local_step = local_step;
         r_azimuth = azimuth;
-        r_stride = (float) stride;
+        r_stride = (float) (stride * 3.5);
 
         Log.d("drawing method working",r_local_step+"drawing");
         if (r_local_step <= 1 && !isBackTrackActivated()) {
             if(MainActivity.pathAvailableNumber==0) {
-                startX = (width / 2);
-                startY = (height / 2) + 700;
+                startX = (width / 2) + 220; //원래는 +0
+                startY = (height / 2) + 700; //원래는 +700
                 path.moveTo(startX, startY);
                 invalidate();
                 endX = startX;
-                endY = startY - 3;
+                endY = startY - r_stride; //원래는 -3
                 theta = r_azimuth;
                 path.lineTo(endX, endY);
                 canvas.drawOval(startX - 12, startY - 12, startX + 12, endY + 12, startAndFinishMarkColorPaint);//스타트 마크, 여기에 있어야 사라지지 않음
@@ -123,7 +127,7 @@ public class drawCanvas extends View {
                 path.moveTo(startX, startY);
                 invalidate();
                 endX = startX;
-                endY = startY - 3;
+                endY = startY - r_stride;//원래는 -3
                 path.lineTo(endX, endY);
                 canvas.drawPath(path, pathColorPaint);
             }
@@ -134,7 +138,7 @@ public class drawCanvas extends View {
             path.lineTo(endX,endY);
             canvas.drawPath(path, pathColorPaint);
 
-            if(r_local_step % 80 == 0 && r_local_step!=0) {
+            if(distanceFromMain%50>=0 && distanceFromMain%50<1 && r_local_step!=0) {
                 canvas.drawOval(startX-12, startY-12, startX+12, endY+12, intermediatePaint);
             }
         }
