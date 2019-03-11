@@ -14,20 +14,27 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:largeHeap="true">
 
-        <activity android:name=".StartScreenActivity">
+        <activity android:name=".StartScreenActivity"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".ListScreenActivity"></activity>
+        <activity android:name=".ListScreenActivity"
+            android:theme="@style/ListTheme"></activity>
 
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity"
+            android:theme="@style/MainTheme"></activity>
 
-        <activity android:name=".PathInfoModification"></activity>
+        <activity android:name=".PathInfoModification"
+            android:theme="@style/ModifyTheme"></activity>
+
+        <activity android:name=".GuideScreenActivity"
+            android:theme="@style/GuideTheme"></activity>
     </application>
 
 </manifest>

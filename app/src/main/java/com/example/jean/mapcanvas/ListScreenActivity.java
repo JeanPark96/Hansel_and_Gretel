@@ -29,6 +29,7 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by i on 2019-01-17.
@@ -37,7 +38,7 @@ import java.util.Date;
 public class ListScreenActivity extends AppCompatActivity {
     ListView listView;
     ImageButton shareButton, folderAddButton, helpButton;
-    AlertDialog.Builder delete_ad, help_ad;
+    AlertDialog.Builder delete_ad;
 
     private DBhelper helper; ImageDBhelper IMGhelper;
     SQLiteDatabase db, imgdb;
@@ -55,7 +56,6 @@ public class ListScreenActivity extends AppCompatActivity {
         folderAddButton = findViewById(R.id.folderAddButton);
         helpButton = findViewById(R.id.helpButton);
         delete_ad = new AlertDialog.Builder(ListScreenActivity.this);
-        help_ad = new AlertDialog.Builder(ListScreenActivity.this);
 
         helper = new DBhelper(this);
         db = helper.getWritableDatabase();
@@ -81,7 +81,7 @@ public class ListScreenActivity extends AppCompatActivity {
                 data.putInt("row_id",id);
 
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                Toast.makeText(getApplicationContext(),"ListScreen_id:"+id,Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(),"ListScreen_id:"+id,Toast.LENGTH_LONG).show();
                 intent.putExtras(data);
                 startActivity(intent);
             }
@@ -146,20 +146,19 @@ public class ListScreenActivity extends AppCompatActivity {
         listView.setAdapter(myList);
     }
 
-    public void helpUser(View view){
-        final String TAG = "Help_Alert_Dialog";
-        help_ad.setTitle("도움말");       // 제목 설정
-        help_ad.setMessage("사용법");   // 내용 설정
+    public void guideList(View view){
+        AlertDialog.Builder alert = new AlertDialog.Builder(ListScreenActivity.this);
+        LayoutInflater factory = LayoutInflater.from(ListScreenActivity.this);
+        view = factory.inflate(R.layout.activity_listguide, null);
+        alert.setView(view);
 
-        help_ad.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Log.v(TAG, "Yes Btn Click");
-                dialog.dismiss();
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
             }
         });
-
-        help_ad.show();
+        alert.show();
     }
 
     public class CustomList extends BaseAdapter {

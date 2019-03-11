@@ -1,6 +1,7 @@
 package com.example.jean.mapcanvas;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -24,12 +25,15 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,8 +50,7 @@ public class MainActivity extends AppCompatActivity {
     TextView countText, distanceText;
     ImageButton Btn, closeButton;
     EditText strideText;
-    double stride_length=0, numOfStep=0,radianConst=3.15192/180,distance_result=0;
-    String orientation_result;
+    double stride_length=0, numOfStep=0, distance_result=0,radianConst=3.15192/180;
     String filePath;
     int count = StepValue.Step;
     private long lastTime;
@@ -105,8 +108,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //android.app.ActionBar actionBar = getActionBar();
-        //actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#F0F8FF")));
         setTitle("경로 기록");
         setContentView(R.layout.activity_main);
 
@@ -144,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
         orientationImg = (ImageView)findViewById(R.id.orientationImg);
         orientationImg.setRotation(0);
-        Img = (ImageView)findViewById(R.id.Img);
+        //Img = (ImageView)findViewById(R.id.Img);
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -153,7 +154,6 @@ public class MainActivity extends AppCompatActivity {
         magN = new magneticListener();
 
         callPathImageFromDataBase();
-
 
         Btn.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("RestrictedApi")
@@ -294,11 +294,11 @@ public class MainActivity extends AppCompatActivity {
             if(value > 0){
                 Cursor res = IMGhelper.getData(value);
                 imgid = value;
-               // Toast.makeText(getApplicationContext(),"Main_id:"+imgid,Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(),"Main_id:"+imgid,Toast.LENGTH_LONG).show();
                 res.moveToFirst();
 
                 int i=res.getInt(res.getColumnIndex(IMGhelper.PATH_AVAILABLE_NUM));
-               // Toast.makeText(getApplicationContext(),"pathavailable_id:"+i,Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(),"pathavailable_id:"+i,Toast.LENGTH_LONG).show();
 
                 if(i==1) {
                     //Toast.makeText(getApplicationContext(),"삐삐",Toast.LENGTH_LONG).show();
@@ -312,7 +312,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Bitmap tempBitmap=Bitmap.createBitmap(IMGhelper.retrieveImage(image));
                     Bitmap tempBitmap2=tempBitmap.copy(Bitmap.Config.ARGB_8888,true);
-                    Img.setImageBitmap(tempBitmap2);
+                    //Img.setImageBitmap(tempBitmap2);
                     newBitmap=showCanvas.setBitmap(tempBitmap2);
                 }
 
@@ -427,7 +427,6 @@ public class MainActivity extends AppCompatActivity {
         stride_length = Double.parseDouble(strideText.getText().toString()); //보폭 변환
         distance_result = stride_length*numOfStep; //거리 계산
         distanceText.setText(Double.toString(distance_result)); //거리 출력
-        //Toast.makeText(getApplicationContext(),"azimuth: "+azimuth,Toast.LENGTH_LONG).show();
 
         if(local_step==1)
             first_azimuth=azimuth;
@@ -486,8 +485,8 @@ public class MainActivity extends AppCompatActivity {
                     IMGhelper.updateDB(received_row_id,1,image,first_azimuth,last_azimuth,position_x,position_y);
                 else
                     IMGhelper.updateDB(imgid,1,image,first_azimuth,last_azimuth,position_x,position_y);
-                Toast.makeText(getApplicationContext(),"이미지id:"+imgid,Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(),"바이트:"+image,Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(),"이미지id:"+imgid,Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(),"바이트:"+image,Toast.LENGTH_LONG).show();
             }
         });
         ad.show();
@@ -543,6 +542,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        alert.show();
+    }
+
+    public void guidePath(View view){
+        AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+        LayoutInflater factory = LayoutInflater.from(MainActivity.this);
+        view = factory.inflate(R.layout.activity_guide, null);
+        alert.setView(view);
+
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
         alert.show();
     }
 

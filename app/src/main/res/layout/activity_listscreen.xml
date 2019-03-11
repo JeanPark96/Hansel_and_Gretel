@@ -19,7 +19,7 @@
             android:scaleType="fitCenter"
             android:background="@android:color/transparent"
             android:padding="5dp"
-            android:onClick="helpUser"/>
+            android:onClick="guideList"/>
 
         <ImageButton
             android:id="@+id/shareButton"
