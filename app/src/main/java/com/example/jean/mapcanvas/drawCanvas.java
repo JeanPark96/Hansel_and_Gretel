@@ -39,6 +39,7 @@ public class drawCanvas extends View {
     private short r_bearing;
     private double r_distance;
     private int r_GPSCall;
+    private double GPS_totalDistance=0;
 
     private Path path = new Path();
     private Path path2=new Path();
@@ -158,6 +159,7 @@ public class drawCanvas extends View {
         r_GPSCall=countGPSCall;
         r_distance = 8*distance;
         r_bearing = bearing;
+        GPS_totalDistance+=distance;
 
         Log.d("drawing method working",r_local_step+"drawing");
         if (r_GPSCall <= 2 && !isBackTrackActivated()) {
@@ -190,7 +192,7 @@ public class drawCanvas extends View {
             path2.lineTo(GPS_endX,GPS_endY);
             canvas.drawPath(path2, GPSPaint);
             fixed_bearing=r_bearing;
-            if( 0<=distance%50 && distance%50<1 && r_local_step!=0) {
+            if( 0<=GPS_totalDistance%50 && GPS_totalDistance%50<1 && r_local_step!=0) {
                 canvas.drawOval(GPS_startX-12, GPS_startY-12, GPS_startX+12, GPS_endY+12, intermediatePaint);
             }
         }
@@ -288,6 +290,32 @@ public class drawCanvas extends View {
     private float modifyGPSDirection(double GPS_angleDiff){
         if (GPS_angleDiff < 0)//angleDiff 값은 무조건 양수가 나오도록 보정
             GPS_angleDiff += 360;
+        if(GPS_angleDiff>345 || GPS_angleDiff<=15){//방위각 보정
+            GPS_angleDiff=0;
+        }else if(GPS_angleDiff>15&&GPS_angleDiff<=45){
+            GPS_angleDiff=30;
+        }else if(GPS_angleDiff>45&&GPS_angleDiff<=75){
+            GPS_angleDiff=60;
+        }else if(GPS_angleDiff>75&&GPS_angleDiff<=105){
+            GPS_angleDiff=90;
+        }else if(GPS_angleDiff>105&&GPS_angleDiff<=135){
+            GPS_angleDiff=120;
+        }else if(GPS_angleDiff>135&&GPS_angleDiff<=165){
+            GPS_angleDiff=150;
+        }else if(GPS_angleDiff>165&&GPS_angleDiff<=195){
+            GPS_angleDiff=180;
+        }else if(GPS_angleDiff>195&&GPS_angleDiff<=225){
+            GPS_angleDiff=210;
+        }else if(GPS_angleDiff>225&&GPS_angleDiff<=255){
+            GPS_angleDiff=240;
+        }else if(GPS_angleDiff>255&&GPS_angleDiff<=285){
+            GPS_angleDiff=270;
+        }else if(GPS_angleDiff>285&&GPS_angleDiff<=315){
+            GPS_angleDiff=300;
+        }else if(GPS_angleDiff>315&&GPS_angleDiff<=345){
+            GPS_angleDiff=330;
+        }
+
 
         bearingDiffRadian = (float) (GPS_angleDiff* radianConst);//346~15는 직선 +16~45는 30도 오른쪽, 46~75는 60도 오른쪽, 76~105는 90도 오른쪽, 106~135는 120도, 136~165는 150도, 166~195는 180도,196~225는 210도, 226~255는 240도, 256~285는 270도 , 286~315는 300도, 316~345는 330도,
         return bearingDiffRadian;

@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
     double radian_distance;
     double radian_bearing;
     double true_bearing;
+    boolean stateStatic=false;
     double last_true_bearing;
     short bearingDiff;
     float marker_dp;
@@ -373,6 +374,7 @@ public class MainActivity extends AppCompatActivity {
 
                     lastTotalAbsAcc=totalAbsAcc;
                     lastDeltaTotalAcc=deltaTotalAcc;
+                    stateStatic=false;
                 }
             }
         }
@@ -429,6 +431,7 @@ public class MainActivity extends AppCompatActivity {
             first_azimuth=azimuth;
         moveScrollView();
         showCanvas.drawing(azimuth,local_step,stride_length,distance_result);
+        stateStatic=true;
     }
     public void printGPSResult(){
         showCanvas.GPSdrawing(countGPSCall,distance,(short)true_bearing);
@@ -577,8 +580,8 @@ public class MainActivity extends AppCompatActivity {
         Log.d("Main", "isGPSEnabled="+ isGPSEnabled);
         Log.d("Main", "isNetworkEnabled="+ isNetworkEnabled);
 
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 0, locationListener);//위치갱신 요청
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 0, locationListener);//위치갱신 요청gps
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);//위치갱신 요청
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);//위치갱신 요청gps
 
 
         // 수동으로 위치 구하기
@@ -597,32 +600,34 @@ public class MainActivity extends AppCompatActivity {
     LocationListener locationListener = new LocationListener() {//location manager로부터 location이 바뀌었을 때 알림을 받을 수 있도록 함
 
         public void onLocationChanged(Location location) {//위치가 변할때마다 호출
+            //if(stateStatic!=false) {
+                double lat = location.getLatitude();//위도 받아오기
+                double lng = location.getLongitude();//경도 받아오
 
+                if (++countGPSCall >= 2) {//위도 경도를 각각 2번 이상 받아왔을 때 거리와 방위각 계산이 가능해짐
+                    // DrawMap();
+                    Location location1 = new Location("point1");
+                    location1.setLatitude(lastKnownlat);//location1의 위도는 이전 위치의 위도
+                    location1.setLongitude(lastKnownlng);//location1의 경도는 이전 위치의 경도
+                    Location location2 = new Location("point1");
+                    location2.setLatitude(lat);//location2의 위도는 현재 위도
+                    location2.setLongitude(lng);//location2 경도는 현재 경도
+                    double temp_distance = location1.distanceTo(location2);//location1으로부터 location2까지의 거리를 구하는 메소드
+                    if (temp_distance < 20) {
+                        distance = temp_distance;
+                        true_bearing = bearingTo(lastKnownlat, lastKnownlng, lat, lng);
+                        printGPSResult();
+                    }
 
-            double lat = location.getLatitude();//위도 받아오기
-            double lng = location.getLongitude();//경도 받아오
-
-            if (++countGPSCall >= 2) {//위도 경도를 각각 2번 이상 받아왔을 때 거리와 방위각 계산이 가능해짐
-                // DrawMap();
-                Location location1 = new Location("point1");
-                location1.setLatitude(lastKnownlat);//location1의 위도는 이전 위치의 위도
-                location1.setLongitude(lastKnownlng);//location1의 경도는 이전 위치의 경도
-                Location location2 = new Location("point1");
-                location2.setLatitude(lat);//location2의 위도는 현재 위도
-                location2.setLongitude(lng);//location2 경도는 현재 경도
-                double temp_distance = location1.distanceTo(location2);//location1으로부터 location2까지의 거리를 구하는 메소드
-                distance= temp_distance;
-                true_bearing = bearingTo(lastKnownlat, lastKnownlng,lat,lng);
-                printGPSResult();
+                }
+                //bearingTo 함수 실행해서 방위각 구함 이전 위도경도와 현재 위도경도로 구함
+                Toast.makeText(getApplicationContext(), "distance: " + distance + ", bearing: " + true_bearing, Toast.LENGTH_LONG).show();
+                    lastKnownlng = lng;//현재 경도는 곧 이전 경도가 됨
+                    lastKnownlat = lat;//현재 위도는 곧 이전 위도가 됨
 
             }
-            //bearingTo 함수 실행해서 방위각 구함 이전 위도경도와 현재 위도경도로 구함
-            Toast.makeText(getApplicationContext(),"distance: "+distance+", bearing: "+true_bearing,Toast.LENGTH_LONG).show();
 
-            lastKnownlng = lng;//현재 경도는 곧 이전 경도가 됨
-            lastKnownlat = lat;//현재 위도는 곧 이전 위도가 됨
-
-        }
+        //}
 
         public void onStatusChanged(String provider, int status, Bundle extras) {//provider의 상태가 바뀔
         }
