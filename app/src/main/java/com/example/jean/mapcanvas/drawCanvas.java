@@ -258,7 +258,7 @@ public class drawCanvas extends View {
         if (angleDiff < 0)//angleDiff 값은 무조건 양수가 나오도록 보정
             angleDiff += 360;
 
-        if(angleDiff>345 || angleDiff<=15){//방위각 보정
+        /*if(angleDiff>345 || angleDiff<=15){//방위각 보정
             angleDiff=0;
         }else if(angleDiff>15&&angleDiff<=45){
             angleDiff=30;
@@ -282,13 +282,30 @@ public class drawCanvas extends View {
             angleDiff=300;
         }else if(angleDiff>315&&angleDiff<=345){
             angleDiff=330;
+        }*/
+        if(angleDiff>337.5 || angleDiff<=22.5){//방위각 보정
+            angleDiff=0;
+        }else if(angleDiff>22.5&&angleDiff<=67.5){
+            angleDiff=45;
+        }else if(angleDiff>67.5&&angleDiff<=112.5){
+            angleDiff=90;
+        }else if(angleDiff>112.5&&angleDiff<=157.5){
+            angleDiff=135;
+        }else if(angleDiff>157.5&&angleDiff<=202.5){
+            angleDiff=180;
+        }else if(angleDiff>202.5&&angleDiff<=247.5){
+            angleDiff=225;
+        }else if(angleDiff>247.5&&angleDiff<=292.5){
+            angleDiff=270;
+        }else if(angleDiff>292.5&&angleDiff<=337.5){
+            angleDiff=315;
         }
 
         angleDiffRadian = (float) (angleDiff* radianConst);//346~15는 직선 +16~45는 30도 오른쪽, 46~75는 60도 오른쪽, 76~105는 90도 오른쪽, 106~135는 120도, 136~165는 150도, 166~195는 180도,196~225는 210도, 226~255는 240도, 256~285는 270도 , 286~315는 300도, 316~345는 330도,
         return angleDiffRadian;
     }
     private float modifyGPSDirection(double GPS_angleDiff){
-        if (GPS_angleDiff < 0)//angleDiff 값은 무조건 양수가 나오도록 보정
+        /*if (GPS_angleDiff < 0)//angleDiff 값은 무조건 양수가 나오도록 보정
             GPS_angleDiff += 360;
         if(GPS_angleDiff>345 || GPS_angleDiff<=15){//방위각 보정
             GPS_angleDiff=0;
@@ -314,6 +331,23 @@ public class drawCanvas extends View {
             GPS_angleDiff=300;
         }else if(GPS_angleDiff>315&&GPS_angleDiff<=345){
             GPS_angleDiff=330;
+        }*/
+        if(GPS_angleDiff>337.5 || GPS_angleDiff<=22.5){//방위각 보정
+            GPS_angleDiff=0;
+        }else if(GPS_angleDiff>22.5&&GPS_angleDiff<=67.5){
+            GPS_angleDiff=45;
+        }else if(GPS_angleDiff>67.5&&GPS_angleDiff<=112.5){
+            GPS_angleDiff=90;
+        }else if(GPS_angleDiff>112.5&&GPS_angleDiff<=157.5){
+            GPS_angleDiff=135;
+        }else if(GPS_angleDiff>157.5&&GPS_angleDiff<=202.5){
+            GPS_angleDiff=180;
+        }else if(GPS_angleDiff>202.5&&GPS_angleDiff<=247.5){
+            GPS_angleDiff=225;
+        }else if(GPS_angleDiff>247.5&&GPS_angleDiff<=292.5){
+            GPS_angleDiff=270;
+        }else if(GPS_angleDiff>292.5&&GPS_angleDiff<=337.5){
+            GPS_angleDiff=315;
         }
 
 
