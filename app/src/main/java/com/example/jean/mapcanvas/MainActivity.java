@@ -577,8 +577,8 @@ public class MainActivity extends AppCompatActivity {
         Log.d("Main", "isGPSEnabled="+ isGPSEnabled);
         Log.d("Main", "isNetworkEnabled="+ isNetworkEnabled);
 
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);//위치갱신 요청
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);//위치갱신 요청gps
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 0, locationListener);//위치갱신 요청
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 0, locationListener);//위치갱신 요청gps
 
 
         // 수동으로 위치 구하기

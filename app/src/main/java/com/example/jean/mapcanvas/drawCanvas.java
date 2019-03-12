@@ -184,13 +184,13 @@ public class drawCanvas extends View {
                 canvas.drawPath(path2, GPSPaint);
             }
         } else {
-            GPS_angleDiff=(short)(r_bearing- theta);
+            GPS_angleDiff=(short)(r_bearing- fixed_bearing);
             bearingDiffRadian = modifyGPSDirection(GPS_angleDiff);
             updateGPSLocation(GPS_startX,GPS_startY,bearingDiffRadian,(float)r_distance);
             path2.lineTo(GPS_endX,GPS_endY);
             canvas.drawPath(path2, GPSPaint);
-
-            if(r_local_step % 80 == 0 && r_local_step!=0) {
+            fixed_bearing=r_bearing;
+            if( 0<=distance%50 && distance%50<1 && r_local_step!=0) {
                 canvas.drawOval(GPS_startX-12, GPS_startY-12, GPS_startX+12, GPS_endY+12, intermediatePaint);
             }
         }
