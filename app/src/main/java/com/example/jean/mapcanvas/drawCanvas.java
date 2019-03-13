@@ -11,7 +11,6 @@ import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.ScrollView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,28 +21,40 @@ public class drawCanvas extends View {
     public static File tempFile;
     public static Bitmap drawBitmap, firstBitmap,tempBitmap;
     public Bitmap bitmapForbackTracking;
-    private Paint pathColorPaint, startAndFinishMarkColorPaint,canvasPaint, intermediatePaint;
+    private Paint pathColorPaint, startAndFinishMarkColorPaint,canvasPaint, intermediatePaint,GPSPaint;
     private Canvas canvas;
 
-    private double radianConst=3.15192/180,angleDiff,one_fourth_rad=90*radianConst,half_rad=180*radianConst,three_fourth=270*radianConst;
+    private double radianConst=3.15192/180,angleDiff,GPS_angleDiff,one_fourth_rad=90*radianConst,half_rad=180*radianConst,three_fourth=270*radianConst;
     public static double theta=0;
-    private float angleDiffRadian;
+    public static short fixed_bearing=0;
+    private float angleDiffRadian,bearingDiffRadian;
     public static float startX, startY, endX, endY;
+    public static float GPS_startX, GPS_startY, GPS_endX, GPS_endY;
+    private int width,height;
+
     private int r_local_step;
     private float r_azimuth;
     private float r_stride;
-    private int width,height;
+
+    private short r_bearing;
+    private double r_distance;
+    private int r_GPSCall;
+    private double GPS_totalDistance=0;
+
     private Path path = new Path();
+    private Path path2=new Path();
 
     public drawCanvas(Context context, AttributeSet attrs) {
         super(context,attrs);
         pathColorPaint = new Paint();
         startAndFinishMarkColorPaint = new Paint();
         intermediatePaint = new Paint();
+        GPSPaint=new Paint();
 
         pathColorPaint=settingPaint(R.color.blue,15f);
         startAndFinishMarkColorPaint=settingPaint(R.color.green,8f);
         intermediatePaint=settingPaint(R.color.black,8f);
+        GPSPaint=settingPaint(R.color.red,15f);
         canvasPaint=new Paint(Paint.DITHER_FLAG);
     }
 
@@ -67,9 +78,6 @@ public class drawCanvas extends View {
 
         if(isBackTrackActivated()){
             path.reset();
-            Matrix matrix = new Matrix();
-            matrix.setScale(-1, -1); //상하좌우반전
-            firstBitmap = Bitmap.createBitmap(firstBitmap, 0, 0, firstBitmap.getWidth(), firstBitmap.getHeight(), matrix, false);
 
             canvas = new Canvas(bitmapForbackTracking);
             startX = width-endX;
@@ -87,15 +95,15 @@ public class drawCanvas extends View {
                 drawBitmap = Bitmap.createBitmap(MainActivity.newBitmap);
             }
             canvas = new Canvas(drawBitmap);
-            firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.campus),width,height,false);
-            //firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.myungshin),width,height,false);
-            //firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.grid),width,height,false);
+            //firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.campus),width,height,false);
+            firstBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.myungshin),width,height,false);
         }
-  }
+    }
 
     public boolean isBackTrackActivated(){
         if(MainActivity.newBitmapAvailable==true) {
             bitmapForbackTracking = MainActivity.newBitmap;
+
             return true;
         }
         else
@@ -105,17 +113,17 @@ public class drawCanvas extends View {
     public void drawing(float azimuth,int local_step,double stride,double distanceFromMain) {
         r_local_step = local_step;
         r_azimuth = azimuth;
-        r_stride = (float) (stride * 3.5);
+        r_stride = 8*(float) stride;
 
         Log.d("drawing method working",r_local_step+"drawing");
         if (r_local_step <= 1 && !isBackTrackActivated()) {
             if(MainActivity.pathAvailableNumber==0) {
-                startX = (width / 2) + 220; //원래는 +0
-                startY = (height / 2) + 700; //원래는 +700
+                startX = (width / 2) - 190;
+                startY = (height / 2) + 950;
                 path.moveTo(startX, startY);
                 invalidate();
                 endX = startX;
-                endY = startY - r_stride; //원래는 -3
+                endY = startY - (float)(r_stride);
                 theta = r_azimuth;
                 path.lineTo(endX, endY);
                 canvas.drawOval(startX - 12, startY - 12, startX + 12, endY + 12, startAndFinishMarkColorPaint);//스타트 마크, 여기에 있어야 사라지지 않음
@@ -127,7 +135,7 @@ public class drawCanvas extends View {
                 path.moveTo(startX, startY);
                 invalidate();
                 endX = startX;
-                endY = startY - r_stride;//원래는 -3
+                endY = startY - 3;
                 path.lineTo(endX, endY);
                 canvas.drawPath(path, pathColorPaint);
             }
@@ -138,7 +146,7 @@ public class drawCanvas extends View {
             path.lineTo(endX,endY);
             canvas.drawPath(path, pathColorPaint);
 
-            if(distanceFromMain%50>=0 && distanceFromMain%50<1 && r_local_step!=0) {
+            if(0<=distanceFromMain%50 && distanceFromMain%50<1 && r_local_step!=0) {
                 canvas.drawOval(startX-12, startY-12, startX+12, endY+12, intermediatePaint);
             }
         }
@@ -147,6 +155,54 @@ public class drawCanvas extends View {
 
         startX=endX;
         startY=endY;
+    }
+
+    public void GPSdrawing(int countGPSCall, double distance, short bearing){
+        r_GPSCall=countGPSCall;
+        r_distance = 8*distance;
+        r_bearing = bearing;
+        GPS_totalDistance+=distance;
+
+        Log.d("drawing method working",r_local_step+"drawing");
+        if (r_GPSCall <= 2 && !isBackTrackActivated()) {
+            if(MainActivity.pathAvailableNumber==0) {
+                GPS_startX = (width / 2)+220;
+                GPS_startY = (height / 2) + 550;
+                path2.moveTo(GPS_startX, GPS_startY);
+                invalidate();
+                GPS_endX = GPS_startX;
+                GPS_endY = GPS_startY - (float)(r_distance);
+                fixed_bearing = (short)r_bearing;
+                path2.lineTo(GPS_endX, GPS_endY);
+                canvas.drawOval(GPS_startX - 12, GPS_startY - 12, GPS_startX + 12, GPS_startY + 12, startAndFinishMarkColorPaint);//스타트 마크, 여기에 있어야 사라지지 않음
+                canvas.drawPath(path2, GPSPaint);
+            }
+            else{
+                GPS_startX=GPS_endX;
+                GPS_startY=GPS_endY;
+                path2.moveTo(GPS_startX, GPS_startY);
+                invalidate();
+                GPS_endX = GPS_startX;
+                GPS_endY = GPS_startY - 3;
+                path2.lineTo(GPS_endX, GPS_endY);
+                canvas.drawPath(path2, GPSPaint);
+            }
+        } else {
+            GPS_angleDiff=(short)(r_bearing- fixed_bearing);
+            bearingDiffRadian = modifyGPSDirection(GPS_angleDiff);
+            updateGPSLocation(GPS_startX,GPS_startY,bearingDiffRadian,(float)r_distance);
+            path2.lineTo(GPS_endX,GPS_endY);
+            canvas.drawPath(path2, GPSPaint);
+            fixed_bearing=r_bearing;
+            if( 0<=GPS_totalDistance%50 && GPS_totalDistance%50<1 && r_local_step!=0) {
+                canvas.drawOval(GPS_startX-12, GPS_startY-12, GPS_startX+12, GPS_endY+12, intermediatePaint);
+            }
+        }
+
+        invalidate();
+
+        GPS_startX=GPS_endX;
+        GPS_startY=GPS_endY;
     }
 
     @Override
@@ -159,6 +215,7 @@ public class drawCanvas extends View {
     public void finished(){
         startAndFinishMarkColorPaint=settingPaint(R.color.red,8f);
         canvas.drawOval(startX-12,startY-12,startX+12,endY+12, startAndFinishMarkColorPaint);
+        canvas.drawOval(GPS_startX-12,GPS_startY-12,GPS_startX+12,GPS_endY+12, startAndFinishMarkColorPaint);
         invalidate();
     }
 
@@ -203,7 +260,7 @@ public class drawCanvas extends View {
         if (angleDiff < 0)//angleDiff 값은 무조건 양수가 나오도록 보정
             angleDiff += 360;
 
-        /*if(angleDiff>345 || angleDiff<=15){//방위각 보정(!2등분)
+        /*if(angleDiff>345 || angleDiff<=15){//방위각 보정
             angleDiff=0;
         }else if(angleDiff>15&&angleDiff<=45){
             angleDiff=30;
@@ -227,6 +284,23 @@ public class drawCanvas extends View {
             angleDiff=300;
         }else if(angleDiff>315&&angleDiff<=345){
             angleDiff=330;
+        }*/
+        /*if(angleDiff>337.5 || angleDiff<=22.5){//방위각 보정
+            angleDiff=0;
+        }else if(angleDiff>22.5&&angleDiff<=67.5){
+            angleDiff=45;
+        }else if(angleDiff>67.5&&angleDiff<=112.5){
+            angleDiff=90;
+        }else if(angleDiff>112.5&&angleDiff<=157.5){
+            angleDiff=135;
+        }else if(angleDiff>157.5&&angleDiff<=202.5){
+            angleDiff=180;
+        }else if(angleDiff>202.5&&angleDiff<=247.5){
+            angleDiff=225;
+        }else if(angleDiff>247.5&&angleDiff<=292.5){
+            angleDiff=270;
+        }else if(angleDiff>292.5&&angleDiff<=337.5){
+            angleDiff=315;
         }*/
         if(angleDiff>342 || angleDiff<=18){//방위각 보정
             angleDiff=0;
@@ -253,20 +327,85 @@ public class drawCanvas extends View {
         angleDiffRadian = (float) (angleDiff* radianConst);//346~15는 직선 +16~45는 30도 오른쪽, 46~75는 60도 오른쪽, 76~105는 90도 오른쪽, 106~135는 120도, 136~165는 150도, 166~195는 180도,196~225는 210도, 226~255는 240도, 256~285는 270도 , 286~315는 300도, 316~345는 330도,
         return angleDiffRadian;
     }
+    private float modifyGPSDirection(double GPS_angleDiff){
+        /*if (GPS_angleDiff < 0)//angleDiff 값은 무조건 양수가 나오도록 보정
+            GPS_angleDiff += 360;
+        if(GPS_angleDiff>345 || GPS_angleDiff<=15){//방위각 보정
+            GPS_angleDiff=0;
+        }else if(GPS_angleDiff>15&&GPS_angleDiff<=45){
+            GPS_angleDiff=30;
+        }else if(GPS_angleDiff>45&&GPS_angleDiff<=75){
+            GPS_angleDiff=60;
+        }else if(GPS_angleDiff>75&&GPS_angleDiff<=105){
+            GPS_angleDiff=90;
+        }else if(GPS_angleDiff>105&&GPS_angleDiff<=135){
+            GPS_angleDiff=120;
+        }else if(GPS_angleDiff>135&&GPS_angleDiff<=165){
+            GPS_angleDiff=150;
+        }else if(GPS_angleDiff>165&&GPS_angleDiff<=195){
+            GPS_angleDiff=180;
+        }else if(GPS_angleDiff>195&&GPS_angleDiff<=225){
+            GPS_angleDiff=210;
+        }else if(GPS_angleDiff>225&&GPS_angleDiff<=255){
+            GPS_angleDiff=240;
+        }else if(GPS_angleDiff>255&&GPS_angleDiff<=285){
+            GPS_angleDiff=270;
+        }else if(GPS_angleDiff>285&&GPS_angleDiff<=315){
+            GPS_angleDiff=300;
+        }else if(GPS_angleDiff>315&&GPS_angleDiff<=345){
+            GPS_angleDiff=330;
+        }*/
+        if(GPS_angleDiff>337.5 || GPS_angleDiff<=22.5){//방위각 보정
+            GPS_angleDiff=0;
+        }else if(GPS_angleDiff>22.5&&GPS_angleDiff<=67.5){
+            GPS_angleDiff=45;
+        }else if(GPS_angleDiff>67.5&&GPS_angleDiff<=112.5){
+            GPS_angleDiff=90;
+        }else if(GPS_angleDiff>112.5&&GPS_angleDiff<=157.5){
+            GPS_angleDiff=135;
+        }else if(GPS_angleDiff>157.5&&GPS_angleDiff<=202.5){
+            GPS_angleDiff=180;
+        }else if(GPS_angleDiff>202.5&&GPS_angleDiff<=247.5){
+            GPS_angleDiff=225;
+        }else if(GPS_angleDiff>247.5&&GPS_angleDiff<=292.5){
+            GPS_angleDiff=270;
+        }else if(GPS_angleDiff>292.5&&GPS_angleDiff<=337.5){
+            GPS_angleDiff=315;
+        }
 
-    private void updateLocation(float startX, float startY, float angleDiffRadian, float stride){
+
+        bearingDiffRadian = (float) (GPS_angleDiff* radianConst);//346~15는 직선 +16~45는 30도 오른쪽, 46~75는 60도 오른쪽, 76~105는 90도 오른쪽, 106~135는 120도, 136~165는 150도, 166~195는 180도,196~225는 210도, 226~255는 240도, 256~285는 270도 , 286~315는 300도, 316~345는 330도,
+        return bearingDiffRadian;
+    }
+
+    private void updateLocation(float startX, float startY, float angleDiffRadian,float stride){
         if (this.angleDiffRadian >0 && this.angleDiffRadian <= one_fourth_rad) {
-            endX = startX + 3 * (float) Math.cos(this.angleDiffRadian) * stride;
-            endY = startY - 3 * (float) Math.sin(this.angleDiffRadian) * stride;
+            endX = startX + (float) Math.cos(this.angleDiffRadian)* stride;
+            endY = startY - (float) Math.sin(this.angleDiffRadian)* stride;
         } else if (this.angleDiffRadian <= half_rad) {
-            endX = startX + 3 * (float) Math.cos(this.angleDiffRadian - one_fourth_rad) * stride;
-            endY = startY + 3 * (float) Math.sin(this.angleDiffRadian - one_fourth_rad) * stride;
+            endX = startX + (float) Math.cos(this.angleDiffRadian - one_fourth_rad)* stride;
+            endY = startY + (float) Math.sin(this.angleDiffRadian - one_fourth_rad)* stride;
         } else if (this.angleDiffRadian <= three_fourth) {
-            endX = startX - 3 * (float) Math.sin(this.angleDiffRadian - half_rad) * stride;
-            endY = startY + 3 * (float) Math.cos(this.angleDiffRadian - half_rad) * stride;
+            endX = startX - (float) Math.sin(this.angleDiffRadian - half_rad)* stride;
+            endY = startY + (float) Math.cos(this.angleDiffRadian - half_rad)* stride;
         } else if(this.angleDiffRadian <=(2*half_rad) || this.angleDiffRadian ==0){
-            endX = startX - 3 * (float) Math.cos(this.angleDiffRadian - three_fourth) * stride;
-            endY = startY - 3 * (float) Math.sin(this.angleDiffRadian - three_fourth) * stride;
+            endX = startX - (float) Math.cos(this.angleDiffRadian - three_fourth)* stride;
+            endY = startY - (float) Math.sin(this.angleDiffRadian - three_fourth)* stride;
+        }
+    }
+    private void updateGPSLocation(float GPS_startX, float GPS_startY, float bearingDiffRadian,float r_distance){
+        if (this.bearingDiffRadian >0 && this.bearingDiffRadian <= one_fourth_rad) {
+            GPS_endX = GPS_startX + r_distance * (float) Math.cos(this.bearingDiffRadian);
+            GPS_endY = GPS_startY - r_distance * (float) Math.sin(this.bearingDiffRadian);
+        } else if (this.bearingDiffRadian <= half_rad) {
+            GPS_endX = GPS_startX + r_distance * (float) Math.cos(this.bearingDiffRadian - one_fourth_rad);
+            GPS_endY = GPS_startY + r_distance * (float) Math.sin(this.bearingDiffRadian - one_fourth_rad);
+        } else if (this.bearingDiffRadian <= three_fourth) {
+            GPS_endX = GPS_startX - r_distance * (float) Math.sin(this.bearingDiffRadian - half_rad);
+            GPS_endY = GPS_startY + r_distance * (float) Math.cos(this.bearingDiffRadian - half_rad);
+        } else if(this.bearingDiffRadian <=(2*half_rad) || this.bearingDiffRadian ==0){
+            GPS_endX = GPS_startX - r_distance * (float) Math.cos(this.bearingDiffRadian - three_fourth);
+            GPS_endY = GPS_startY - r_distance * (float) Math.sin(this.bearingDiffRadian - three_fourth);
         }
     }
 }

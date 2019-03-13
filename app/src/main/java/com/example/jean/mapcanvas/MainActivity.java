@@ -3,8 +3,10 @@ package com.example.jean.mapcanvas;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -15,8 +17,14 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -80,6 +88,26 @@ public class MainActivity extends AppCompatActivity {
     Date currentDate = new Date(now);
     RadioButton man_stride, woman_stride;
     boolean man=false, woman=false;
+
+    LocationManager locationManager;
+
+    Boolean isGPSEnabled;//gps 사용가능 여부
+    Boolean isNetworkEnabled;//네트워크 사용가능여부
+    int countGPSCall=0; //거리와 방위각을 계산하기 위해서는 위도와 경도가 최소한 1번 바껴야 하므로 필요함
+    double lastKnownlng=0;
+    double lastKnownlat=0;
+    double distance=0;
+    double radian_distance;
+    double radian_bearing;
+    double true_bearing;
+    boolean stateStatic=false;
+    double last_true_bearing;
+    short bearingDiff;
+    float marker_dp;
+    float curr_posX;
+    float curr_posY;
+    float marker_diffX;
+    float marker_diffY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -403,6 +431,10 @@ public class MainActivity extends AppCompatActivity {
         showCanvas.drawing(azimuth,local_step,stride_length,distance_result);
     }
 
+    public void printGPSResult(){
+        showCanvas.GPSdrawing(countGPSCall,distance,(short)true_bearing);
+    }
+
     public void averageStrideSet(View view){
         switch (view.getId()){
             case R.id.man_stride:
@@ -524,5 +556,102 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         alert.show();
+    }
+
+    //gps버튼 작동
+    public void GetLocations(){
+
+        if ( Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions( this, new String[] {  android.Manifest.permission.ACCESS_FINE_LOCATION  },
+                    0 );
+        }//안드로이드가 23 버전 이상으로 업그레이드 되면서 사용자에게 퍼미션을 요청하는 소스코드를 manifest 파일 외에도 삽입해야함
+
+
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);//시스템 위치 서비스에 접근 가능하게 함. 이 서비스는 어플이 기기의 지리학적 위치를 주기적으로 업데이트 받아오게끔 함
+
+        // GPS 프로바이더 사용가능여부
+        isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        // 네트워크 프로바이더 사용가능여부
+        isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        Log.d("Main", "isGPSEnabled="+ isGPSEnabled);
+        Log.d("Main", "isNetworkEnabled="+ isNetworkEnabled);
+
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);//위치갱신 요청
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);//위치갱신 요청gps
+
+
+        // 수동으로 위치 구하기
+        String locationProvider = LocationManager.GPS_PROVIDER;
+
+        Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+        if (lastKnownLocation != null) {
+            double lng = lastKnownLocation.getLongitude();
+            double lat = lastKnownLocation.getLatitude();
+
+            Log.d("Main", "longtitude=" + lng + ", latitude=" + lat);
+
+        }
+    }
+
+    LocationListener locationListener = new LocationListener() {//location manager로부터 location이 바뀌었을 때 알림을 받을 수 있도록 함
+
+        public void onLocationChanged(Location location) {//위치가 변할때마다 호출
+            //if(stateStatic!=false) {
+            double lat = location.getLatitude();//위도 받아오기
+            double lng = location.getLongitude();//경도 받아오
+
+            if (++countGPSCall >= 2) {//위도 경도를 각각 2번 이상 받아왔을 때 거리와 방위각 계산이 가능해짐
+                // DrawMap();
+                Location location1 = new Location("point1");
+                location1.setLatitude(lastKnownlat);//location1의 위도는 이전 위치의 위도
+                location1.setLongitude(lastKnownlng);//location1의 경도는 이전 위치의 경도
+                Location location2 = new Location("point1");
+                location2.setLatitude(lat);//location2의 위도는 현재 위도
+                location2.setLongitude(lng);//location2 경도는 현재 경도
+                double temp_distance = location1.distanceTo(location2);//location1으로부터 location2까지의 거리를 구하는 메소드
+                if (temp_distance < 20) {
+                    distance = temp_distance;
+                    true_bearing = bearingTo(lastKnownlat, lastKnownlng, lat, lng);
+                    printGPSResult();
+                }
+
+            }
+            //bearingTo 함수 실행해서 방위각 구함 이전 위도경도와 현재 위도경도로 구함
+            Toast.makeText(getApplicationContext(), "distance: " + distance + ", bearing: " + true_bearing, Toast.LENGTH_LONG).show();
+            lastKnownlng = lng;//현재 경도는 곧 이전 경도가 됨
+            lastKnownlat = lat;//현재 위도는 곧 이전 위도가 됨
+
+        }
+
+        //}
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {//provider의 상태가 바뀔
+        }
+
+        public void onProviderEnabled(String provider) {//사용자에 의해 provider가 설정될 때 호출
+        }
+
+        public void onProviderDisabled(String provider) {//사용자에 의해 provider가 해제될 때 호출
+        }
+    };
+
+    //방위각 구하기
+    public short bearingTo(double latitude1,double longitude1,double latitude2,double longitude2) {
+        double currLatRadian = latitude1 * radianConst;//이전 위도를 라디안으로 변환
+        double currLngRadian = longitude1 * radianConst;//이전 경도를 라디안으로 변환
+        double destLatRadian = latitude2* radianConst;//현재 위도를 라디안으로 변환
+        double destLngRadian = longitude2 * radianConst;//현재 경도를 라디안으로 변환
+        radian_distance = Math.acos(Math.sin(currLatRadian) * Math.sin(destLatRadian) + Math.cos(currLatRadian) * Math.cos(destLatRadian) * Math.cos(currLngRadian - destLngRadian));
+        radian_bearing = Math.acos((Math.sin(destLatRadian) - Math.sin(currLatRadian) * Math.cos(radian_distance)) / (Math.cos(currLatRadian) * Math.sin(radian_distance)));
+        true_bearing=0;
+        if (Math.sin(destLngRadian - currLngRadian) < 0) {//경도는 서쪽 180, 동쪽 180으로만 구분되므로 총 360도인 방위각으로 표현하기 위해서는 현재 경도보다 이전 경도가 크면 라디안 방위각을 방위각으로 변환시켜 그대로 출력하지 않고 360에서 빼줘야 한다
+            true_bearing = radian_bearing * (1/radianConst);//라디안 각을 degree로 표시
+            true_bearing = (360 - true_bearing);//현재경도보다 이전경도가 크면 방위각으로 표ㅛ현할때 보와해줘야 함
+        } else {
+            true_bearing = (radian_bearing * (1/radianConst));// 현재 경도가 이전 경도보다 크면 방위각 그대로 계산 라디안 각을 degree로 변환
+        }
+        return (short)true_bearing;//short형으로 방위각 리턴
     }
 }
