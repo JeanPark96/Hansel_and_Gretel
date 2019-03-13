@@ -42,7 +42,7 @@ public class StartScreenActivity extends AppCompatActivity {
                 finish();
             }
         });
-        alert.setMessage("경고창");
+        alert.setMessage("                              <  경고문  >\n\n시작 이후 디바이스를 휴대한 위치가 변경될 경우, 경로 기록이 정확하지 않을 수 있습니다.\n\n(ex) 디바이스를 손에 들고 걸었다가 주머니에 넣게 될 경우)");
         alert.show();
     }
 }
