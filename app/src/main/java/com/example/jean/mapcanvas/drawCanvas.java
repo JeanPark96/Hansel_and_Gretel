@@ -78,6 +78,9 @@ public class drawCanvas extends View {
 
         if(isBackTrackActivated()){
             path.reset();
+            Matrix matrix = new Matrix();
+            matrix.setScale(-1, -1); //상하좌우반전
+            firstBitmap = Bitmap.createBitmap(firstBitmap, 0, 0, firstBitmap.getWidth(), firstBitmap.getHeight(), matrix, false);
 
             canvas = new Canvas(bitmapForbackTracking);
             startX = width-endX;
@@ -118,12 +121,12 @@ public class drawCanvas extends View {
         Log.d("drawing method working",r_local_step+"drawing");
         if (r_local_step <= 1 && !isBackTrackActivated()) {
             if(MainActivity.pathAvailableNumber==0) {
-                startX = (width / 2) - 200;
-                startY = (height / 2) + 920;
+                startX = (width / 2) - 160;
+                startY = (height / 2) + 550;
                 path.moveTo(startX, startY);
                 invalidate();
                 endX = startX;
-                endY = startY - (float)(r_stride);
+                endY = startY - r_stride;
                 theta = r_azimuth;
                 path.lineTo(endX, endY);
                 canvas.drawOval(startX - 12, startY - 12, startX + 12, endY + 12, startAndFinishMarkColorPaint);//스타트 마크, 여기에 있어야 사라지지 않음
@@ -157,17 +160,17 @@ public class drawCanvas extends View {
         startY=endY;
     }
 
-    public void GPSdrawing(int countGPSCall, double distance, short bearing){
+    /*public void GPSdrawing(int countGPSCall, double distance, short bearing){
         r_GPSCall=countGPSCall;
-        r_distance = 8*distance;
+        r_distance = 32*distance;
         r_bearing = bearing;
         GPS_totalDistance+=distance;
 
         Log.d("drawing method working",r_local_step+"drawing");
         if (r_GPSCall <= 2 && !isBackTrackActivated()) {
             if(MainActivity.pathAvailableNumber==0) {
-                GPS_startX = (width / 2) -160;
-                GPS_startY = (height / 2) + 920;
+                GPS_startX = (width / 2) -120;
+                GPS_startY = (height / 2) + 550;
                 path2.moveTo(GPS_startX, GPS_startY);
                 invalidate();
                 GPS_endX = GPS_startX;
@@ -203,7 +206,7 @@ public class drawCanvas extends View {
 
         GPS_startX=GPS_endX;
         GPS_startY=GPS_endY;
-    }
+    }*/
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -284,23 +287,6 @@ public class drawCanvas extends View {
             angleDiff=300;
         }else if(angleDiff>315&&angleDiff<=345){
             angleDiff=330;
-        }*/
-        /*if(angleDiff>337.5 || angleDiff<=22.5){//방위각 보정
-            angleDiff=0;
-        }else if(angleDiff>22.5&&angleDiff<=67.5){
-            angleDiff=45;
-        }else if(angleDiff>67.5&&angleDiff<=112.5){
-            angleDiff=90;
-        }else if(angleDiff>112.5&&angleDiff<=157.5){
-            angleDiff=135;
-        }else if(angleDiff>157.5&&angleDiff<=202.5){
-            angleDiff=180;
-        }else if(angleDiff>202.5&&angleDiff<=247.5){
-            angleDiff=225;
-        }else if(angleDiff>247.5&&angleDiff<=292.5){
-            angleDiff=270;
-        }else if(angleDiff>292.5&&angleDiff<=337.5){
-            angleDiff=315;
         }*/
         if(angleDiff>342 || angleDiff<=18){//방위각 보정
             angleDiff=0;
