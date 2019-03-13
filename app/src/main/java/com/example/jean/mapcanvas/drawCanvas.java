@@ -283,7 +283,7 @@ public class drawCanvas extends View {
         }else if(angleDiff>315&&angleDiff<=345){
             angleDiff=330;
         }*/
-        if(angleDiff>337.5 || angleDiff<=22.5){//방위각 보정
+        /*if(angleDiff>337.5 || angleDiff<=22.5){//방위각 보정
             angleDiff=0;
         }else if(angleDiff>22.5&&angleDiff<=67.5){
             angleDiff=45;
@@ -298,6 +298,27 @@ public class drawCanvas extends View {
         }else if(angleDiff>247.5&&angleDiff<=292.5){
             angleDiff=270;
         }else if(angleDiff>292.5&&angleDiff<=337.5){
+            angleDiff=315;
+        }*/
+        if(angleDiff>342 || angleDiff<=18){//방위각 보정
+            angleDiff=0;
+        }else if(angleDiff>18&&angleDiff<=54){
+            angleDiff=45;
+        } else if(angleDiff>54&&angleDiff<=90){
+            angleDiff=90;
+        } else if(angleDiff>90&&angleDiff<=126){
+            angleDiff=90;
+        }else if(angleDiff>126&&angleDiff<=162){
+            angleDiff=135;
+        }else if(angleDiff>162&&angleDiff<=198){
+            angleDiff=180;
+        }else if(angleDiff>198&&angleDiff<=234){
+            angleDiff=225;
+        }else if(angleDiff>234&&angleDiff<=270){
+            angleDiff=270;
+        }else if(angleDiff>270&&angleDiff<=306){
+            angleDiff=270;
+        }else if(angleDiff>306&&angleDiff<=342){
             angleDiff=315;
         }
 
