@@ -168,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
 
                     try {
                         onStartCommand();
+                        printGPSResult();
 
                     } catch (Exception e) {
                         Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
@@ -176,6 +177,9 @@ public class MainActivity extends AppCompatActivity {
 
                 else {
                     Btn.setImageResource(R.drawable.start);
+                    locationManager.removeUpdates(locationListener);
+                    locationListener=null;
+                    locationManager=null;
                     showCanvas.finished();
                     try {
                         onStop();
@@ -219,6 +223,9 @@ public class MainActivity extends AppCompatActivity {
         }
         if (magneticSensor != null) {
             sensorManager.registerListener(magN, magneticSensor, sensorManager.SENSOR_DELAY_GAME);
+        }
+        if(locationManager==null){
+            GetLocations();
         }
         return START_STICKY;
     }

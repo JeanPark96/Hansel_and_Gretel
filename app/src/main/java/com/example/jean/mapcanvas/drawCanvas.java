@@ -113,13 +113,13 @@ public class drawCanvas extends View {
     public void drawing(float azimuth,int local_step,double stride,double distanceFromMain) {
         r_local_step = local_step;
         r_azimuth = azimuth;
-        r_stride = 8*(float) stride;
+        r_stride = 32*(float) stride;
 
         Log.d("drawing method working",r_local_step+"drawing");
         if (r_local_step <= 1 && !isBackTrackActivated()) {
             if(MainActivity.pathAvailableNumber==0) {
-                startX = (width / 2) - 190;
-                startY = (height / 2) + 950;
+                startX = (width / 2) - 200;
+                startY = (height / 2) + 920;
                 path.moveTo(startX, startY);
                 invalidate();
                 endX = startX;
@@ -166,8 +166,8 @@ public class drawCanvas extends View {
         Log.d("drawing method working",r_local_step+"drawing");
         if (r_GPSCall <= 2 && !isBackTrackActivated()) {
             if(MainActivity.pathAvailableNumber==0) {
-                GPS_startX = (width / 2)+220;
-                GPS_startY = (height / 2) + 550;
+                GPS_startX = (width / 2) -160;
+                GPS_startY = (height / 2) + 920;
                 path2.moveTo(GPS_startX, GPS_startY);
                 invalidate();
                 GPS_endX = GPS_startX;
