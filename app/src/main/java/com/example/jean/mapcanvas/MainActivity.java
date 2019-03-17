@@ -1,7 +1,6 @@
 package com.example.jean.mapcanvas;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,8 +10,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -20,7 +17,6 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -30,13 +26,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -160,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
 
                     try {
                         onStartCommand();
-                        //printGPSResult();
+                        printGPSResult();
 
                     } catch (Exception e) {
                         Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
@@ -169,9 +163,9 @@ public class MainActivity extends AppCompatActivity {
 
                 else {
                     Btn.setImageResource(R.drawable.start);
-                    //locationManager.removeUpdates(locationListener);
-                    //locationListener=null;
-                    //locationManager=null;
+                    locationManager.removeUpdates(locationListener);
+                    locationListener=null;
+                    locationManager=null;
                     showCanvas.finished();
                     try {
                         onStop();
@@ -194,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
     private Runnable horizontalScrollDrag=new Runnable() {
         @Override
         public void run() {
-            horscrollView.smoothScrollBy(600,0);
+            horscrollView.smoothScrollBy(1200,0);
         }
     };
 
@@ -216,9 +210,9 @@ public class MainActivity extends AppCompatActivity {
         if (magneticSensor != null) {
             sensorManager.registerListener(magN, magneticSensor, sensorManager.SENSOR_DELAY_GAME);
         }
-        //if(locationManager==null){
-        //    GetLocations();
-        //}
+        if(locationManager==null){
+            GetLocations();
+        }
         return START_STICKY;
     }
 
@@ -430,9 +424,9 @@ public class MainActivity extends AppCompatActivity {
         showCanvas.drawing(azimuth,local_step,stride_length,distance_result);
     }
 
-    //public void printGPSResult(){
-    //    showCanvas.GPSdrawing(countGPSCall,distance,(short)true_bearing);
-    //}
+    public void printGPSResult(){
+        showCanvas.GPSdrawing(countGPSCall,distance,(short)true_bearing);
+    }
 
     public void averageStrideSet(View view){
         switch (view.getId()){
@@ -557,7 +551,7 @@ public class MainActivity extends AppCompatActivity {
         alert.show();
     }
 
-    /*gps버튼 작동
+    //gps버튼 작동
     public void GetLocations(){
 
         if ( Build.VERSION.SDK_INT >= 23 &&
@@ -652,5 +646,5 @@ public class MainActivity extends AppCompatActivity {
             true_bearing = (radian_bearing * (1/radianConst));// 현재 경도가 이전 경도보다 크면 방위각 그대로 계산 라디안 각을 degree로 변환
         }
         return (short)true_bearing;//short형으로 방위각 리턴
-    }*/
+    }
 }
