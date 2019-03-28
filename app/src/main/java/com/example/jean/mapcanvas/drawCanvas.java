@@ -263,7 +263,7 @@ public class drawCanvas extends View {
         if (angleDiff < 0)//angleDiff 값은 무조건 양수가 나오도록 보정
             angleDiff += 360;
 
-        /*if(angleDiff>345 || angleDiff<=15){//방위각 보정
+        if(angleDiff>345 || angleDiff<=15){//방위각 보정
             angleDiff=0;
         }else if(angleDiff>15&&angleDiff<=45){
             angleDiff=30;
@@ -287,28 +287,8 @@ public class drawCanvas extends View {
             angleDiff=300;
         }else if(angleDiff>315&&angleDiff<=345){
             angleDiff=330;
-        }*/
-        if(angleDiff>342 || angleDiff<=18){//방위각 보정
-            angleDiff=0;
-        }else if(angleDiff>18&&angleDiff<=54){
-            angleDiff=45;
-        } else if(angleDiff>54&&angleDiff<=90){
-            angleDiff=90;
-        } else if(angleDiff>90&&angleDiff<=126){
-            angleDiff=90;
-        }else if(angleDiff>126&&angleDiff<=162){
-            angleDiff=135;
-        }else if(angleDiff>162&&angleDiff<=198){
-            angleDiff=180;
-        }else if(angleDiff>198&&angleDiff<=234){
-            angleDiff=225;
-        }else if(angleDiff>234&&angleDiff<=270){
-            angleDiff=270;
-        }else if(angleDiff>270&&angleDiff<=306){
-            angleDiff=270;
-        }else if(angleDiff>306&&angleDiff<=342){
-            angleDiff=315;
         }
+        
 
         angleDiffRadian = (float) (angleDiff* radianConst);//346~15는 직선 +16~45는 30도 오른쪽, 46~75는 60도 오른쪽, 76~105는 90도 오른쪽, 106~135는 120도, 136~165는 150도, 166~195는 180도,196~225는 210도, 226~255는 240도, 256~285는 270도 , 286~315는 300도, 316~345는 330도,
         return angleDiffRadian;
