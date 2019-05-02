@@ -105,8 +105,8 @@
                 android:orientation="vertical">
                 <com.example.jean.mapcanvas.drawCanvas
                     android:id="@+id/drawing"
-                    android:layout_width="1500dp"
-                    android:layout_height="600dp"
+                    android:layout_width="800dp"
+                    android:layout_height="800dp"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentStart="true">
                 </com.example.jean.mapcanvas.drawCanvas>
