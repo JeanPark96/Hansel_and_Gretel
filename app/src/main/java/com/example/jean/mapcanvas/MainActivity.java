@@ -318,7 +318,7 @@ public class MainActivity extends AppCompatActivity {
                     if(high_peak-low_peak>AMPLITUDE_THRESHOLD){
                         if(count==0||(lastDeltaTotalAcc>0 && deltaTotalAcc<0)) {
                             if(StepValue.Step<=5){
-                                customThresholdTotal+=totalAccDiff;
+                                customThresholdTotal+=(high_peak - low_peak);
                                 if(StepValue.Step==5) {
                                     averageCustomThreshold = customThresholdTotal / 5;
                                     if(averageCustomThreshold>AMPLITUDE_THRESHOLD)
